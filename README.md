@@ -55,6 +55,7 @@ civika/
    ./init/local/init.sh
 
 ## Command-command Penting (Docker)
+### Command Prompt
 -  **Composer install** => scripts\install.bat
 -  **Logging App** => scripts\logs.bat
 -  **Migrasi Database** => scripts\migrate.bat
