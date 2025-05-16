@@ -1,0 +1,3 @@
+@echo off
+echo 📜 Menampilkan log container civika-app...
+docker compose -f compose.dev.yaml logs -f app

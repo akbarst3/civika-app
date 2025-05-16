@@ -1,0 +1,3 @@
+@echo off
+echo 🔧 Menyetel permission folder storage dan cache...
+docker compose -f compose.dev.yaml exec app sh -c "chown -R www-data:www-data storage bootstrap/cache && chmod -R 775 storage/bootstrap/cache"

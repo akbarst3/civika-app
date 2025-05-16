@@ -1,0 +1,21 @@
+FROM php:8.3-fpm
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    git \
+    curl \
+    zip \
+    unzip \
+    && docker-php-ext-install pdo pdo_pgsql
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Jangan copy source karena akan ditimpa volume saat runtime
+
+# Tambahkan folder ke daftar aman Git
+RUN git config --global --add safe.directory /var/www/html

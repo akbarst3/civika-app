@@ -1,0 +1,36 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/development/Dockerfile
+    image: civika-app
+    container_name: civika-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html:delegated
+    depends_on:
+      - db
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=civika_db
+      - DB_USERNAME=civika
+      - DB_PASSWORD=ppl25
+
+  db:
+    image: postgres:14-alpine
+    container_name: civika-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=civika_db
+      - POSTGRES_USER=civika
+      - POSTGRES_PASSWORD=ppl25
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

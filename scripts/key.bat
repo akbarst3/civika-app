@@ -1,0 +1,3 @@
+@echo off
+echo 🔐 Menggenerate app key...
+docker compose -f compose.dev.yaml exec app php artisan key:generate

@@ -1,0 +1,3 @@
+@echo off
+echo 🛠️ Menjalankan migrasi database...
+docker compose -f compose.dev.yaml exec app php artisan migrate

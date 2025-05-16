@@ -1,0 +1,7 @@
+vendor
+node_modules
+storage/*.key
+.env
+.git
+docker-compose.yml
+*.sh
