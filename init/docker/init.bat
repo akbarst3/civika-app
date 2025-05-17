@@ -29,7 +29,7 @@ if errorlevel 1 (
 )
 echo ✅ Container %CONTAINER_NAME% aktif!
 
-:: Install dependency Civika jika folder vendor belum ada
+:: Install dependency PHP jika vendor belum ada
 if not exist "vendor" (
     echo 📦 Menjalankan composer install...
     docker compose -f %COMPOSE_FILE% exec %SERVICE_NAME% composer install --no-interaction --optimize-autoloader
@@ -37,19 +37,43 @@ if not exist "vendor" (
     echo ✅ Folder vendor sudah ada.
 )
 
-:: Set permission (tidak fatal di Windows)
+:: Install dependency Node jika node_modules belum ada
+if not exist "node_modules" (
+    echo 📦 Menjalankan npm install untuk Bootstrap dan Font Awesome...
+    docker compose -f %COMPOSE_FILE% exec %SERVICE_NAME% npm install bootstrap@5.3.3 @fortawesome/fontawesome-free@6.6.0 --save-dev
+    echo 📦 Menjalankan npm install untuk dependensi lainnya...
+    docker compose -f %COMPOSE_FILE% exec %SERVICE_NAME% npm install
+) else (
+    echo ✅ Folder node_modules sudah ada.
+)
+
+:: Pastikan import CSS tersedia
+echo 📥 Memastikan import Bootstrap dan Font Awesome di resources/css/app.css...
+docker compose -f %COMPOSE_FILE% exec %SERVICE_NAME% sh -c "test -f resources/css/app.css || echo '' > resources/css/app.css"
+docker compose -f %COMPOSE_FILE% exec %SERVICE_NAME% sh -c "grep -q 'bootstrap/dist/css/bootstrap.min.css' resources/css/app.css || echo \"@import 'bootstrap/dist/css/bootstrap.min.css';\n@import '@fortawesome/fontawesome-free/css/all.min.css';\n\" >> resources/css/app.css"
+
+:: Pastikan import JS tersedia
+echo 📥 Memastikan import Bootstrap di resources/js/app.js...
+docker compose -f %COMPOSE_FILE% exec %SERVICE_NAME% sh -c "test -f resources/js/app.js || echo '' > resources/js/app.js"
+docker compose -f %COMPOSE_FILE% exec %SERVICE_NAME% sh -c "grep -q 'import \"bootstrap\"' resources/js/app.js || echo \"import 'bootstrap';\n\" >> resources/js/app.js"
+
+:: Set permission (jika diabaikan di Windows, tidak fatal)
 echo 🔧 Menyetel permission folder storage dan cache...
 docker compose -f %COMPOSE_FILE% exec %SERVICE_NAME% sh -c "chown -R www-data:www-data storage bootstrap/cache && chmod -R 775 storage bootstrap/cache" || echo (Permission diabaikan di Windows)
 
-:: Generate Civika key
+:: Generate Laravel key
 echo 🔐 Menggenerate key aplikasi Civika...
 docker compose -f %COMPOSE_FILE% exec %SERVICE_NAME% php artisan key:generate
 
-:: Migrasi database
+:: Jalankan migrasi
 echo 🛠️ Menjalankan migrasi database...
 docker compose -f %COMPOSE_FILE% exec %SERVICE_NAME% php artisan migrate
 
-:: Jalankan Civika server di background (opsional)
+:: Compile asset frontend
+echo 🔧 Menjalankan npm run build untuk compile asset...
+docker compose -f %COMPOSE_FILE% exec %SERVICE_NAME% npm run build
+
+:: Jalankan Laravel server
 echo 🚀 Menjalankan Civika server di port 8000...
 docker compose -f %COMPOSE_FILE% exec -d %SERVICE_NAME% php artisan serve --host=0.0.0.0 --port=8000
 
