@@ -62,7 +62,7 @@ civika/
 -  **Restart Container** => scripts\restart.bat
 -  **Seeding Database** => scripts\seed.bat
 -  **Stop Container** => scripts\stop.bat
--  **Start Container** => scripts\start.bat
+-  **Start Container** => scripts\up.bat
 ### Powershell
 -  **Composer install** => .\scripts\install.ps1
 -  **Logging App** => .\scripts\logs.ps1
@@ -70,7 +70,7 @@ civika/
 -  **Restart Container** => .\scripts\restart.ps1
 -  **Seeding Database** => .\scripts\seed.ps1
 -  **Stop Container** => .\scripts\stop.ps1
--  **Start Container** => .\scripts\start.ps1
+-  **Start Container** => .\scripts\up.ps1
 ### UNIX (Linux, WSL, macOS)
 -  **Composer install** => make install
 -  **Logging App** => make logs
