@@ -7,15 +7,24 @@ RUN apt-get update && apt-get install -y \
     curl \
     zip \
     unzip \
+    gnupg \
     && docker-php-ext-install pdo pdo_pgsql
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Install Node.js + npm (gunakan versi stabil LTS)
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh && \
+    bash nodesource_setup.sh && \
+    apt-get install -y nodejs && \
+    echo "📦 Node.js version:" && node -v && \
+    echo "📦 npm version (before update):" && npm -v && \
+    npm install -g npm && \
+    echo "📦 npm version (after update):" && npm -v && \
+    rm nodesource_setup.sh
+    
 # Set working directory
 WORKDIR /var/www/html
-
-# Jangan copy source karena akan ditimpa volume saat runtime
 
 # Tambahkan folder ke daftar aman Git
 RUN git config --global --add safe.directory /var/www/html
