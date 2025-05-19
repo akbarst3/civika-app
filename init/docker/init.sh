@@ -50,5 +50,6 @@ docker compose -f $COMPOSE_FILE exec $SERVICE_NAME php artisan migrate
 # Jalankan Laravel server background (opsional jika tidak pakai nginx/php-fpm)
 echo "🚀 Menjalankan Laravel server di port 8000..."
 docker compose -f $COMPOSE_FILE exec -d $SERVICE_NAME php artisan serve --host=0.0.0.0 --port=8000
-
 echo "✅ Setup selesai! Laravel tersedia di http://localhost:8000"
+npm install
+npm run dev

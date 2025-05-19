@@ -54,4 +54,6 @@ docker compose -f $COMPOSE_FILE exec -d $SERVICE_NAME php artisan serve --host=0
 
 Write-Host "✅ Setup selesai! Civika tersedia di http://localhost:8000"
 
+npm install
+npm run dev
 Pause

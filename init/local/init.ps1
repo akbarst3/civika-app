@@ -18,5 +18,10 @@ php artisan key:generate
 Write-Host "🛠️ Menjalankan migrasi database..."
 php artisan migrate
 
-Write-Host "✅ Setup selesai! Jalankan: php artisan serve"
+php artisan serve
+
+npm install
+npm run dev
+echo "✅ Setup selesai"
+
 Pause

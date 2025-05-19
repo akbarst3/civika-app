@@ -21,7 +21,11 @@ php artisan key:generate
 echo 🛠️ Menjalankan migrasi database...
 php artisan migrate
 
-echo ✅ Setup selesai! Jalankan: php artisan serve
+php artisan serve
+
+npm install
+npm run dev
+echo "✅ Setup selesai"
 
 endlocal
 pause
