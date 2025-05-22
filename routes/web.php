@@ -16,3 +16,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/riwayat-pengajuan-surat', function () {
+    try {
+        return view('surat-view.TU.riwayat-pengajuan-surat');
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+})->name('riwayat-pengajuan-surat');
+
