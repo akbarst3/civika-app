@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FormSuratController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/form/create', [FormSuratController::class, 'create']);
+Route::post('/form', [FormSuratController::class, 'store'])->name('surat.store');
