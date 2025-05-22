@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('instansi_ibu', 255);
             $table->string('telepon_instansi_ibu', 255);
             $table->string('kode_pos_ibu', 5);
-            $table->integer('penghasilan_ibu'); 
+            $table->integer('penghasilan_ibu');
             $table->foreign('nim')->references('nim')->on('mahasiswa')->restrictOnDelete()->restrictOnUpdate();
             $table->timestamps();
         });
