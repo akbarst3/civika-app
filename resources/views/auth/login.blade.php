@@ -1,47 +1,71 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Login POLBAN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-[#F2F4F7] min-h-screen flex items-center justify-center p-4">
+    <div class="flex max-w-4xl w-full rounded-3xl overflow-hidden bg-white shadow-lg">
+        <div class="relative w-1/2 min-h-[400px]">
+            <img alt="Modern building of POLBAN with glass pyramid roof and blue sky with clouds"
+                 class="w-full h-full object-cover" height="400" src="{{ asset('images/foto_gdh.jpg') }}" width="600">
         </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
+        <div class="w-1/2 p-10 flex flex-col justify-center">
+            <h2 class="text-[#1A237E] font-bold text-lg mb-8 select-none">Login</h2>
+            <div class="flex justify-center mb-8">
+                <img alt="POLBAN logo with orange stripes and blue hexagon shape" class="w-28 h-28 object-contain"
+                     height="120" src="{{ asset('images/polban_logo.png') }}" width="120">
+            </div>
+            <!-- Session Status -->
+            @if (session('status'))
+                <div class="text-green-600 text-xs mb-4">{{ session('status') }}</div>
             @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+            <form class="space-y-5" method="POST" action="{{ route('login') }}">
+                @csrf
+                <!-- Email -->
+                <div>
+                    <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="email">Email</label>
+                    <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
+                           id="email" placeholder="Masukkan Email" name="email" type="email" value="{{ old('email') }}" required autofocus>
+                    @error('email')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <!-- Password -->
+                <div>
+                    <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="password">Password</label>
+                    <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
+                           id="password" placeholder="Masukkan Password" name="password" type="password" required>
+                    @error('password')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <!-- Forgot Password -->
+                <div class="text-[9px] font-bold text-[#1A237E] mb-4">
+                    @if (Route::has('password.request'))
+                        Forgot your password?
+                        <a class="text-[#1A237E] underline font-semibold" href="{{ route('password.request') }}">Click here!</a>
+                    @endif
+                </div>
+                <!-- Submit Button -->
+                <button class="w-full bg-gradient-to-r from-[#1A237E] to-[#3F51B5] text-white font-bold text-xs py-2 rounded-md shadow-md hover:brightness-110 transition"
+                        type="submit">LOGIN</button>
+            </form>
+            <!-- Register Link -->
+            <p class="text-[9px] font-bold text-[#1A237E] mt-4 text-center select-none">
+                Don't have an account?
+                <a class="text-[#1A237E] underline font-semibold" href="{{ route('register') }}">Register</a>
+            </p>
         </div>
-    </form>
-</x-guest-layout>
+    </div>
+</body>
+</html>
