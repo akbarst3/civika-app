@@ -32,3 +32,19 @@ Route::get('/verifikasi-surat-tu', function () {
         return "Error: " . $e->getMessage();
     }
 })->name('verifikasi-surat-tu');
+
+Route::get('/riwayat-pengajuan-surat-mhs', function () {
+    try {
+        return view('surat-view.mahasiswa.riwayat-pengajuan-surat-mhs');
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+})->name('riwayat-pengajuan-surat-mhs');
+
+Route::get('/riwayat-pengajuan-surat-dosen', function () {
+    try {
+        return view('surat-view.dosen.riwayat-pengajuan-surat-dosen');
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+})->name('riwayat-pengajuan-surat-dosen');
