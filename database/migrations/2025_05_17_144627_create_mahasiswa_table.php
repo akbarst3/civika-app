@@ -33,7 +33,7 @@ return new class extends Migration
                 ->references('id')
                 ->on('kelas')
                 ->restrictOnDelete()
-                ->restrictOnUpdate();            
+                ->restrictOnUpdate();
             $table->timestamps();
         });
     }
