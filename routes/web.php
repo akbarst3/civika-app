@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\FormSuratController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\SuratController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,3 +43,5 @@ Route::post('/form', [FormSuratController::class, 'store'])->name('surat.store')
 
 Route::get('/form/create', [FormSuratController::class, 'create']);
 Route::post('/form', [FormSuratController::class, 'store'])->name('surat.store');
+
+Route::get('/mahasiswa/pengajuan-surat', [SuratController::class, 'index'])->name('pengajuan.surat');
