@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TugasAkhirController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/ta/form', [TugasAkhirController::class, 'form'])->name('ta.form');
+Route::get('/ta/download', [TugasAkhirController::class, 'handleDownload'])->name('ta.download');
