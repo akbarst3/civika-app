@@ -12,6 +12,12 @@ class PKLController extends Controller
 {
     public function handleDownload(Request $request)
     {
+        $request->validate([
+            'prodi' => 'required',
+            'angkatan' => 'required',
+            'jenis_laporan' => 'required|in:pdpt,honor'
+        ]);
+
         if ($request->jenis_laporan === 'pdpt') {
             return $this->generatePDPT($request);
         }
