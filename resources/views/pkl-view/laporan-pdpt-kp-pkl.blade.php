@@ -136,7 +136,7 @@
                 <td><p>{{ $kaprodi->nama_dosen ?? 'Nama Dosen' }}</p></td>
             </tr>
             <tr>
-                <td><p>NIP {{ $kaprodi->nip ?? '000000000' }}</p></td>
+                <td><p>NIP {{ $kaprodi->nip }}</p></td>
             </tr>
         </table>
     </div>
