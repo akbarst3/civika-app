@@ -21,9 +21,23 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link text-dark" data-bs-toggle="collapse" data-bs-target="#pencatatanAkademikCollapse">
+            <a href="#" class="nav-link text-dark" data-bs-toggle="collapse" data-bs-target="#pencatatanAkademikCollapse" aria-expanded="false" aria-controls="pencatatanAkademikCollapse">
                 <i class="fas fa-pencil-alt"></i> Pencatatan Akademik
             </a>
+            <div class="collapse" id="pencatatanAkademikCollapse">
+                <ul class="nav flex-column ms-3">
+                    <li class="nav-item">
+                        <a href="{{ route('import.buku-besar.index') }}" class="nav-link text-dark {{ request()->is('import-buku-besar') ? 'active' : '' }}">
+                            Import Buku Besar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/history-buku-besar" class="nav-link text-dark {{ request()->is('history-buku-besar') ? 'active' : '' }}">
+                            History Buku Besar
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
         <li class="nav-item">
             <a href="#" class="nav-link text-dark" data-bs-toggle="collapse" data-bs-target="#dataStatistikCollapse">

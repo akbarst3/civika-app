@@ -16,3 +16,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Rute untuk Status Import Buku Besar
+Route::get('/import-buku-besar', function () {
+    return view('buku-besar-view.status-import');
+})->name('import.buku-besar.index');
+
+// Rute untuk Halaman Import Buku Besar
+Route::get('/import-buku-besar/form', function () {
+    return view('buku-besar-view.import-buku-besar');
+})->name('import.buku-besar.form');
