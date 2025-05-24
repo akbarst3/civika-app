@@ -11,7 +11,7 @@ class Membimbing extends Model
     protected $primaryKey = ['kota', 'kode_dosen'];
     public $incrementing = false;
 
-    protected $fillable = ['kota', 'kode_dosen'];
+    protected $fillable = ['kota', 'kode_dosen', 'pembimbing_ke'];
 
     public function tugasAkhir()
     {
