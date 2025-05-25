@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/buku-besar', function () {
+    return view('buku-besar-view.tabel-buku-besar');
+});
