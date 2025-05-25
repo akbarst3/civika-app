@@ -1,3 +1,70 @@
-@import 'bootstrap/dist/css/bootstrap.min.css';
-@import '@fortawesome/fontawesome-free/css/all.min.css';
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
 
+body,
+input,
+select,
+button,
+table {
+    font-family: "Poppins", sans-serif;
+}
+
+thead th {
+    background-color: #f4f4f4e8 !important;
+    color: #000000cd !important;
+    font-weight: 700;
+    text-align: center;
+}
+
+td[rowspan] {
+    vertical-align: middle !important;
+}
+
+/* Font tabel diperkecil agar rapi */
+table {
+    font-size: 14px;
+}
+
+/* Style pagination: hilangkan border pada page-link */
+.pagination .page-link {
+    border: none;
+    color: #000;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+    border-radius: 0;
+}
+
+/* Hilangkan border pada pagination li */
+.pagination .page-item {
+    border: none;
+}
+
+/* Warna oranye pagination jadi lebih terang */
+.pagination .page-item.active .page-link {
+    background-color: #ffa500; /* oranye terang */
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+}
+
+/* Hover efek agar lebih halus */
+.pagination .page-link:hover {
+    background-color: #ffd59a;
+    color: #000;
+    border-radius: 8px;
+}
+
+.sidebar-nav .nav-link {
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-nav .nav-link:hover {
+    background-color: rgba(255, 158, 0, 0.5); /* Warna oranye transparan */
+}
+
+.sidebar-nav .nav-link i {
+    width: 20px;
+    text-align: center;
+}
