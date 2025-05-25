@@ -39,9 +39,19 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link text-danger" data-bs-toggle="collapse" data-bs-target="#logoutCollapse">
+                <a href="#" class="nav-link text-danger" data-bs-toggle="collapse" data-bs-target="#logoutCollapse" aria-expanded="false" aria-controls="logoutCollapse">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
+                <div class="collapse" id="logoutCollapse">
+                    <div class="card card-body">
+                        <p>Apakah Anda yakin ingin logout?</p>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="btn btn-danger btn-sm">Ya, Logout</button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#logoutCollapse">Batal</button>
+                        </form>
+                    </div>
+                </div>
             </li>
         </ul>
     </div>
