@@ -16,3 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/generate-honor-pkl', function () {
+    return view('pkl-view.generate-honor-pkl');
+})->name('generate.honor.pkl.form');
+
+Route::post('/generate-honor-pkl', function () {
+    return redirect()->route('generate.honor.pkl.form')->with('success', 'Laporan Honor PKL generated successfully!');
+})->name('generate.honor.pkl');
