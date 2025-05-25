@@ -45,3 +45,11 @@ Route::get('/riwayat-pengajuan-surat', function () {
 })->name('riwayat-pengajuan-surat');
 
 
+Route::get('/verifikasi-surat-tu', function () {
+    try {
+        return view('surat-view.TU.verifikasi-surat-tu');
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+})->name('verifikasi-surat-tu');
+
