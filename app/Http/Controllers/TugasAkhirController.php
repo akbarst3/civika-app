@@ -86,8 +86,11 @@ class TugasAkhirController extends Controller
             })
             ->values();
 
+        $currentDate = now()->format('d-m-Y');
+        $filename = "laporan_honor_ta_{$prodi->nama_prodi}_{$request->angkatan}_{$currentDate}.pdf";
+
         $pdf = Pdf::loadView('tugas-akhir-view.laporan-honor-ta', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris'));
-        return $pdf->download('laporan_honor_ta.pdf');
+        return $pdf->download($filename);
     }
 
     // untuk dropdown di tampilan
