@@ -1,0 +1,20 @@
+.custom-button {
+    background: linear-gradient(to right, #00008B, #3B3BBD);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    width: 200px;
+    box-shadow: 0 2px 6px rgba(0, 0, 139, 0.3);
+}
+
+.custom-button:hover {
+    background: linear-gradient(to right, #1A1A9D, #4D4DD9);
+}
