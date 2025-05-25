@@ -2,59 +2,64 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+/**
+ * @property string $role
+ */
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use Notifiable;
 
-    protected $table = 'users';
     protected $primaryKey = 'id_user';
-    public $incrementing = true;
+    protected $keyType = 'int';
+    public $incrementing = false;
+
     protected $fillable = [
-        'name',
-        'nim',
-        'kode_dosen',
-        'email',
-        'password',
+        'id_user', 'nim', 'kode_dosen', 'email', 'password',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
+    // Relasi ke Mahasiswa
     public function mahasiswa()
     {
-        return $this->belongsTo(Mahasiswa::class, 'nim', 'nim');
+        return $this->hasOne(Mahasiswa::class, 'nim', 'nim');
     }
 
+    // Relasi ke Dosen
     public function dosen()
     {
-        return $this->belongsTo(Dosen::class, 'kode_dosen', 'kode_dosen');
+        return $this->hasOne(Dosen::class, 'kode_dosen', 'kode_dosen');
     }
 
-    public function surat()
+    // Logika role
+    public function getRoleAttribute()
     {
-        return $this->hasMany(Surat::class, 'id_user', 'id_user');
+        if ($this->nim) {
+            return 'mahasiswa';
+        } elseif ($this->kode_dosen) {
+            return 'dosen';
+        } else {
+            return 'tata_usaha';
+        }
+    }
+    /**
+     * Check if the user has a specific role.
+     *
+     * @param string $role
+     * @return bool
+     */
+    // Cek role
+    public function hasRole($role)
+    {
+        return $this->role === $role;
     }
 }
