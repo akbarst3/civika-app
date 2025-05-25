@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TugasAkhirController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +25,6 @@ Route::get('/generate-honor-ta', function () {
 Route::post('/generate-honor-ta', function () {
     return redirect()->route('generate.honor.ta.form')->with('success', 'Laporan Honor TA generated successfully!');
 })->name('generate.honor.ta');
+
+Route::get('/ta/form', [TugasAkhirController::class, 'form'])->name('ta.form');
+Route::get('/ta/download', [TugasAkhirController::class, 'handleDownload'])->name('ta.download');
