@@ -34,7 +34,9 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('DashboardReviewer1');
+});
+
 
 Route::get('/riwayat-pengajuan-surat', function () {
     try {
