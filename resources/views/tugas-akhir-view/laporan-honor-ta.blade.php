@@ -88,7 +88,7 @@
 </head>
 <body>
     <div class="header">
-        <h3>REKAPITULASI BIMBINGAN DAN PENGUJI SIDANG TUGAS AKHIR</h3>
+        <h4>REKAPITULASI BIMBINGAN DAN PENGUJI SIDANG TUGAS AKHIR</h4>
         <h4>PROGRAM STUDI TEKNIK INFORMATIKA (ANGKATAN {{ request()->angkatan }})</h4>
         <h4>DEPARTEMEN TEKNIK KOMPUTER DAN INFORMATIKA</h4>
         <h4>TAHUN AKADEMIK {{ $tahunAkademik }}</h4>
@@ -118,12 +118,12 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $item->nip ?? '-' }}</td>
                     <td>{{ $item->nama_dosen }}</td>
-                    <td>{{ $item->pembimbing_1_count }}</td>
-                    <td>{{ $item->pembimbing_2_count }}</td>
-                    <td>{{ $item->pembimbing_1_count + $item->pembimbing_2_count }}</td>
-                    <td>{{ $item->penguji_1_count }}</td>
-                    <td>{{ $item->penguji_2_count }}</td>
-                    <td>{{ $item->penguji_1_count + $item->penguji_2_count }}</td>
+                    <td>{{ $item->pembimbing_1_count == 0 ? '' : $item->pembimbing_1_count }}</td>
+                    <td>{{ $item->pembimbing_2_count == 0 ? '' : $item->pembimbing_2_count }}</td>
+                    <td>{{ ($item->pembimbing_1_count + $item->pembimbing_2_count) == 0 ? '' : ($item->pembimbing_1_count + $item->pembimbing_2_count) }}</td>
+                    <td>{{ $item->penguji_1_count == 0 ? '' : $item->penguji_1_count }}</td>
+                    <td>{{ $item->penguji_2_count == 0 ? '' : $item->penguji_2_count }}</td>
+                    <td>{{ ($item->penguji_1_count + $item->penguji_2_count) == 0 ? '' : ($item->penguji_1_count + $item->penguji_2_count) }}</td>
                 </tr>
             @endforeach
         </tbody>

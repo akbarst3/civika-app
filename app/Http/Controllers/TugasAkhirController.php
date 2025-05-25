@@ -32,7 +32,7 @@ class TugasAkhirController extends Controller
         $sekretaris = Dosen::where('jabatan_dosen', 'Sekretaris 2')->first();
 
         $angkatan = $request->angkatan;
-        $isD3 = strpos($prodi->nama_prodi ?? '', 'D-3') !== false;
+        $isD3 = strpos($prodi->nama_prodi ?? '', 'D3') !== false;
         $taYear = $angkatan + ($isD3 ? 3 : 4);
         $tahunAkademik = ($taYear - 1) . '/' . $taYear;
 
