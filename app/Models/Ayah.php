@@ -14,7 +14,7 @@ class Ayah extends Model
 
     protected $fillable = [
         'nim', 'nama_ayah', 'pekerjaan_ayah', 'alamat_ayah', 'telepon_ayah',
-        'kota_ayah', 'instansi_ayah', 'telepon_instansi_ayah', 'kode_pos_ayah', 'penghasilan_ayah'
+        'kota_ayah', 'pendidikan_ayah', 'instansi_ayah', 'telepon_instansi_ayah', 'kode_pos_ayah', 'penghasilan_ayah'
     ];
 
     public function mahasiswa()

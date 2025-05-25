@@ -13,9 +13,9 @@ class Mahasiswa extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'nim', 'nama_kelas', 'angkatan', 'nama_mhs', 'no_ktp', 'email', 'telepon',
+        'nim', 'nama_mhs', 'no_ktp', 'email', 'telepon',
         'tgl_lahir', 'kota_lahir', 'jenis_kelamin', 'agama', 'gol_darah', 'anak_ke',
-        'nama_slta', 'jalur_daftar', 'nem'
+        'nama_slta', 'jalur_daftar', 'nem', 'kelas_id'
     ];
 
     protected $casts = [
