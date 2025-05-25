@@ -12,8 +12,8 @@ class Rekomendasi extends Model
 
     protected $fillable = ['kode_surat', 'tujuan_rekomendasi'];
 
-    public function surat()
-    {
-        return $this->belongsTo(Surat::class, 'kode_surat', 'kode_surat');
-    }
+    // public function surat()
+    // {
+    //     return $this->belongsTo(Surat::class, 'kode_surat', 'kode_surat');
+    // }
 }

@@ -3,35 +3,38 @@
 @section('title', 'Riwayat Pengajuan Surat Mahasiswa')
 
 @section('content')
+         {{-- // nama, nim, ipk, kelas, prodi, semester, smt, tahun, ditujukan, keperluan surat, berkas, kode_surat, id_user, jenis_surat, tgl_surat, status_surat --}}
     <h3>Riwayat Pengajuan Surat Mahasiswa</h3>
     <div class="mt-4">
         <div class="table-responsive">
             <table class="table table-bordered table-striped" style="font-size: 0.9em;">
                 <thead>
                     <tr class="text-center">
-                        <th>No</th>
+                        <th>Kode Surat</th>
                         <th>Jenis Surat</th>
+                        <th>Ditujukan</th>
                         <th>Keperluan Surat</th>
-                        <th>Tanggal</th>
                         <th>Status Verifikasi</th>
+                        <th>Tanggal Pengajuan</th>
                         <th>Waktu Verifikasi</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @for ($i = 1; $i <= 12; $i++)
+                    @foreach ($surats as $surat)
                         <tr>
-                            <td class="text-center">{{ $i }}</td>
-                            <td class="text-center">Lorem ipsum.</td>
-                            <td class="text-center">Lorem ipsum.</td>
-                            <td class="text-center">{{ \Carbon\Carbon::create(2025, 2, 13, 10, 13, 07)->format('d F Y H:i:s') }}</td>
-                            <td class="text-center"><span class="badge bg-danger">Menunggu Verifikasi</span></td>
-                            <td class="text-center">{{ \Carbon\Carbon::create(2025, 2, 18, 15, 59, 18)->format('d F Y H:i:s') }}</td>
+                            <td class="text-center">{{ $surat->kode_surat }}</td>
+                            <td class="text-center">{{ $surat->jenis_surat }}</td>
+                            <td class="text-center">{{ $surat->ditujukan }}</td>
+                            <td class="text-center">{{ $surat->keperluan }}</td>
+                            <td class="text-center">{{ $surat->status_surat }}</td>
+                            <td class="text-center">{{ $surat->created_at }}</td>
+                            <td class="text-center">{{ $surat->updated_at }}</td>
                             <td class="text-center">
                                 <a href="#" class="btn btn-sm btn-outline-primary">⬇</a>
                             </td>
                         </tr>
-                    @endfor
+                    @endforeach
                 </tbody>
             </table>
         </div>

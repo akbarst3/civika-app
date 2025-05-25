@@ -19,7 +19,7 @@ class MahasiswaSeeder extends Seeder
         $golDarah = ['A', 'B', 'AB', 'O'];
         $kelasId = DB::table('kelas')->pluck('id')->first(); // ambil 1 id dari tabel kelas
 
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 1; $i++) {
             DB::table('mahasiswa')->insert([
                 'nim' => '2301010' . str_pad($i, 2, '0', STR_PAD_LEFT),
                 'nama_kelas'    => chr(64 + (($i % 3) + 1)), // A, B, C
@@ -37,7 +37,7 @@ class MahasiswaSeeder extends Seeder
                 'nama_slta'     => 'SMAN ' . rand(1, 100),
                 'jalur_daftar'  => $jalurList[array_rand($jalurList)],
                 'nem'           => number_format(rand(750, 1000) / 100, 2),
-                'kelas_id'      => $kelasId,
+                'kelas_id'      => 1,
                 'created_at'    => now(),
                 'updated_at'    => now(),
             ]);

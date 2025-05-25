@@ -27,14 +27,15 @@
     <!-- Main Content -->
     <main class="main-content">
         <div class="w-full max-w-4xl">
-            <h2 class="text-[#1A237E] font-bold text-lg mb-8 select-none text-center" id="formTitle">Form Pengajuan Surat</h2>
-            <form class="space-y-5">
+            <h2 class="text-[#1A237E] font-bold text-lg mb-8 select-none text-center" id="formTitle">Form Pengajuan Surat Beasiswa</h2>
+            <form action="{{ route('pengajuan-surat-store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
+                @csrf
                 <!-- Nama Lengkap -->
                 <div class="flex space-x-4">
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="nama">Nama</label>
                         <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                               id="nama" placeholder="Masukkan Nama" name="nama" type="text" required>
+                               id="nama" placeholder="Masukkan Nama" name="nama" type="text" value="{{ old('nama', $mahasiswa->nama_mhs ?? '') }}">
                     </div>
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="ipk">IPK</label>
@@ -44,7 +45,7 @@
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="kelas">Kelas</label>
                         <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                               id="kelas" placeholder="Masukkan Kelas" name="kelas" type="text" required>
+                               id="kelas" placeholder="Masukkan Kelas" name="kelas" type="text" value="{{ old('kelas', $mahasiswa->nama_kelas ?? '') }}">
                     </div>
                 </div>
                 <!-- NIM -->
@@ -52,12 +53,12 @@
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="nim">NIM</label>
                         <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                               id="nim" placeholder="Masukkan NIM" name="nim" type="text" required>
+                               id="nim" placeholder="Masukkan NIM" name="nim" type="text" value="{{ old('nim', $mahasiswa->nim ?? '') }}">
                     </div>
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="prodi">Prodi</label>
                         <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                               id="prodi" placeholder="Masukkan Prodi" name="prodi" type="text" required>
+                               id="prodi" placeholder="Masukkan Prodi" name="prodi" type="text" value="{{ old('prodi', $mahasiswa->kelas->prodi->nama_prodi ?? '') }}">
                     </div>
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="semester">Semester</label>
@@ -106,7 +107,7 @@
                 <!-- Buttons -->
                 <div class="flex space-x-4">
                     <button type="button" class="w-1/2 bg-gradient-to-r from-[#E11818] to-[#FF6C6C] text-white font-bold text-xs py-2 rounded-md hover:brightness-110 transition" data-bs-toggle="modal" data-bs-target="#confirmationModal">Batal</button>
-                    <button type="button" class="w-1/2 bg-gradient-to-r from-[#00008B] to-[#3B3BBD] text-white font-bold text-xs py-2 rounded-md hover:brightness-110 transition" data-bs-toggle="modal" data-bs-target="#confirmationModal">Ajukan</button>
+                    <button type="submit" class="w-1/2 bg-gradient-to-r from-[#00008B] to-[#3B3BBD] text-white font-bold text-xs py-2 rounded-md hover:brightness-110 transition" data-bs-toggle="modal" data-bs-target="#confirmationModal">Ajukan</button>
                 </div>
             </form>
         </div>

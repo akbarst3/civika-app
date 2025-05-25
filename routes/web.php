@@ -35,16 +35,23 @@ use App\Http\Controllers\SuratController;
 // });
 
 Route::get('/', function () {
-    return view('DashboardReviewer1');
+    return view('welcome');
 });
 
-Route::get('/form/create', [FormSuratController::class, 'create']);
-Route::post('/form', [FormSuratController::class, 'store'])->name('surat.store');
+Route::get('/dashboard', function () {
+    return view('surat-view.TU.dashboard-reviewer1');
+});
 
-Route::get('/form/create', [FormSuratController::class, 'create']);
-Route::post('/form', [FormSuratController::class, 'store'])->name('surat.store');
+//Dashboard Pengaju
+Route::get('/mahasiswa/dashboard-pengaju', [SuratController::class, 'viewDashboardPengaju'])->name('dashboard-pengaju');
 
-Route::get('/mahasiswa/pengajuan-surat', [SuratController::class, 'index'])->name('pengajuan.surat');
+//Form Pengajuan
+Route::get('/mahasiswa/pengajuan-surat', [SuratController::class, 'createPengajuan'])->name('pengajuan-surat');
+Route::post('/mahasiswa/pengajuan-surat-send', [SuratController::class, 'storePengajuan'])->name('pengajuan-surat-store');
+
+//Daftar Surat Pengaju
+Route::get('/mahasiswa/daftar-pengajuan-surat', [SuratController::class, 'indexDaftarSurat'])->name('daftar-pengajuan-surat');
+
 
 Route::get('/riwayat-pengajuan-surat', function () {
     try {
@@ -63,14 +70,6 @@ Route::get('/verifikasi-surat-tu', function () {
     }
 })->name('verifikasi-surat-tu');
 
-
-Route::get('/riwayat-pengajuan-surat-mhs', function () {
-    try {
-        return view('surat-view.mahasiswa.riwayat-pengajuan-surat-mhs');
-    } catch (\Exception $e) {
-        return "Error: " . $e->getMessage();
-    }
-})->name('riwayat-pengajuan-surat-mhs');
 
 Route::get('/riwayat-pengajuan-surat-dosen', function () {
     try {

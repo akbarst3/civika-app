@@ -12,8 +12,8 @@ class Beasiswa extends Model
 
     protected $fillable = ['kode_surat', 'nama_perusahaan', 'program'];
 
-    public function surat()
-    {
-        return $this->belongsTo(Surat::class, 'kode_surat', 'kode_surat');
-    }
+    // public function surat()
+    // {
+    //     return $this->belongsTo(Surat::class, 'kode_surat', 'kode_surat');
+    // }
 }

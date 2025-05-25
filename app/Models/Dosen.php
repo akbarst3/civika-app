@@ -28,10 +28,10 @@ class Dosen extends Model
         return $this->hasMany(Nilai::class, 'kode_dosen', 'kode_dosen');
     }
 
-    public function surat()
-    {
-        return $this->hasMany(Surat::class, 'kode_dosen', 'kode_dosen');
-    }
+    // public function surat()
+    // {
+    //     return $this->hasMany(Surat::class, 'kode_dosen', 'kode_dosen');
+    // }
 
     public function membimbing()
     {
