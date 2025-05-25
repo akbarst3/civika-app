@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('navbar-content', 'Import Buku Besar')
+
 @section('content')
     <div class="container mt-5">
         <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
