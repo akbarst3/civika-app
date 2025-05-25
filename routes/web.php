@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MahasiswaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/buku-besar', function () {
-    return view('buku-besar-view.tabel-buku-besar');
-});
+// Route::get('/buku-besar', function () {
+//     return view('buku-besar-view.tabel-buku-besar');
+// });
+Route::get('/buku-besar', [MahasiswaController::class, 'bukuBesar'])->name('buku-besar');
+

@@ -19,14 +19,9 @@
             <div class="col-md-2">
                 <label for="semester" class="form-label">Semester</label>
                 <select class="form-select custom-dropdown" id="semester">
-                    <option value="1" selected>1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
+                    @for ($i = 1; $i <= $totalSemesters; $i++)
+                        <option value="{{ $i }}" {{ $i == $semester ? 'selected' : '' }}>{{ $i }}</option>
+                    @endfor
                 </select>
             </div>
             <div class="col-md-2">
@@ -38,16 +33,20 @@
             <div class="col-md-2">
                 <label for="tahun" class="form-label">Tahun</label>
                 <select class="form-select custom-dropdown" id="tahun">
-                    <option value="2021" selected>2021</option>
-                    <option value="2020">2020</option>
+                    @for ($i = 2020; $i <= date('Y'); $i++)
+                        <option value="{{ $i }}" {{ $i == $tahun ? 'selected' : '' }}>{{ $i }}</option>
+                    @endfor
                 </select>
             </div>
             <div class="col-md-2">
                 <label for="program_studi" class="form-label">Program Studi</label>
                 <select class="form-select custom-dropdown" id="program_studi">
                     <option value="" hidden>Silakan Pilih Program Studi</option>
-                    <option value="1">D4 - Teknik Informatika</option>
-                    <option value="2">D3 - Teknik Informatika</option>
+                    @foreach ($prodis as $prodi)
+                        <option value="{{ $prodi->id }}" {{ $prodi->id == $program_studi ? 'selected' : '' }}>
+                            {{ $prodi->nama_prodi }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -59,7 +58,7 @@
                         <th rowspan="4">NO</th>
                         <th rowspan="4">NIM</th>
                         <th rowspan="4">NAMA</th>
-                        <th colspan="8">MATA KULIAH</th>
+                        <th colspan="7">MATA KULIAH</th>
                         <th id="sks-d-header" colspan="8" rowspan="3">JUMLAH SKS NILAI D SEMESTER</th>
                         <th colspan="2" rowspan="3">KUMULATIF</th>
                         <th colspan="2" rowspan="3">IP SEMESTER</th>
@@ -73,34 +72,19 @@
                         <th rowspan="4">KET.</th>
                     </tr>
                     <tr class="highlight">
-                        <th>DU094N</th>
-                        <th>DU141P</th>
-                        <th>DU153P</th>
-                        <th>IG032P</th>
-                        <th>KO009N</th>
-                        <th>KO016N</th>
-                        <th>KO018N</th>
-                        <th>KO023N</th>
+                        @foreach ($data[2]['nilai_per_matkul'] as $mk)
+                            <th>{{ $mk['kode_dosen'] }}</th>
+                        @endforeach
                     </tr>
                     <tr class="highlight">
-                        <th>21KU1001</th>
-                        <th>21KU1007</th>
-                        <th>21KU0001</th>
-                        <th>21IG1017</th>
-                        <th>21IF1001</th>
-                        <th>21KU1008</th>
-                        <th>21IF1003</th>
-                        <th>21IF1002</th>
+                        @foreach ($mataKuliahs as $mk)
+                            <th>{{ $mk['kode_matkul'] }}</th>
+                        @endforeach
                     </tr>
                     <tr class="highlight">
-                        <th>2</th>
-                        <th>2</th>
-                        <th>2</th>
-                        <th>2</th>
-                        <th>4</th>
-                        <th>3</th>
-                        <th>2</th>
-                        <th>3</th>
+                        @foreach ($mataKuliahs as $mk)
+                            <th>{{ $mk['jumlah_sks'] }}</th>
+                        @endforeach
                         <th class="semester-1">I</th>
                         <th class="semester-2">II</th>
                         <th class="semester-3">III</th>
@@ -113,31 +97,50 @@
                         <th>NxB</th>
                         <th>LALU</th>
                         <th>SEKARANG</th>
+                        @foreach ($mataKuliahs as $mk)
+                            <th>{{ $mk['totalSksAll'] }}</th>
+                        @endforeach
                     </tr>
                 </thead>
                 <tbody>
-                    @for ($i = 1; $i <= 10; $i++)
+                    @foreach($data as $mhs)
                         <tr>
-                            <td>{{ $i }}</td>
-                            <td>22101{{ str_pad($i, 3, '0', STR_PAD_LEFT) }}</td>
-                            <td>Nama Mahasiswa {{ $i }}</td>
-                            <td>A</td>
-                            <td>B</td>
-                            <td>AB</td>
-                            <td>AB</td>
-                            <td>C</td>
-                            <td>C</td>
-                            <td>A</td>
-                            <td>B</td>
-                            <td class="semester-1"></td>
+                            <td>{{ $mhs['no'] }}</td>
+                            <td>{{ $mhs['nim'] }}</td>
+                            <td>{{ $mhs['nama_mhs'] }}</td>
+                            @foreach($mhs['nilai_per_matkul'] as $nilai)
+                                <td>
+                                    {{ $nilai['indeks_nilai'] }}
+                                </td>
+                            @endforeach
+                            @for ($i = 1; $i <= 8; $i++)
+                                <td class="semester-{{ $i }} {{ $i <= $semester ? 'semester-active' : '' }}">
+                                    {{ $mhs['semester_sks'][$i] ?? 0 }}
+                                </td>
+                            @endfor
+                            <td>{{ $mhs['jumlah_d'] }}</td>
+                            <td>{{ $mhs['sks_d'] }}</td>
+                            <td>{{ $mhs['nilai_bobot'] }}</td>
+                            <td>{{ $mhs['ip_semester']['lalu'] }}</td>
+                            <td>{{ $mhs['ip_semester']['sekarang'] }}</td>
+                            <td>{{ $mhs['ipk'] }}</td>
+                            <td>{{ $mhs['jml_sakit'] }}</td>
+                            <td>{{ $mhs['jml_izin'] }}</td>
+                            <td>{{ $mhs['jml_alfa'] }}</td>
+                            <td>{{ $mhs['jml'] }}</td>
+                            <td>{{ $mhs['nilai_penghayatan'] }}</td>
+                            <td>{{ $mhs['status'] }}</td>
+                            <td>{{ $mhs['keterangan'] }}</td>
+                            {{-- <td>{{ $mhs[''] }}</td> --}}
+                            {{-- <td class="semester-1"></td>
                             <td class="semester-2"></td>
                             <td class="semester-3"></td>
                             <td class="semester-4"></td>
                             <td class="semester-5"></td>
                             <td class="semester-6"></td>
                             <td class="semester-7"></td>
-                            <td class="semester-8"></td>
-                            <td></td>
+                            <td class="semester-8"></td> --}}
+                            {{-- <td></td>
                             <td>2.95</td>
                             <td>2.95</td>
                             <td>2.95</td>
@@ -148,9 +151,9 @@
                             <td>0</td>
                             <td></td>
                             <td>LL</td>
-                            <td>-</td>
+                            <td>-</td> --}}
                         </tr>
-                    @endfor
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -177,21 +180,31 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>AW0011004</td>
-                        <td>[Nama Mata Kuliah]</td>
-                        <td>[Nama Dosen]</td>
-                        <td>2</td>
-                        <td>1</td>
-                        <td>3</td>
-                        <td>2</td>
-                        <td>1</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                    </tr>
-                    <!-- Tambahkan baris lain sesuai kebutuhan -->
+                    @foreach ($mataKuliahs as $index => $mk)
+                        @php
+                            $nilaiCounts = ['A' => 0, 'AB' => 0, 'B' => 0, 'BC' => 0, 'C' => 0, 'CD' => 0, 'D' => 0, 'E' => 0];
+                            foreach ($data as $mhs) {
+                                $nilai = $mhs['nilai_per_matkul']->where('kode_matkul', $mk->kode_matkul)->first()['indeks_nilai'] ?? '-';
+                                if (array_key_exists($nilai, $nilaiCounts)) {
+                                    $nilaiCounts[$nilai]++;
+                                }
+                            }
+                        @endphp
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $mk->kode_matkul }}</td>
+                            <td>{{ $mk->nama_matkul }}</td>
+                            <td>{{ $mk['nama_dosen'] ?? '-' }}</td>
+                            <td>{{ $nilaiCounts['A'] }}</td>
+                            <td>{{ $nilaiCounts['AB'] }}</td>
+                            <td>{{ $nilaiCounts['B'] }}</td>
+                            <td>{{ $nilaiCounts['BC'] }}</td>
+                            <td>{{ $nilaiCounts['C'] }}</td>
+                            <td>{{ $nilaiCounts['CD'] }}</td>
+                            <td>{{ $nilaiCounts['D'] }}</td>
+                            <td>{{ $nilaiCounts['E'] }}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -205,19 +218,35 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $ipCounts = [
+                            'IP<=2.75' => 0,
+                            '2.75<IP<=3.50' => 0,
+                            'IP>3.50' => 0,
+                        ];
+                        foreach ($data as $mhs) {
+                            $ip = $mhs['ip_semester']['sekarang'];
+                            if ($ip <= 2.75) {
+                                $ipCounts['IP<=2.75']++;
+                            } elseif ($ip <= 3.50) {
+                                $ipCounts['2.75<IP<=3.50']++;
+                            } else {
+                                $ipCounts['IP>3.50']++;
+                            }
+                        }
+                    @endphp
                     <tr>
                         <td>IP<=2.75</td>
-                        <td>4</td>
+                        <td>{{ $ipCounts['IP<=2.75'] }}</td>
                     </tr>
                     <tr>
-                        <td>2.75<IP</td>
-                        <td>20</td>
+                        <td>2.75<IP<=3.50</td>
+                        <td>{{ $ipCounts['2.75<IP<=3.50'] }}</td>
                     </tr>
                     <tr>
                         <td>IP>3.50</td>
-                        <td>4</td>
+                        <td>{{ $ipCounts['IP>3.50'] }}</td>
                     </tr>
-                </tbody>
             </table>
         </div>
 
@@ -230,17 +259,34 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $ipkCounts = [
+                            'IPK<=2.75' => 0,
+                            '2.75<IPK<=3.50' => 0,
+                            'IPK>3.50' => 0,
+                        ];
+                        foreach ($data as $mhs) {
+                            $ipk = $mhs['ipk'];
+                            if ($ipk <= 2.75) {
+                                $ipkCounts['IPK<=2.75']++;
+                            } elseif ($ipk <= 3.50) {
+                                $ipkCounts['2.75<IPK<=3.50']++;
+                            } else {
+                                $ipkCounts['IPK>3.50']++;
+                            }
+                        }
+                    @endphp
                     <tr>
                         <td>IPK<=2.75</td>
-                        <td>9</td>
+                        <td>{{ $ipkCounts['IPK<=2.75'] }}</td>
                     </tr>
                     <tr>
                         <td>2.75<IPK<=3.50</td>
-                        <td>20</td>
+                        <td>{{ $ipkCounts['2.75<IPK<=3.50'] }}</td>
                     </tr>
                     <tr>
                         <td>IPK>3.50</td>
-                        <td>4</td>
+                        <td>{{ $ipkCounts['IPK>3.50'] }}</td>
                     </tr>
                 </tbody>
             </table>
