@@ -10,10 +10,26 @@
                 <i class="fas fa-users"></i> Data Mahasiswa
             </a>
         </li>
+        </li>
         <li class="nav-item">
-            <a href="#" class="nav-link text-dark" data-bs-toggle="collapse" data-bs-target="#dataTaPklCollapse">
+            <a href="#" class="nav-link text-dark" data-bs-toggle="collapse" data-bs-target="#dataMahasiswaCollapse" aria-expanded="false">
                 <i class="fas fa-book"></i> Data TA/PKL
+                <i class="fas fa-chevron-down ms-auto"></i>
             </a>
+            <div class="collapse" id="dataMahasiswaCollapse">
+                <ul class="nav nav-pills flex-column ms-4">
+                    <li class="nav-item">
+                        <a href="{{ route('datapkl.import') }}" class="nav-link text-dark">
+                            <i class="fas fa-file-excel me-2"></i> Import Excel
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('datapkl') }}" class="nav-link text-dark">
+                            <i class="fas fa-table me-2"></i> Lihat Data
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
         <li class="nav-item">
             <a href="#" class="nav-link text-dark" data-bs-toggle="collapse" data-bs-target="#generateLaporanCollapse">

@@ -16,3 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/datapkl', function () {
+    return view('pkl-view/datapkl');
+})->name('datapkl');
+
+Route::get('/datapkl/import', function () {
+    return view('pkl-view/importdatapkl');
+})->name('datapkl.import');
