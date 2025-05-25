@@ -16,3 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/generate-honor-ta', function () {
+    return view('tugas-akhir-view.generate-honor-ta');
+})->name('generate.honor.ta.form');
+
+Route::post('/generate-honor-ta', function () {
+    return redirect()->route('generate.honor.ta.form')->with('success', 'Laporan Honor TA generated successfully!');
+})->name('generate.honor.ta');
