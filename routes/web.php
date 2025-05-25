@@ -16,3 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/datamahasiswa', function () {
+    return view('mahasiswa-view/datamhs');
+})->name('datamahasiswa');
+
+Route::get('/datamahasiswa/import', function () {
+    return view('mahasiswa-view/importdatamhs');
+})->name('datamahasiswa.import');
