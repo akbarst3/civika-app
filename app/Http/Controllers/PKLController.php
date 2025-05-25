@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\KpPkl;
 use App\Models\Dosen;
+use App\Models\Prodi;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 
@@ -30,6 +31,9 @@ class PKLController extends Controller
             'prodi' => 'required',
             'angkatan' => 'required'
         ]);
+
+        $prodi = Prodi::findOrFail($request->prodi);
+        $namaProdi = $prodi->nama_prodi;
 
         $kaprodi = Dosen::where('jabatan_dosen', 'Kaprodi')->first();
         $data = KpPkl::with([
@@ -60,8 +64,11 @@ class PKLController extends Controller
             ];
         });
 
+        $currentDate = now()->format('d-m-Y');
+        $filename = "laporan_pdpt_kp_pkl_{$namaProdi}_{$request->angkatan}_{$currentDate}.pdf";
+
         $pdf = Pdf::loadView('pkl-view.laporan-pdpt-kp-pkl', compact('data', 'kaprodi'));
-        return $pdf->download('laporan_pdpt.pdf');
+        return $pdf->download($filename);
     }
 
     // untuk dropdown di tampilan
