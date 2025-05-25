@@ -1,8 +1,72 @@
-@import 'bootstrap/dist/css/bootstrap.min.css';
-@import '@fortawesome/fontawesome-free/css/all.min.css';
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
 
-body {
-    font-family: 'Poppins', sans-serif;
+body,
+input,
+select,
+button,
+table {
+    font-family: "Poppins", sans-serif;
+}
+
+thead th {
+    background-color: #f4f4f4e8 !important;
+    color: #000000cd !important;
+    font-weight: 700;
+    text-align: center;
+}
+
+td[rowspan] {
+    vertical-align: middle !important;
+}
+
+/* Font tabel diperkecil agar rapi */
+table {
+    font-size: 14px;
+}
+
+/* Style pagination: hilangkan border pada page-link */
+.pagination .page-link {
+    border: none;
+    color: #000;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+    border-radius: 0;
+}
+
+/* Hilangkan border pada pagination li */
+.pagination .page-item {
+    border: none;
+}
+
+/* Warna oranye pagination jadi lebih terang */
+.pagination .page-item.active .page-link {
+    background-color: #ffa500; /* oranye terang */
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+}
+
+/* Hover efek agar lebih halus */
+.pagination .page-link:hover {
+    background-color: #ffd59a;
+    color: #000;
+    border-radius: 8px;
+}
+
+.sidebar-nav .nav-link {
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-nav .nav-link:hover {
+    background-color: rgba(255, 158, 0, 0.5); /* Warna oranye transparan */
+}
+
+.sidebar-nav .nav-link i {
+    width: 20px;
+    text-align: center;
 }
 
 .content {
@@ -129,7 +193,7 @@ body {
 
 .upload-box {
     border: 2px dashed #D1D5DB;
-    padding: 100px;
+    padding: 80px;
     border-radius: 8px;
     margin-bottom: 30px;
     background-color: #F9FAFB;
@@ -158,6 +222,26 @@ body {
     font-size: 14px;
     color: #6B7280;
     font-weight: 500;
+}
+
+/* Styling untuk jumlah file yang dipilih */
+.file-count {
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+}
+
+/* Styling untuk progress bar */
+.progress-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.progress-container p {
+    font-size: 14px;
+    color: #6B7280;
+    text-align: center;
 }
 
 /* Styling untuk tombol format */
@@ -280,4 +364,30 @@ body {
 
 .btn-primary:hover {
     background: linear-gradient(to right, #3CCF3F, #9AF33A);
+}
+
+/* Styling untuk pop-up kecil */
+.status-popup {
+    position: fixed;
+    top: 120px; /* Sesuai tinggi navbar, sesuaikan jika berbeda */
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.status-popup p {
+    margin: 0;
+    font-size: 14px;
+    color: white;
+}
+
+.status-success {
+    background: linear-gradient(to right, #32BB35, #8BE52E);
+}
+
+.status-fail {
+    background: linear-gradient(to right, #E11818, #FF6C6C);
 }

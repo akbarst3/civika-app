@@ -9,7 +9,7 @@
 
         <div class="d-flex justify-content-start align-items-center mb-3 flex-wrap gap-3">
             <div class="dropdown-wrapper">
-                <select class="form-select" style="width: 260px;">
+                <select class="form-select" style="width: 280px;">
                     <option value="" selected disabled>Tahun Akademik</option>
                     <option value="2024/2025_semester_genap">2024/2025 Semester Genap</option>
                     <!-- Opsi lain akan diisi dari BE nanti -->

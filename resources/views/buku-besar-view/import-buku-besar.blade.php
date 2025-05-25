@@ -21,8 +21,16 @@
         <div class="upload-container">
             <div class="upload-box">
                 <i class="fas fa-cloud-upload-alt"></i>
-                <input type="file" accept=".xlsx, .xls" id="excelFile" />
-                <p>Upload file Excel untuk import data buku besar<br>(Format: .xlsx atau .xls)</p>
+                <input type="file" name="excel_files[]" id="excel_files" accept=".xlsx, .xls, .csv" multiple required />
+                <p>Upload file Excel untuk import data buku besar<br>(Format: .xlsx, .xls, atau .csv)<br><small>Tekan Ctrl (atau Cmd) untuk memilih beberapa file.</small></p>
+                <p id="fileCount" class="file-count mt-2">0 file telah dipilih</p>
+            </div>
+            <!-- Progress Bar -->
+            <div id="progressContainer" class="progress-container mb-3 d-none">
+                <div class="progress" style="height: 25px;">
+                    <div id="importProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+                <p id="progressText" class="mt-2">0 dari 0 file telah diimport</p>
             </div>
             <!-- Tombol Import di bawah upload -->
             <div class="import-button-container">
@@ -50,65 +58,160 @@
                 </div>
             </div>
         </div>
+
+        <!-- Pop-up Kecil untuk Status -->
+        <div id="statusPopup" class="status-popup d-none">
+            <p id="statusMessage"></p>
+        </div>
     </div>
 
     <!-- Menambahkan SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        function handleImport() {
-            const fileInput = document.getElementById('excelFile');
+        let totalFiles = 0;
+        let successfulImports = 0;
+        let failedImports = 0;
+
+        // Update jumlah file yang dipilih
+        const fileInput = document.getElementById('excel_files');
+        const fileCountDisplay = document.getElementById('fileCount');
+
+        fileInput.addEventListener('change', () => {
+            const fileCount = fileInput.files.length;
+            fileCountDisplay.textContent = `${fileCount} file telah dipilih`;
+        });
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('importProgress');
+            const progressText = document.getElementById('progressText');
+            const percentage = totalFiles === 0 ? 0 : (successfulImports / totalFiles) * 100;
+            progressBar.style.width = `${percentage}%`;
+            progressBar.setAttribute('aria-valuenow', percentage);
+            progressBar.textContent = `${Math.round(percentage)}%`;
+            progressText.textContent = `${successfulImports} dari ${totalFiles} file telah diimport`;
+        }
+
+        function showStatusPopup(message, isSuccess) {
+            const statusPopup = document.getElementById('statusPopup');
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.textContent = message;
+            statusPopup.classList.remove('d-none');
+            statusPopup.classList.remove('status-success', 'status-fail');
+            statusPopup.classList.add(isSuccess ? 'status-success' : 'status-fail');
+            setTimeout(() => {
+                statusPopup.classList.add('d-none');
+            }, 3000); // Hilang setelah 3 detik
+        }
+
+        async function handleImport() {
+            const fileInput = document.getElementById('excel_files');
+            const progressContainer = document.getElementById('progressContainer');
 
             // Periksa apakah file sudah diupload
             if (!fileInput.files || fileInput.files.length === 0) {
-                Swal.fire({
-                    title: 'File Tidak Ditemukan',
-                    text: 'Silakan upload file Excel sebelum mengimport.',
-                    icon: 'warning',
-                    confirmButtonText: 'OK',
-                    customClass: {
-                        confirmButton: 'btn btn-primary'
-                    },
-                    buttonsStyling: false
-                });
+                showStatusPopup('Silakan upload file Excel sebelum mengimport.', false);
                 return;
             }
 
-            const file = fileInput.files[0];
-            const fileName = file.name;
+            // Tampilkan progress bar
+            progressContainer.classList.remove('d-none');
 
-            // Simulasi hasil dari BE: secara acak menentukan apakah format salah (50% peluang)
-            const isFormatValid = Math.random() > 0.5;
+            const files = Array.from(fileInput.files);
+            totalFiles = files.length;
+            successfulImports = 0;
+            failedImports = 0;
 
-            if (isFormatValid) {
-                // Jika format sesuai, tampilkan pop-up sukses
-                Swal.fire({
-                    title: 'Succeed',
-                    text: 'File berhasil diimport',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    customClass: {
-                        confirmButton: 'btn btn-primary'
-                    },
-                    buttonsStyling: false
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Opsional: Tambahkan logika setelah tombol OK ditekan
+            console.log('Files detected:', files); // Debug: Cek apakah file terdeteksi
+
+            if (totalFiles > 1) {
+                const formData = new FormData();
+                files.forEach(file => {
+                    formData.append('excel_files[]', file);
+                });
+
+                try {
+                    const response = await fetch('/import-excel', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success && Array.isArray(data.results)) {
+                        data.results.forEach(result => {
+                            if (result.success) {
+                                successfulImports++;
+                                showStatusPopup(`File ${result.fileName} berhasil diimport.`, true);
+                            } else {
+                                failedImports++;
+                                showStatusPopup(`File ${result.fileName} gagal diimport: ${result.message || 'Format tidak sesuai.'}`, false);
+                            }
+                        });
+                    } else {
+                        failedImports += totalFiles; // Jika tidak ada data spesifik, anggap semua gagal
+                        files.forEach(file => showStatusPopup(`File ${file.name} gagal diimport: Respons tidak valid.`, false));
                     }
-                });
+                } catch (error) {
+                    failedImports += totalFiles;
+                    files.forEach(file => showStatusPopup(`File ${file.name} gagal diimport: Kesalahan server.`, false));
+                }
             } else {
-                // Jika format tidak sesuai, tampilkan pop-up warning
-                Swal.fire({
-                    title: 'Format Salah',
-                    html: `File <strong>${fileName}</strong> tidak mengikuti format Excel yang sesuai.`,
-                    icon: 'warning',
-                    confirmButtonText: 'OK',
-                    customClass: {
-                        confirmButton: 'btn btn-primary'
-                    },
-                    buttonsStyling: false
-                });
+                const file = files[0];
+                const formData = new FormData();
+                formData.append('excel_files[]', file);
+
+                try {
+                    const response = await fetch('/import-excel', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        successfulImports++;
+                        showStatusPopup(`File ${file.name} berhasil diimport.`, true);
+                    } else {
+                        failedImports++;
+                        showStatusPopup(`File ${file.name} gagal diimport: ${data.message || 'Format tidak sesuai.'}`, false);
+                    }
+                } catch (error) {
+                    failedImports++;
+                    showStatusPopup(`File ${file.name} gagal diimport: Kesalahan server.`, false);
+                }
             }
+
+            updateProgressBar();
+
+            // Tampilkan pop-up sukses setelah semua file diproses
+            Swal.fire({
+                title: 'Import Selesai',
+                html: `Berhasil mengimport ${successfulImports} file.<br>Gagal mengimport ${failedImports} file.`,
+                icon: 'success',
+                confirmButtonText: 'OK',
+                customClass: {
+                    confirmButton: 'btn btn-primary'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Reset progress bar dan input setelah import selesai
+                    fileInput.value = '';
+                    totalFiles = 0;
+                    successfulImports = 0;
+                    failedImports = 0;
+                    updateProgressBar();
+                    fileCountDisplay.textContent = '0 file telah dipilih'; // Reset jumlah file
+                    progressContainer.classList.add('d-none');
+                }
+            });
         }
     </script>
 @endsection
