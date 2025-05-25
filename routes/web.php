@@ -13,9 +13,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//Contoh penggunaan middleware
+
+// Route::middleware(['auth', 'role:mahasiswa'])->group(function () {
+//     Route::get('/mahasiswa/dashboard', function () {
+//         return view('mahasiswa.dashboard');
+//     })->name('mahasiswa.dashboard');
+// });
+
+// Route::middleware(['auth', 'role:dosen'])->group(function () {
+//     Route::get('/dosen/dashboard', function () {
+//         return view('dosen.dashboard');
+//     })->name('dosen.dashboard');
+// });
+
+// Route::middleware(['auth', 'role:tata_usaha'])->group(function () {
+//     Route::get('/tata-usaha/dashboard', function () {
+//         return view('tata-usaha.dashboard');
+//     })->name('tata_usaha.dashboard');
+// });
+
 Route::get('/', function () {
     return view('welcome');
-});
 
 Route::get('/riwayat-pengajuan-surat', function () {
     try {
@@ -24,4 +43,5 @@ Route::get('/riwayat-pengajuan-surat', function () {
         return "Error: " . $e->getMessage();
     }
 })->name('riwayat-pengajuan-surat');
+
 
