@@ -19,6 +19,16 @@ class KelasSeeder extends Seeder
                 'angkatan' => '2023',
                 'kode_prodi' => 1,
             ],
+            [
+                'nama_kelas' => 'C',
+                'angkatan' => '2023',
+                'kode_prodi' => 1,
+            ],
+            [
+                'nama_kelas' => 'A',
+                'angkatan' => '2023',
+                'kode_prodi' => 2,
+            ],
         ];
 
         Kelas::insert($kelas);
