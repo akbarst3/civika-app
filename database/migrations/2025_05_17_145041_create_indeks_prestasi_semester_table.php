@@ -21,6 +21,7 @@ return new class extends Migration
             $table->primary(['nim', 'semester']);
             $table->foreign('nim')->references('nim')->on('mahasiswa')->restrictOnDelete()->restrictOnUpdate();
             $table->index(['nim'], 'mendapatkan_fk');
+            $table->string('keterangan', 255);
             $table->timestamps();
         });
     }
