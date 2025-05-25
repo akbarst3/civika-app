@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PKLController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +18,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/generate-laporan', [PKLController::class, 'form'])->name('generate.laporan.form');
+Route::get('/laporan/download', [PKLController::class, 'handleDownload'])->name('laporan.download');
 Route::get('/generate-pdpt-pkl', function () {
     return view('pkl-view.generate-pdpt-pkl');
 })->name('generate.pdpt.pkl.form');
