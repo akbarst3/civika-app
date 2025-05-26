@@ -15,7 +15,7 @@
 
             <div class="d-flex align-items-center ms-auto me-4">
                 <a href="#" class="position-relative me-4">
-                    <i class="fa fa-bell fs-4" style="color: #717171;""></i>
+                    <i class="fa fa-bell fs-4" style="color: #717171;"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                         style="width: 10px; height: 10px; padding:0;"></span>
                 </a>
