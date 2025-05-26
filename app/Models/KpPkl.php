@@ -22,4 +22,14 @@ class KpPkl extends Model
     {
         return $this->belongsTo(Dosen::class, 'kode_dosen', 'kode_dosen');
     }
+
+    public function membimbingKpPkl()
+    {
+        return $this->hasOne(MembimbingKpPkl::class, 'id_perusahaan', 'id_perusahaan');
+    }
+
+    public function mengujiKpPkl()
+    {
+        return $this->hasOne(MengujiKpPkl::class, 'id_perusahaan', 'id_perusahaan');
+    }
 }
