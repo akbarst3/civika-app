@@ -7,7 +7,7 @@ use App\Models\KpPkl;
 
 class PKLController extends Controller
 {
-    public function index()
+    public function getDatapkl()
     {
         // Mengambil semua data PKL beserta relasi mahasiswa dan dosen
         $kpPkl = KpPkl::with([
