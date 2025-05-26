@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BukuBesarController;
 use App\Http\Controllers\MahasiswaController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,5 +21,5 @@ Route::get('/', function () {
 // Route::get('/buku-besar', function () {
 //     return view('buku-besar-view.tabel-buku-besar');
 // });
-Route::get('/buku-besar', [MahasiswaController::class, 'bukuBesar'])->name('buku-besar');
+Route::get('/buku-besar', [BukuBesarController::class, 'bukuBesar'])->name('buku-besar');
 

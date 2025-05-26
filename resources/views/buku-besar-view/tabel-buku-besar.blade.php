@@ -183,27 +183,34 @@
                     @foreach ($mataKuliahs as $index => $mk)
                         @php
                             $nilaiCounts = ['A' => 0, 'AB' => 0, 'B' => 0, 'BC' => 0, 'C' => 0, 'CD' => 0, 'D' => 0, 'E' => 0];
+                            $nilaiDetails = [];
                             foreach ($data as $mhs) {
-                                $nilai = $mhs['nilai_per_matkul']->where('kode_matkul', $mk->kode_matkul)->first()['indeks_nilai'] ?? '-';
-                                if (array_key_exists($nilai, $nilaiCounts)) {
-                                    $nilaiCounts[$nilai]++;
+                                $nilai = $mhs['nilai_per_matkul']->where('kode_matkul', $mk->kode_matkul)->first();
+                                if ($nilai && !in_array($nilai['nama_dosen'], $nilaiDetails)) {
+                                    $nilaiDetails[] = $nilai['nama_dosen'];
+                                }
+                                $nilaiIndex = $nilai['indeks_nilai'] ?? '-';
+                                if (array_key_exists($nilaiIndex, $nilaiCounts)) {
+                                    $nilaiCounts[$nilaiIndex]++;
                                 }
                             }
                         @endphp
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $mk->kode_matkul }}</td>
-                            <td>{{ $mk->nama_matkul }}</td>
-                            <td>{{ $mk['nama_dosen'] ?? '-' }}</td>
-                            <td>{{ $nilaiCounts['A'] }}</td>
-                            <td>{{ $nilaiCounts['AB'] }}</td>
-                            <td>{{ $nilaiCounts['B'] }}</td>
-                            <td>{{ $nilaiCounts['BC'] }}</td>
-                            <td>{{ $nilaiCounts['C'] }}</td>
-                            <td>{{ $nilaiCounts['CD'] }}</td>
-                            <td>{{ $nilaiCounts['D'] }}</td>
-                            <td>{{ $nilaiCounts['E'] }}</td>
-                        </tr>
+                        @foreach ($nilaiDetails as $dosen)
+                            <tr>
+                                <td>{{ $loop->parent->index + 1 }}</td>
+                                <td>{{ $mk->kode_matkul }}</td>
+                                <td>{{ $mk->nama_matkul }}</td>
+                                <td>{{ $dosen }}</td>
+                                <td>{{ $nilaiCounts['A'] }}</td>
+                                <td>{{ $nilaiCounts['AB'] }}</td>
+                                <td>{{ $nilaiCounts['B'] }}</td>
+                                <td>{{ $nilaiCounts['BC'] }}</td>
+                                <td>{{ $nilaiCounts['C'] }}</td>
+                                <td>{{ $nilaiCounts['CD'] }}</td>
+                                <td>{{ $nilaiCounts['D'] }}</td>
+                                <td>{{ $nilaiCounts['E'] }}</td>
+                            </tr>
+                        @endforeach
                     @endforeach
                 </tbody>
             </table>
