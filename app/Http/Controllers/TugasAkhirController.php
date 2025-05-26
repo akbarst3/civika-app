@@ -9,7 +9,7 @@ use App\Models\Menguji;
 
 class TugasAkhirController extends Controller
 {
-    public function index()
+    public function getDataTA()
     {
         // Mengambil semua data tugas akhir beserta relasi mahasiswa, pembimbing, dan penguji
         $tugasAkhir = TugasAkhir::with([
