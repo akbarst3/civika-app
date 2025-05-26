@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PKLController;
+use App\Models\Prodi;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::post('/kp-pkl/import', [PKLController::class, 'import'])->name('kp-pkl.import');
+Route::get('/kp-pkl/import', function () {
+    return view('welcome', ['prodis' => Prodi::all()]);
+})->name('kp-pkl.import.form');
