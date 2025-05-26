@@ -97,17 +97,58 @@
                 <div class="col-md-4">
                     <label class="form-label fw-bold">Rentang Angkatan :</label>
                 </div>
+
+
+                {{-- @php
+                    $filtered = $data->filter(function ($item) {
+                        return $item['prodi'] === 'D3'; // ganti 'D3' ke prodi yang dipilih
+                    })->sortBy('angkatan')->values();
+
+                    $startYear = $filtered->first()['angkatan'] ?? 2023;
+                    $endYear = $filtered->last()['angkatan'] ?? 2023;
+                @endphp
+
+                <div class="col-md-4">
+                    <label>Start Year</label>
+                    <select class="form-select" id="startYear">
+                        @for ($year = $startYear; $year <= $endYear; $year++)
+                            <option value="{{ $year }}">{{ $year }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label>End Year</label>
+                    <select class="form-select" id="endYear">
+                        @for ($year = $startYear; $year <= $endYear; $year++)
+                            <option value="{{ $year }}" {{ $year == $endYear ? 'selected' : '' }}>{{ $year }}</option>
+                        @endfor
+                    </select>
+                </div> --}}
+
+                {{-- <div class="col-md-4">
+                    <select class="form-select" id="startYear"></select>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="endYear"></select>
+                </div> --}}
+
+                @php
+                    $startYear = $data->isNotEmpty() ? (int) $data->first()['angkatan'] : 2023;
+                    $endYear = $data->isNotEmpty() ? (int) $data->last()['angkatan'] : 2023;
+                @endphp
                 <div class="col-md-4">
                     <select class="form-select" id="startYear">
-                        @for ($year = 2000; $year <= 2025; $year++)
+                        @for ($year = $startYear; $year <= $endYear; $year++)
                             <option value="{{ $year }}">{{ $year }}</option>
                         @endfor
                     </select>
                 </div>
                 <div class="col-md-4">
                     <select class="form-select" id="endYear">
-                        @for ($year = 2000; $year <= 2025; $year++)
-                            <option value="{{ $year }}">{{ $year }}</option>
+                        @for ($year = $startYear; $year <= $endYear; $year++)
+                            <option value="{{ $year }}" {{ $year == $endYear ? 'selected' : '' }}>
+                                {{ $year }}
+                            </option>
                         @endfor
                     </select>
                 </div>
@@ -201,19 +242,65 @@ document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('statistikChart').getContext('2d');
     let chart;
 
+    // Data Angkatan per Prodi
+    const angkatanData = @json($dataAngkatan);
+    const programSelect = document.getElementById('programSelect');
+    const startYearSelect = document.getElementById('startYear');
+    const endYearSelect = document.getElementById('endYear');
+
+    function updateYearOptions(prodi) {
+        const years = angkatanData[prodi] || [];
+        startYearSelect.innerHTML = '';
+        endYearSelect.innerHTML = '';
+
+        years.forEach(year => {
+            const option1 = new Option(year, year);
+            const option2 = new Option(year, year);
+            startYearSelect.appendChild(option1);
+            endYearSelect.appendChild(option2);
+        });
+
+        if (years.length > 0) {
+            startYearSelect.value = years[0];
+            endYearSelect.value = years[years.length - 1];
+        }
+    }
+
+    // Saat halaman pertama kali dibuka
+    updateYearOptions(programSelect.value);
+
+    // Saat dropdown prodi diganti
+    programSelect.addEventListener('change', function () {
+        updateYearOptions(this.value);
+    });
+
+
     // Data for different program studies
+    const data = @json($data);
+    const dataIPKD3 = [];
+    const dataAngkatanD3 = [];
+    const dataIPKD4 = [];
+    const dataAngkatanD4 = [];
+
+    Object.values(data).forEach(item => {
+        if (item.prodi === 'D3') {
+            dataIPKD3.push(item.rata_rata_ips);
+            dataAngkatanD3.push(item.angkatan);
+        } else if (item.prodi === 'D4') {
+            dataIPKD4.push(item.rata_rata_ips);
+            dataAngkatanD4.push(item.angkatan);
+        }
+    });
+    console.log(dataIPKD4);
+    console.log(dataAngkatanD4);
     const chartData = {
         D3: {
             title: 'Program Studi : D3 - Teknik Komputer dan Informatika',
             data: {
-                labels: Array.from({length: 26}, (_, i) => (2000 + i).toString()),
+                labels: dataAngkatanD3,
                 datasets: [{
                     label: 'IPK',
-                    data: [
-                        3.1, 3.15, 3.2, 3.25, 3.3, 3.28, 3.27, 3.29, 3.3, 3.31,
-                        3.32, 3.33, 3.34, 3.35, 3.2, 3.3, 3.4, 3.1, 3.5, 3.4,
-                        3.45, 3.42, 3.38, 3.36, 3.34, 3.35
-                    ],
+                    data : dataIPKD3,
                     borderColor: '#ff6b35',
                     backgroundColor: 'rgba(255, 107, 53, 0.1)',
                     tension: 0.4,
@@ -231,15 +318,11 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         D4: {
             title: 'Program Studi : D4 - Teknik Komputer dan Informatika',
-            data: {
-                labels: Array.from({length: 26}, (_, i) => (2000 + i).toString()),
+            data: {     
+                labels: dataAngkatanD4,
                 datasets: [{
                     label: 'IPK',
-                    data: [
-                        3.3, 3.35, 3.4, 3.45, 3.5, 3.48, 3.47, 3.49, 3.5, 3.51,
-                        3.52, 3.53, 3.54, 3.55, 3.4, 3.5, 3.3, 3.2, 3.6, 3.5,
-                        3.55, 3.52, 3.48, 3.46, 3.44, 3.45
-                    ],
+                    data: dataIPKD4,
                     borderColor: '#4285f4',
                     backgroundColor: 'rgba(66, 133, 244, 0.1)',
                     tension: 0.4,

@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('prodi', function (Blueprint $table) {
             $table->integer('kode_prodi')->primary();
-            $table->string('nama_prodi', 2);
+            $table->string('nama_prodi', 255);
             $table->timestamps();
         });
+        
     }
-
     /**
      * Reverse the migrations.
      */
