@@ -93,6 +93,84 @@ class TugasAkhirController extends Controller
         return $pdf->download($filename);
     }
 
+public function displayHonorTA(Request $request)
+{
+    logger('Display Honor TA Request:', $request->all());
+
+    $request->validate([
+        'prodi' => 'required',
+        'angkatan' => 'required',
+    ], [
+        'prodi.required' => 'Program Studi harus dipilih.',
+        'angkatan.required' => 'Angkatan harus dipilih.',
+    ]);
+
+    $prodi = Prodi::where('kode_prodi', $request->input('prodi'))->first(); 
+    if (!$prodi) {
+        return redirect()->back()->withErrors(['prodi' => 'Program Studi tidak valid.']);
+    }
+
+    $kaprodi = Dosen::where('jabatan_dosen', 'Kaprodi')->first();
+    $sekretaris = Dosen::where('jabatan_dosen', 'Sekretaris 2')->first();
+
+    $angkatan = $request->input('angkatan');
+    $isD3 = strpos($prodi->nama_prodi ?? '', 'D3') !== false;
+    $taYear = $angkatan + ($isD3 ? 3 : 4);
+    $tahunAkademik = ($taYear - 1) . '/' . $taYear;
+
+    $data = Dosen::with(['membimbing.tugasAkhir.mahasiswa.kelas', 'menguji.tugasAkhir.mahasiswa.kelas'])
+        ->get()
+        ->map(function ($dosen) use ($request) {
+            $pembimbing1Count = $dosen->membimbing()
+                ->where('pembimbing_ke', 1)
+                ->whereHas('tugasAkhir.mahasiswa.kelas', function ($query) use ($request) {
+                    $query->where('kode_prodi', $request->input('prodi'))
+                        ->where('angkatan', $request->input('angkatan'));
+                })
+                ->count();
+
+            $pembimbing2Count = $dosen->membimbing()
+                ->where('pembimbing_ke', 2)
+                ->whereHas('tugasAkhir.mahasiswa.kelas', function ($query) use ($request) {
+                    $query->where('kode_prodi', $request->input('prodi'))
+                        ->where('angkatan', $request->input('angkatan'));
+                })
+                ->count();
+
+            $penguji1Count = $dosen->menguji()
+                ->where('penguji_ke', 1)
+                ->whereHas('tugasAkhir.mahasiswa.kelas', function ($query) use ($request) {
+                    $query->where('kode_prodi', $request->input('prodi'))
+                        ->where('angkatan', $request->input('angkatan'));
+                })
+                ->count();
+
+            $penguji2Count = $dosen->menguji()
+                ->where('penguji_ke', 2)
+                ->whereHas('tugasAkhir.mahasiswa.kelas', function ($query) use ($request) {
+                    $query->where('kode_prodi', $request->input('prodi'))
+                        ->where('angkatan', $request->input('angkatan'));
+                })
+                ->count();
+
+            return (object) [
+                'nip' => $dosen->nip,
+                'nama_dosen' => $dosen->nama_dosen,
+                'pembimbing_1_count' => $pembimbing1Count,
+                'pembimbing_2_count' => $pembimbing2Count,
+                'penguji_1_count' => $penguji1Count,
+                'penguji_2_count' => $penguji2Count,
+            ];
+        })
+        ->filter(function ($dosen) {
+            return $dosen->pembimbing_1_count > 0 || $dosen->pembimbing_2_count > 0 || 
+                $dosen->penguji_1_count > 0 || $dosen->penguji_2_count > 0;
+        })
+        ->values();
+
+    return view('tugas-akhir-view.display-honor-ta', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris'));
+}
+
     // untuk dropdown di tampilan
     public function form()
     {
@@ -101,7 +179,9 @@ class TugasAkhirController extends Controller
             ->distinct()
             ->orderBy('angkatan', 'asc')
             ->pluck('angkatan');
+        
+        $prodis = Prodi::all();
 
-        return view('tugas-akhir-view.generate-laporan', compact('angkatans'));
+        return view('tugas-akhir-view.generate-honor-ta', compact('angkatans', 'prodis'));
     }
 }
