@@ -1,3 +1,393 @@
-@import 'bootstrap/dist/css/bootstrap.min.css';
-@import '@fortawesome/fontawesome-free/css/all.min.css';
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
 
+body,
+input,
+select,
+button,
+table {
+    font-family: "Poppins", sans-serif;
+}
+
+thead th {
+    background-color: #f4f4f4e8 !important;
+    color: #000000cd !important;
+    font-weight: 700;
+    text-align: center;
+}
+
+td[rowspan] {
+    vertical-align: middle !important;
+}
+
+/* Font tabel diperkecil agar rapi */
+table {
+    font-size: 14px;
+}
+
+/* Style pagination: hilangkan border pada page-link */
+.pagination .page-link {
+    border: none;
+    color: #000;
+    background-color: transparent;
+    transition: background-color 0.3s ease;
+    border-radius: 0;
+}
+
+/* Hilangkan border pada pagination li */
+.pagination .page-item {
+    border: none;
+}
+
+/* Warna oranye pagination jadi lebih terang */
+.pagination .page-item.active .page-link {
+    background-color: #ffa500; /* oranye terang */
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+}
+
+/* Hover efek agar lebih halus */
+.pagination .page-link:hover {
+    background-color: #ffd59a;
+    color: #000;
+    border-radius: 8px;
+}
+
+.sidebar-nav .nav-link {
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-nav .nav-link:hover {
+    background-color: rgba(255, 158, 0, 0.5); /* Warna oranye transparan */
+}
+
+.sidebar-nav .nav-link i {
+    width: 20px;
+    text-align: center;
+}
+
+.content {
+    padding: 0;
+    background-color: #FFFFFF;
+    min-height: calc(100vh - 56px);
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1F2937;
+    text-align: left;
+    margin: 0 0 20px 0;
+    padding: 0 0 0 20px;
+    line-height: 1.2;
+    width: 100%;
+}
+
+.description-text {
+    font-size: 16px;
+    color: #6B7280;
+    font-weight: 400;
+    text-align: left;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.table-container {
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    width: 100%;
+}
+
+.table-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1F2937;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead th {
+    background-color: #FFFFFF;
+    color: #1F2937;
+    font-weight: 600;
+    padding: 12px;
+    border-bottom: 2px solid #E5E7EB;
+    text-align: center;
+}
+
+.table tbody tr {
+    background-color: #F3F4F6;
+}
+
+.table tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #E5E7EB;
+    text-align: center;
+}
+
+.table th, .table td {
+    width: 16.67%;
+}
+
+.badge-success {
+    background: linear-gradient(to right, #32BB35, #8BE52E);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 12px;
+    display: inline-block;
+    text-align: center;
+}
+
+.badge-danger {
+    background: linear-gradient(to right, #E11818, #FF6C6C);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 12px;
+    display: inline-block;
+    text-align: center;
+}
+
+.import-button {
+    background: linear-gradient(to right, #00008B, #3B3BBD);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    width: 200px;
+    box-shadow: 0 2px 6px rgba(0, 0, 139, 0.3);
+}
+
+.import-button:hover {
+    background: linear-gradient(to right, #1A1A9D, #4D4DD9);
+}
+
+/* Styling untuk tombol format dalam satu baris */
+.switch-and-button-container {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+/* Styling untuk area upload */
+.upload-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.upload-box {
+    border: 2px dashed #D1D5DB;
+    padding: 80px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    background-color: #F9FAFB;
+    transition: border-color 0.3s ease;
+}
+
+.upload-box:hover {
+    border-color: #3B3BBD;
+}
+
+.upload-box i {
+    font-size: 36px;
+    color: #6B7280;
+    margin-bottom: 10px;
+}
+
+.upload-box input[type="file"] {
+    display: block;
+    margin: 15px auto;
+    font-size: 14px;
+    color: #374151;
+}
+
+.upload-box p {
+    margin: 0;
+    font-size: 14px;
+    color: #6B7280;
+    font-weight: 500;
+}
+
+/* Styling untuk jumlah file yang dipilih */
+.file-count {
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+}
+
+/* Styling untuk progress bar */
+.progress-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.progress-container p {
+    font-size: 14px;
+    color: #6B7280;
+    text-align: center;
+}
+
+/* Styling untuk tombol format */
+.format-button {
+    background: linear-gradient(to right, #F67B00, #FFAA55);
+    color: white;
+    border: none;
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(246, 123, 0, 0.3);
+}
+
+.format-button:hover {
+    background: linear-gradient(to right, #F59E0B, #FFAA55);
+    transform: translateY(-1px);
+}
+
+.format-button:active {
+    transform: translateY(1px);
+}
+
+/* Styling untuk tombol import di bawah upload */
+.import-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* Styling untuk navbar dan sidebar */
+.navbar {
+    margin-bottom: 0 !important;
+}
+
+.nav-title {
+    text-align: left !important;
+    padding-left: 20px;
+}
+
+/* Styling untuk tombol di kolom Buku Besar */
+.btn-link {
+    color: #1F2937;
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+.btn-link:hover {
+    color: #F67B00;
+    text-decoration: none;
+}
+
+/* Styling untuk dropdown dan tombol agar sejajar dengan tepi tabel */
+.dropdown-wrapper {
+    margin-left: 0;
+}
+
+.button-wrapper {
+    /* Hapus margin-right karena tombol sudah didorong ke kanan oleh flex-grow-1 */
+}
+
+/* Styling untuk modal */
+.modal-content {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+    background: #F9FAFB;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1F2937;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.format-warning {
+    font-size: 16px;
+    color: #1F2937;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.format-links p {
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+.format-links a {
+    color: #3B3BBD;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.format-links a:hover {
+    color: #F67B00;
+    text-decoration: underline;
+}
+
+/* Styling untuk tombol OK pada SweetAlert2 */
+.btn-primary {
+    background: linear-gradient(to right, #32BB35, #8BE52E);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(to right, #3CCF3F, #9AF33A);
+}
+
+/* Styling untuk pop-up kecil */
+.status-popup {
+    position: fixed;
+    top: 120px; /* Sesuai tinggi navbar, sesuaikan jika berbeda */
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.status-popup p {
+    margin: 0;
+    font-size: 14px;
+    color: white;
+}
+
+.status-success {
+    background: linear-gradient(to right, #32BB35, #8BE52E);
+}
+
+.status-fail {
+    background: linear-gradient(to right, #E11818, #FF6C6C);
+}

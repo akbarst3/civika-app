@@ -58,18 +58,25 @@ class DataAkademikImport implements ToCollection, WithMultipleSheets, SkipsUnkno
     private $statusIPSColumnIndex;
     private $keteranganColumnIndex;
 
-    public function __construct()
+    private $sheetName;
+
+    public function __construct($sheetName = null)
     {
+        $this->sheetName = $sheetName;
         $this->nimColumnIndex = self::NIM_COL;
         $this->matkulStartColumnIndex = self::MATKUL_START_COL;
     }
 
     public function sheets(): array
     {
-        $sheetNames = ['A', 'B', 'C']; 
+        if ($this->sheetName) {
+            Log::info("Scheduling single sheet: {$this->sheetName}");
+            return [$this->sheetName => $this];
+        }
+        $sheetNames = ['A', 'B', 'C'];
         $sheets = [];
         foreach ($sheetNames as $sheetName) {
-            $sheets[$sheetName] = new self();
+            $sheets[$sheetName] = new self($sheetName);
             Log::info("Scheduling sheet: {$sheetName}");
         }
         return $sheets;
@@ -82,6 +89,7 @@ class DataAkademikImport implements ToCollection, WithMultipleSheets, SkipsUnkno
 
     public function collection(Collection $rows)
     {
+        Log::info("Processing sheet: {$this->sheetName}");
         $this->determineFormatExcel($rows);
         $this->extractGlobalInfo($rows);
         $this->prefetchSupportingData();
@@ -102,9 +110,9 @@ class DataAkademikImport implements ToCollection, WithMultipleSheets, SkipsUnkno
             }
         }
         if (!$this->programStudiGlobal) {
-            throw new InvalidExcelStructureException('Program studi (DIPLOMA 3/SARJANA TERAPAN) tidak ditemukan pada baris ' . (self::PROGRAM_INFO_ROW + 1) . '.');
+            throw new InvalidExcelStructureException("Program studi (DIPLOMA 3/SARJANA TERAPAN) tidak ditemukan pada baris " . (self::PROGRAM_INFO_ROW + 1) . " di sheet {$this->sheetName}.");
         }
-        Log::info("Importer: Program Studi terdeteksi: {$this->programStudiGlobal}");
+        Log::info("Importer: Program Studi terdeteksi di sheet {$this->sheetName}: {$this->programStudiGlobal}");
 
         // Mengambil informasi Mata Kuliah dan Dosen
         $dosenHeaderRow = $rows[self::KODE_DOSEN_HEADER_ROW] ?? collect();
