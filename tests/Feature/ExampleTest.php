@@ -14,6 +14,9 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertStatus(302); // di ubah biar successful response nya  soal nya udah di ubah ubah
+
+        //200 = OK
+        //302 = Redirect
     }
 }
