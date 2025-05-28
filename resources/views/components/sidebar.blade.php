@@ -76,12 +76,8 @@
                 <i :class="active === 'akademik' ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
             </button>
             <div x-show="active === 'akademik'" x-transition.duration.300ms class="ps-4 mt-1" x-cloak>
-<<<<<<< HEAD
-                <a href="#" class="d-block nav-link text-dark py-1 ps-4">Import Buku Besar</a>
-=======
                 <a href="{{ route('import.buku-besar.index') }}" class="d-block nav-link text-dark py-1 ps-4">Import Buku Besar</a>
->>>>>>> origin/tim-b/buku-besar.import-excel
-                <a href="#" class="d-block nav-link text-dark py-1 ps-4">History Buku Besar</a>
+                <a href="{{ route('buku-besar') }}" class="d-block nav-link text-dark py-1 ps-4">History Buku Besar</a>
             </div>
         </div>
 

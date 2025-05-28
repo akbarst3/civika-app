@@ -59,7 +59,7 @@
                         <th rowspan="4">NIM</th>
                         <th rowspan="4">NAMA</th>
                         <th colspan="7">MATA KULIAH</th>
-                        <th id="sks-d-header" colspan="8" rowspan="3">JUMLAH SKS NILAI D SEMESTER</th>
+                        <th id="sks-d-header" colspan="8" rowspan="2">JUMLAH SKS NILAI D SEMESTER</th>
                         <th colspan="2" rowspan="3">KUMULATIF</th>
                         <th colspan="2" rowspan="3">IP SEMESTER</th>
                         <th rowspan="4">IPK</th>
@@ -80,6 +80,18 @@
                         @foreach ($mataKuliahs as $mk)
                             <th>{{ $mk['kode_matkul'] }}</th>
                         @endforeach
+                            @for ($i = 1; $i <= 8; $i++)
+                                    <th class="semester-{{ $i }}">
+                                        @if ($i == $semester)
+                                            {{ $totalSks[$i] ?? "" }}
+                                        @else
+                                            {{ "" }}
+                                        @endif
+                                    </th>
+                                @endfor
+                            {{-- @for ($i = 1; $i <= 8; $i++)
+                            <th class="semester-{{ $i }}">{{ $semester_sks[$i] ?? "" }}</th>
+                        @endfor --}}
                     </tr>
                     <tr class="highlight">
                         @foreach ($mataKuliahs as $mk)
@@ -97,9 +109,9 @@
                         <th>NxB</th>
                         <th>LALU</th>
                         <th>SEKARANG</th>
-                        @foreach ($mataKuliahs as $mk)
+                        {{-- @foreach ($mataKuliahs as $mk)
                             <th>{{ $mk['totalSksAll'] }}</th>
-                        @endforeach
+                        @endforeach --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -115,10 +127,20 @@
                             @endforeach
                             @for ($i = 1; $i <= 8; $i++)
                                 <td class="semester-{{ $i }} {{ $i <= $semester ? 'semester-active' : '' }}">
-                                    {{ $mhs['semester_sks'][$i] ?? 0 }}
+                                    {{-- {{ $mhs['semester_sks'][$i] ?? "" }} --}}
+                                    @if ($i == $semester)
+                                        {{ $mhs['jumlah_d'] ?? "" }}
+                                    @else
+                                        {{ "" }}
+                                    @endif
                                 </td>
                             @endfor
-                            <td>{{ $mhs['jumlah_d'] }}</td>
+                            {{-- @for ($i = 1; $i <= 8; $i++)
+                                <td class="semester-{{ $i }} {{ $i <= $semester ? 'semester-active' : '' }}">
+                                    {{ $mhs['semester_sks'][$i] ?? 0 }}
+                                </td>
+                            @endfor --}}
+                            {{-- <td>{{ $mhs['jumlah_d'] }}</td> --}}
                             <td>{{ $mhs['sks_d'] }}</td>
                             <td>{{ $mhs['nilai_bobot'] }}</td>
                             <td>{{ $mhs['ip_semester']['lalu'] }}</td>
