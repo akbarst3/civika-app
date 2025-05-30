@@ -35,13 +35,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @php
+                    {{-- @php
                         $importStatus = [
                             ['nama_kelas' => 'D', 'angkatan' => '2023', 'nama_prodi' => 'D3', 'status' => 'imported'],
                             ['nama_kelas' => '1B', 'angkatan' => '2023', 'nama_prodi' => 'D3', 'status' => 'not_imported'],
                             ['nama_kelas' => '1C', 'angkatan' => '2023', 'nama_prodi' => 'D3', 'status' => 'imported'],
                         ];
-                    @endphp
+                    @endphp --}}
                     @foreach ($importStatus as $item)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
