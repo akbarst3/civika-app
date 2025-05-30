@@ -38,9 +38,29 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('surat-view.TU.dashboard-reviewer1');
-});
+//Dashboard Reviewer1
+Route::get('/TU/dashboard-reviewer1', [SuratController::class, 'viewDashboardReviewer1'])->name('dashboard-reviewer1');
+
+//Daftar Surat Pengaju
+Route::get('/TU/daftar-surat-disetujui', [SuratController::class, 'indexDaftarSuratDisetujui'])->name('daftar-surat-disetujui');
+Route::get('/TU/daftar-verifikasi-surat', [SuratController::class, 'indexDaftarSuratVerifikasi'])->name('daftar-verifikasi-surat');
+
+//Detail Pengajuan Surat
+Route::get('/TU/detail-pengajuan-surat/{kode_surat}', [SuratController::class, 'indexDetailPengajuanSurat'])->name('detail-pengajuan-surat');
+Route::put('TU/detail-pengajuan-surat/{kode_surat}/update', [SuratController::class, 'updateDetailPengajuanSurat'])->name('detail-pengajuan-surat-update');
+
+
+
+
+
+//Dashboard Reviewer2
+Route::get('/kaprodi/dashboard-reviewer2', [SuratController::class, 'viewDashboardReviewer2'])->name('dashboard-reviewer2');
+
+//Daftar Surat Pengaju 2
+Route::get('/kaprodi/daftar-surat-disetujui2', [SuratController::class, 'indexDaftarSuratDisetujui2'])->name('daftar-surat-disetujui2');
+Route::get('/kaprodi/daftar-verifikasi-surat2', [SuratController::class, 'indexDaftarSuratVerifikasi2'])->name('daftar-verifikasi-surat2');
+
+
 
 //Dashboard Pengaju
 Route::get('/mahasiswa/dashboard-pengaju', [SuratController::class, 'viewDashboardPengaju'])->name('dashboard-pengaju');

@@ -28,6 +28,7 @@ return new class extends Migration
             // $table->text('isi_surat');
             // $table->text('pesan')->nullable();
             $table->string('status_surat', 20)->default('draft');
+            $table->string('tahap_verifikasi', 20)->default('tu');
             // $table->foreign('id_user')->references('id_user')->on('users')->restrictOnDelete()->restrictOnUpdate();
             $table->foreign('nim')->references('nim')->on('mahasiswa')->restrictOnDelete()->restrictOnUpdate();
             // $table->foreign('kode_dosen')->references('kode_dosen')->on('dosen')->restrictOnDelete()->restrictOnUpdate();
