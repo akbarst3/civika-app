@@ -14,7 +14,7 @@ class KelasSeeder extends Seeder
     public function run(): void
     {
         $kelas = ['A', 'B', 'C'];
-        $angkatan = ['2023', '2022'];
+        $angkatan = ['2023', '2022', '2021'];
         $prodi_ids = DB::table('prodi')->pluck('kode_prodi')->toArray();
 
         $data = [];

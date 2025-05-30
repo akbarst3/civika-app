@@ -14,12 +14,13 @@ class TugasAkhirController extends Controller
         // Validating the uploaded file
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
-            'angkatan' => 'required|digits:4'
+            'angkatan' => 'required|digits:4',
+            'prodi' => 'required'
         ]);
 
         try {
             // Importing the file using DataTAImport
-            Excel::import(new DataTAImport($request->angkatan), $request->file('file'));
+            Excel::import(new DataTAImport($request->angkatan, $request->prodi), $request->file('file'));
 
             return redirect()->back()->with('success', 'Data Tugas Akhir berhasil diimpor.');
         } catch (\Exception $e) {

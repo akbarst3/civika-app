@@ -44,7 +44,7 @@ class MahasiswaSeeder extends Seeder
                 'nama_slta' => 'SMAN 1 Bandung',
                 'jalur_daftar' => 'SNMPTN',
                 'nem' => 85.50,
-                'kelas_id' => 1, // Pastikan kelas dengan ID 1 sudah ada di tabel `kelas`
+                'kelas_id' => 5, // Pastikan kelas dengan ID 1 sudah ada di tabel `kelas`
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

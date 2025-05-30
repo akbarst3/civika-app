@@ -19,9 +19,10 @@ class DataTAImport implements ToCollection, WithStartRow, WithChunkReading
     private $lastKota = null;
     private $angkatan;
 
-    public function __construct($angkatan)
+    public function __construct($angkatan, $prodi)
     {
         $this->angkatan = $angkatan;
+        $this->kode_prodi = $prodi;
     }
 
 
@@ -100,6 +101,11 @@ class DataTAImport implements ToCollection, WithStartRow, WithChunkReading
             }
 
             $mahasiswa = Mahasiswa::where('nim', $data['nim'])->first();
+            $mahasiswaProdi = $mahasiswa->kelas->kode_prodi;
+            if ($mahasiswaProdi != $this->kode_prodi) {
+                Log::warning("Prodi mismatch for NIM {$data['nim']}: expected {$this->kode_prodi}, got {$mahasiswaProdi}");
+                continue;
+            }
             if (!$mahasiswa) {
                 Log::error("Skipping row " . ($index + 2) . ": NIM {$data['nim']} not found in Mahasiswa table");
                 continue;
