@@ -19,7 +19,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/kp-pkl/import', [PKLController::class, 'import'])->name('kp-pkl.import');
-Route::get('/kp-pkl/import', function () {
-    return view('welcome', ['prodis' => Prodi::all()]);
+Route::get('/datapkl', function () {
+    return view('pkl-view/datapkl');
+})->name('datapkl');
+
+Route::post('/datapkl/import', [PKLController::class, 'import'])->name('kp-pkl.import');
+
+Route::get('/datapkl/import', function () {
+    return view('pkl-view/importdatapkl', ['prodis' => Prodi::all()]);
 })->name('kp-pkl.import.form');
