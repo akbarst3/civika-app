@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PKLController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,3 +25,7 @@ Route::get('/generate-honor-pkl', function () {
 Route::post('/generate-honor-pkl', function () {
     return redirect()->route('generate.honor.pkl.form')->with('success', 'Laporan Honor PKL generated successfully!');
 })->name('generate.honor.pkl');
+
+
+Route::get('/kp-pkl/form', [PKLController::class, 'form'])->name('kp-pkl.form');
+Route::get('/kp-pkl/download', [PKLController::class, 'downloadHonorKpPkl'])->name('kp-pkl.download');
