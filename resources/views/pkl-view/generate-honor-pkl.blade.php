@@ -7,7 +7,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <form action="{{ route('generate.honor.pkl') }}" method="POST">
+                    <form action="{{ route('generate.honor.kp-pkl.download') }}" method="POST">
                         @csrf
                         <div class="mb-3">
                             <label for="program_studi" class="form-label">Program Studi</label>

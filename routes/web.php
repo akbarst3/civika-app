@@ -18,14 +18,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/generate-honor-pkl', function () {
-    return view('pkl-view.generate-honor-pkl');
-})->name('generate.honor.pkl.form');
+//Route::get('data/kp-pkl/generate-honor', function () {
+//    return view('pkl-view.generate-honor-pkl');
+//})->name('generate.honor.pkl.form');
 
-Route::post('/generate-honor-pkl', function () {
+Route::post('data/kp-pkl/generate-honor/action', function () {
     return redirect()->route('generate.honor.pkl.form')->with('success', 'Laporan Honor PKL generated successfully!');
-})->name('generate.honor.pkl');
+})->name('generate.honor.kp-pkl');
 
 
-Route::get('/kp-pkl/form', [PKLController::class, 'form'])->name('kp-pkl.form');
-Route::get('/kp-pkl/download', [PKLController::class, 'downloadHonorKpPkl'])->name('kp-pkl.download');
+Route::get('data/kp-pkl/generate-honor', [PKLController::class, 'form'])->name('generate.honor.kp-pkl.form');
+Route::get('data/kp-pkl/generate-honor/generate', [PKLController::class, 'downloadHonorKpPkl'])->name('generate.honor.kp-pkl.download');

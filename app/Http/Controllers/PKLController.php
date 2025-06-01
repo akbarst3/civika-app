@@ -116,6 +116,6 @@ class PKLController extends Controller
             ->orderBy('angkatan', 'asc')
             ->pluck('angkatan');
 
-        return view('pkl-view.generate-laporan', compact('angkatans'));
+        return view('pkl-view.generate-honor-pkl', compact('angkatans'));
     }
 }
