@@ -18,6 +18,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 Route::get('/generate-honor-ta', [TugasAkhirController::class, 'form'])->name('generate.honor.ta.form');
 Route::post('/generate-honor-ta', [TugasAkhirController::class, 'handleDownload'])->name('generate.honor.ta');
 Route::get('/display-honor-ta', [TugasAkhirController::class, 'displayHonorTA'])->name('display.honor.ta');

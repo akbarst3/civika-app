@@ -170,8 +170,6 @@ public function displayHonorTA(Request $request)
 
     return view('tugas-akhir-view.display-honor-ta', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris'));
 }
-
-    // untuk dropdown di tampilan
     public function form()
     {
         $angkatans = DB::table('mahasiswa')
