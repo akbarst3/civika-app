@@ -71,7 +71,6 @@ class PKLController extends Controller
         return $pdf->download($filename);
     }
 
-    // untuk dropdown di tampilan
     public function form()
     {
         $angkatans = DB::table('mahasiswa')
@@ -80,6 +79,6 @@ class PKLController extends Controller
             ->orderBy('angkatan', 'asc')
             ->pluck('angkatan');
 
-        return view('pkl-view.generate-laporan', compact('angkatans'));
+        return view('pkl-view.generate-pdpt-pkl', compact('angkatans'));
     }
 }

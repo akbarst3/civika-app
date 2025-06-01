@@ -18,12 +18,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/generate-laporan', [PKLController::class, 'form'])->name('generate.laporan.form');
+Route::get('/generate-pdpt-pkl', [PKLController::class, 'form'])->name('generate.laporan.form');
 Route::get('/laporan/download', [PKLController::class, 'handleDownload'])->name('laporan.download');
-Route::get('/generate-pdpt-pkl', function () {
-    return view('pkl-view.generate-pdpt-pkl');
-})->name('generate.pdpt.pkl.form');
-
-Route::post('/generate-pdpt-pkl', function () {
-    return redirect()->route('generate.pdpt.pkl.form')->with('success', 'Laporan PDPT PKL generated successfully!');
-})->name('generate.pdpt.pkl');
