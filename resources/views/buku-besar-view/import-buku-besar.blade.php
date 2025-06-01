@@ -30,9 +30,9 @@
             <!-- Progress Bar -->
             <div id="progressContainer" class="progress-container mb-3 d-none">
                 <div class="progress" style="height: 25px;">
-                    <div id="importProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    <div id="importProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%; transition: width 0.5s ease-in-out;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                 </div>
-                <p id="progressText" class="mt-2">0 dari 0 file telah diimport</p>
+                <p id="progressText" class="mt-2">0 dari 0 sheet telah diimport</p>
             </div>
             <!-- Tombol Import di bawah upload -->
             <div class="import-button-container">
@@ -60,24 +60,22 @@
                 </div>
             </div>
         </div>
-
-        <!-- Pop-up Kecil untuk Status -->
-        <div id="statusPopup" class="status-popup d-none">
-            <p id="statusMessage"></p>
-        </div>
     </div>
 
     <!-- Menambahkan SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        let totalFiles = 0;
-        let successfulImports = 0;
-        let failedImports = 0;
+        let totalSheets = 0;
+        let processedSheets = 0;
+        let successfulSheets = 0;
+        let failedSheets = 0;
 
-        // Update jumlah file yang dipilih
         const fileInput = document.getElementById('excel_files');
         const fileCountDisplay = document.getElementById('fileCount');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('importProgress');
+        const progressText = document.getElementById('progressText');
 
         fileInput.addEventListener('change', () => {
             const fileCount = fileInput.files.length;
@@ -85,135 +83,171 @@
         });
 
         function updateProgressBar() {
-            const progressBar = document.getElementById('importProgress');
-            const progressText = document.getElementById('progressText');
-            const percentage = totalFiles === 0 ? 0 : (successfulImports / totalFiles) * 100;
+            const percentage = totalSheets === 0 ? 0 : (processedSheets / totalSheets) * 100;
             progressBar.style.width = `${percentage}%`;
             progressBar.setAttribute('aria-valuenow', percentage);
             progressBar.textContent = `${Math.round(percentage)}%`;
-            progressText.textContent = `${successfulImports} dari ${totalFiles} file telah diimport`;
+            progressText.textContent = `${processedSheets} dari ${totalSheets} sheet telah diimport`;
         }
 
-        function showStatusPopup(message, isSuccess) {
-            const statusPopup = document.getElementById('statusPopup');
-            const statusMessage = document.getElementById('statusMessage');
-            statusMessage.textContent = message;
-            statusPopup.classList.remove('d-none');
-            statusPopup.classList.remove('status-success', 'status-fail');
-            statusPopup.classList.add(isSuccess ? 'status-success' : 'status-fail');
-            setTimeout(() => {
-                statusPopup.classList.add('d-none');
-            }, 3000); // Hilang setelah 3 detik
+        // Fungsi untuk mensimulasikan pembaruan progress bar secara bertahap
+        async function simulateProgress(totalSheetsToProcess) {
+            const increment = 1; // Increment per step
+            const intervalTime = 500; // Waktu per step dalam milidetik (sesuaikan untuk kecepatan)
+
+            while (processedSheets < totalSheetsToProcess) {
+                await new Promise(resolve => setTimeout(resolve, intervalTime));
+                processedSheets = Math.min(processedSheets + increment, totalSheetsToProcess);
+                updateProgressBar();
+            }
         }
 
         async function handleImport() {
-            const fileInput = document.getElementById('excel_files');
-            const progressContainer = document.getElementById('progressContainer');
-
-            // Periksa apakah file sudah diupload
             if (!fileInput.files || fileInput.files.length === 0) {
-                showStatusPopup('Silakan upload file Excel sebelum mengimport.', false);
+                Swal.fire({
+                    title: 'Peringatan',
+                    text: 'Silakan upload file Excel sebelum mengimport.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                });
                 return;
             }
 
-            // Tampilkan progress bar
             progressContainer.classList.remove('d-none');
-
             const files = Array.from(fileInput.files);
-            totalFiles = files.length;
-            successfulImports = 0;
-            failedImports = 0;
+            totalSheets = 0;
+            processedSheets = 0;
+            successfulSheets = 0;
+            failedSheets = 0;
 
-            console.log('Files detected:', files); // Debug: Cek apakah file terdeteksi
-
-            if (totalFiles > 1) {
-                const formData = new FormData();
-                files.forEach(file => {
-                    formData.append('excel_files[]', file);
-                });
-
-                try {
-                    const response = await fetch('/import-excel', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        },
-                        body: formData
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success && Array.isArray(data.results)) {
-                        data.results.forEach(result => {
-                            if (result.success) {
-                                successfulImports++;
-                                showStatusPopup(`File ${result.fileName} berhasil diimport.`, true);
-                            } else {
-                                failedImports++;
-                                showStatusPopup(`File ${result.fileName} gagal diimport: ${result.message || 'Format tidak sesuai.'}`, false);
-                            }
-                        });
-                    } else {
-                        failedImports += totalFiles; // Jika tidak ada data spesifik, anggap semua gagal
-                        files.forEach(file => showStatusPopup(`File ${file.name} gagal diimport: Respons tidak valid.`, false));
-                    }
-                } catch (error) {
-                    failedImports += totalFiles;
-                    files.forEach(file => showStatusPopup(`File ${file.name} gagal diimport: Kesalahan server.`, false));
-                }
-            } else {
-                const file = files[0];
-                const formData = new FormData();
-                formData.append('excel_files[]', file);
-
-                try {
-                    const response = await fetch('/import-excel', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                        },
-                        body: formData
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        successfulImports++;
-                        showStatusPopup(`File ${file.name} berhasil diimport.`, true);
-                    } else {
-                        failedImports++;
-                        showStatusPopup(`File ${file.name} gagal diimport: ${data.message || 'Format tidak sesuai.'}`, false);
-                    }
-                } catch (error) {
-                    failedImports++;
-                    showStatusPopup(`File ${file.name} gagal diimport: Kesalahan server.`, false);
-                }
-            }
-
+            // Set teks awal progress bar sebelum mendapatkan data dari server
             updateProgressBar();
 
-            // Tampilkan pop-up sukses setelah semua file diproses
-            Swal.fire({
-                title: 'Import Selesai',
-                html: `Berhasil mengimport ${successfulImports} file.<br>Gagal mengimport ${failedImports} file.`,
-                icon: 'success',
-                confirmButtonText: 'OK',
-                customClass: {
-                    confirmButton: 'btn btn-primary'
-                },
-                buttonsStyling: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Reset progress bar dan input setelah import selesai
-                    fileInput.value = '';
-                    totalFiles = 0;
-                    successfulImports = 0;
-                    failedImports = 0;
+            const formData = new FormData();
+            files.forEach(file => formData.append('excel_files[]', file));
+
+            try {
+                const response = await fetch('/import-excel', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success && Array.isArray(data.results)) {
+                    // Set totalSheets berdasarkan data dari server
+                    totalSheets = data.totalSheets;
+                    processedSheets = 0; // Reset untuk simulasi
+
+                    // Mulai simulasi progress bar setelah mendapatkan totalSheets
+                    const progressPromise = simulateProgress(totalSheets);
+
+                    let successDetails = [];
+                    let failureDetails = [];
+
+                    data.results.forEach(fileResult => {
+                        fileResult.sheets.forEach(sheet => {
+                            if (sheet.success) {
+                                successfulSheets++;
+                                successDetails.push(`Sheet ${sheet.sheetName} di file ${fileResult.fileName} berhasil diimport.`);
+                            } else {
+                                failedSheets++;
+                                failureDetails.push(`Sheet ${sheet.sheetName} di file ${fileResult.fileName} gagal diimport: ${sheet.message || 'Alasan tidak diketahui.'}`);
+                            }
+                        });
+                    });
+
+                    // Tunggu hingga simulasi progress selesai
+                    await progressPromise;
+
+                    // Pastikan processedSheets sesuai dengan totalSheets
+                    processedSheets = totalSheets;
                     updateProgressBar();
-                    fileCountDisplay.textContent = '0 file telah dipilih'; // Reset jumlah file
-                    progressContainer.classList.add('d-none');
+
+                    let htmlMessage = '';
+                    if (successfulSheets > 0) {
+                        htmlMessage += `<p><strong>Berhasil diimport (${successfulSheets} sheet):</strong></p><ul>${successDetails.map(detail => `<li>${detail}</li>`).join('')}</ul>`;
+                    }
+                    if (failedSheets > 0) {
+                        htmlMessage += `<p><strong>Gagal diimport (${failedSheets} sheet):</strong></p><ul>${failureDetails.map(detail => `<li>${detail}</li>`).join('')}</ul>`;
+                    }
+
+                    const icon = successfulSheets > 0 ? 'success' : (failedSheets > 0 ? 'warning' : 'info');
+                    Swal.fire({
+                        title: 'Import Selesai',
+                        html: htmlMessage || 'Tidak ada sheet yang diimpor.',
+                        icon: icon,
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fileInput.value = '';
+                            totalSheets = 0;
+                            processedSheets = 0;
+                            successfulSheets = 0;
+                            failedSheets = 0;
+                            updateProgressBar();
+                            fileCountDisplay.textContent = '0 file telah dipilih';
+                            progressContainer.classList.add('d-none');
+                        }
+                    });
+                } else {
+                    failedSheets += totalSheets;
+                    Swal.fire({
+                        title: 'Import Gagal',
+                        html: files.map(file => `<p>File ${file.name} gagal diimport: Respons tidak valid dari server.</p>`).join(''),
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fileInput.value = '';
+                            totalSheets = 0;
+                            processedSheets = 0;
+                            successfulSheets = 0;
+                            failedSheets = 0;
+                            updateProgressBar();
+                            fileCountDisplay.textContent = '0 file telah dipilih';
+                            progressContainer.classList.add('d-none');
+                        }
+                    });
                 }
-            });
+            } catch (error) {
+                Swal.fire({
+                    title: 'Import Gagal',
+                    html: files.map(file => `<p>File ${file.name} gagal diimport: Kesalahan server (${error.message}).</p>`).join(''),
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fileInput.value = '';
+                        totalSheets = 0;
+                        processedSheets = 0;
+                        successfulSheets = 0;
+                        failedSheets = 0;
+                        updateProgressBar();
+                        fileCountDisplay.textContent = '0 file telah dipilih';
+                        progressContainer.classList.add('d-none');
+                    }
+                });
+            }
         }
     </script>
 @endsection

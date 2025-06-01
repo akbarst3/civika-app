@@ -15,13 +15,13 @@ return new class extends Migration
             $table->string('nim', 9);
             $table->string('semester', 1);
             $table->string('status', 20);
-            $table->string('indeks_prestasi', 2);
+            $table->decimal('indeks_prestasi', 3, 2);
             $table->integer('nilai_bobot');
             $table->integer('jumlah_d');
             $table->primary(['nim', 'semester']);
             $table->foreign('nim')->references('nim')->on('mahasiswa')->restrictOnDelete()->restrictOnUpdate();
             $table->index(['nim'], 'mendapatkan_fk');
-            $table->string('keterangan', 255);
+            $table->string('keterangan', 255)->nullable();
             $table->timestamps();
         });
     }

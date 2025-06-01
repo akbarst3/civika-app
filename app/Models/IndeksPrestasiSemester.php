@@ -11,10 +11,11 @@ class IndeksPrestasiSemester extends Model
     protected $primaryKey = ['nim', 'semester'];
     public $incrementing = false;
 
-    protected $fillable = ['nim', 'semester', 'status', 'indeks_prestasi', 'nilai_bobot', 'jumlah_d'];
+    protected $fillable = ['nim', 'semester', 'status', 'indeks_prestasi', 'nilai_bobot', 'jumlah_d', 'keterangan'];
 
     protected $casts = [
         'status' => 'string', // Enum: LL, TT, T, DO, MG
+        'indeks_prestasi' => 'decimal:2',
     ];
 
     public function mahasiswa()
