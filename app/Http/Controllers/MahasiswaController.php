@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kelas;
 use Illuminate\Http\Request;
 use App\Imports\DataMahasiswaImport;
 use Illuminate\Support\Facades\Log;
@@ -10,7 +11,16 @@ use Illuminate\Routing\Controller;
 
 class MahasiswaController extends Controller
 {
-    public function import(Request $request)
+    public function showImportMahasiswa()
+    {
+        // Fetch distinct angkatan values from Kelas model
+        $angkatanList = Kelas::distinct()->pluck('angkatan')->sort()->values();
+
+        // Pass the angkatan list to the view
+        return view('mahasiswa-view.importdatamhs', compact('angkatanList'));
+    }
+
+    public function importMahasiswa(Request $request)
     {
         $request->validate([
             'file' => 'required|mimes:xlsx,xls',

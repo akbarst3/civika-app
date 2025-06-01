@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MahasiswaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +22,6 @@ Route::get('/datamahasiswa', function () {
     return view('mahasiswa-view/datamhs');
 })->name('datamahasiswa');
 
-Route::get('/datamahasiswa/import', function () {
-    return view('mahasiswa-view/importdatamhs');
-})->name('datamahasiswa.import');
+Route::get('/datamahasiswa/import', [MahasiswaController::class, 'showImportMahasiswa'])->name('datamahasiswa.import');
+
+Route::post('/datamahasiswa/import', [MahasiswaController::class, 'importMahasiswa'])->name('mahasiswa.import');
