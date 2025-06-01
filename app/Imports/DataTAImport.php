@@ -161,8 +161,14 @@ class DataTAImport implements ToCollection, WithStartRow, WithChunkReading
                 $tugasAkhir = TugasAkhir::firstOrCreate(
                     ['kota' => $kota],
                     [
-                        'topik' => $data['topik_sesuai_fta_sidang'],
-                        'nim' => $data['nim'],
+                        'topik' => $data['topik_sesuai_fta_sidang']
+                    ]
+                );
+
+                $mahasiswa = Mahasiswa::updateOrCreate(
+                    ['nim' => $data['nim']],
+                    [
+                        'kota' => $kota
                     ]
                 );
 

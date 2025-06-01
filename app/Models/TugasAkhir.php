@@ -16,7 +16,7 @@ class TugasAkhir extends Model
 
     public function mahasiswa()
     {
-        return $this->belongsTo(Mahasiswa::class, 'nim', 'nim');
+        return $this->hasMany(Mahasiswa::class, 'kota', 'kota');
     }
 
     public function membimbing()

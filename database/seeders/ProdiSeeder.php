@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Prodi;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class ProdiSeeder extends Seeder
 {
@@ -13,9 +13,17 @@ class ProdiSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('prodi')->insert([
-            ['kode_prodi' => 1, 'nama_prodi' => 'D3', 'created_at' => now(), 'updated_at' => now()],
-            ['kode_prodi' => 2, 'nama_prodi' => 'D4', 'created_at' => now(), 'updated_at' => now()],
-        ]);
+        $prodis = [
+            [
+                'kode_prodi' => '1',
+                'nama_prodi' => 'D3'
+            ],
+            [
+                'kode_prodi' => '2',
+                'nama_prodi' => 'D4'
+            ]
+        ];
+
+        Prodi::insert($prodis);
     }
 }

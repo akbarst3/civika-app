@@ -12,7 +12,7 @@ class Dosen extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = ['kode_dosen', 'nip', 'nidn', 'nama_dosen', 'jabatan_dosen', 'ttd'];
+    protected $fillable = ['kode_dosen', 'nip', 'nama_dosen', 'jabatan_dosen', 'ttd'];
 
     protected $casts = [
         'jabatan_dosen' => 'string', // Enum: Kajur, Kaprodi
@@ -42,17 +42,6 @@ class Dosen extends Model
     {
         return $this->hasMany(Menguji::class, 'kode_dosen', 'kode_dosen');
     }
-
-    public function membimbingKpPkl()
-    {
-        return $this->hasMany(MembimbingKpPkl::class, 'kode_dosen', 'kode_dosen');
-    }
-
-    public function mengujiKpPkl()
-    {
-        return $this->hasMany(MengujiKpPkl::class, 'kode_dosen', 'kode_dosen');
-    }
-
 
     public function user()
     {

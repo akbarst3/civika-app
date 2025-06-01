@@ -30,8 +30,6 @@ class MahasiswaSeeder extends Seeder
             DB::table('mahasiswa')->insert([
                 'nim' => $mhs['nim'],
                 'nama_mhs' => $mhs['nama_mhs'],
-                'nama_kelas' => 'A',
-                'angkatan' => '2023',
                 'no_ktp' => Str::random(16),
                 'email' => Str::slug($mhs['nama_mhs'], '.') . '@example.com',
                 'telepon' => '0812' . rand(10000000, 99999999),
@@ -42,8 +40,7 @@ class MahasiswaSeeder extends Seeder
                 'gol_darah' => 'O',
                 'anak_ke' => 1,
                 'nama_slta' => 'SMAN 1 Bandung',
-                'jalur_daftar' => 'SNMPTN',
-                'nem' => 85.50,
+                'jalur_daftar' => 'SNBT',
                 'kelas_id' => 5, // Pastikan kelas dengan ID 1 sudah ada di tabel `kelas`
                 'created_at' => now(),
                 'updated_at' => now(),

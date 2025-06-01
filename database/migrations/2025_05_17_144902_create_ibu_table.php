@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('ibu', function (Blueprint $table) {
             $table->string('nim', 9)->primary();
-            $table->string('nama_ibu', 255);
-            $table->string('pekerjaan_ibu', 255);
-            $table->string('alamat_ibu', 255);
-            $table->string('telepon_ibu', 255);
-            $table->string('kota_ibu', 255);
-            $table->string('instansi_ibu', 255);
-            $table->string('telepon_instansi_ibu', 255);
-            $table->string('kode_pos_ibu', 5);
-            $table->integer('penghasilan_ibu'); 
+            $table->string('nama_ibu', 255)->nullable();
+            $table->string('pekerjaan_ibu', 255)->nullable();
+            $table->string('alamat_ibu', 255)->nullable();
+            $table->string('telepon_ibu', 255)->nullable();
+            $table->string('kota_ibu', 255)->nullable();
+            $table->enum('pendidikan_ibu', ['S1', 'S2', 'D3', 'SLTA', 'SLTP', 'SD', 'TIDAK SD'])->nullable();
+            $table->string('instansi_ibu', 255)->nullable();
+            $table->string('telepon_instansi_ibu', 255)->nullable();
+            $table->string('kode_pos_ibu', 5)->nullable();
+            $table->string('penghasilan_ibu')->nullable();
             $table->foreign('nim')->references('nim')->on('mahasiswa')->restrictOnDelete()->restrictOnUpdate();
             $table->timestamps();
         });

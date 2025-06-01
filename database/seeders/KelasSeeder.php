@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Kelas;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class KelasSeeder extends Seeder
 {
@@ -13,24 +13,34 @@ class KelasSeeder extends Seeder
      */
     public function run(): void
     {
-        $kelas = ['A', 'B', 'C'];
-        $angkatan = ['2023', '2022', '2021'];
-        $prodi_ids = DB::table('prodi')->pluck('kode_prodi')->toArray();
+        $kelas = [
+            [
+                'nama_kelas' => 'A',
+                'angkatan' => '2023',
+                'kode_prodi' => 1,
+            ],
+            [
+                'nama_kelas' => 'B',
+                'angkatan' => '2023',
+                'kode_prodi' => 1,
+            ],
+            [
+                'nama_kelas' => 'C',
+                'angkatan' => '2023',
+                'kode_prodi' => 1,
+            ],
+            [
+                'nama_kelas' => 'A',
+                'angkatan' => '2021',
+                'kode_prodi' => 1,
+            ],
+            [
+                'nama_kelas' => 'B',
+                'angkatan' => '2021',
+                'kode_prodi' => 1,
+            ],
+        ];
 
-        $data = [];
-        foreach ($kelas as $k) {
-            foreach ($angkatan as $a) {
-                foreach ($prodi_ids as $p) {
-                    $data[] = [
-                        'nama_kelas' => $k,
-                        'angkatan' => $a,
-                        'kode_prodi' => $p,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                }
-            }
-        }
-        DB::table('kelas')->insert($data);
+        Kelas::insert($kelas);
     }
 }

@@ -27,7 +27,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh && \
     npm install -g npm && \
     echo "📦 npm version (after update):" && npm -v && \
     rm nodesource_setup.sh
-
+    
 # Set working directory
 WORKDIR /var/www/html
 

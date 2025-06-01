@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Imports\DataTAImport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -28,5 +29,17 @@ class TugasAkhirController extends Controller
             Log::error('Error importing Tugas Akhir data: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
         }
+    }
+
+    // untuk dropdown di tampilan
+    public function form()
+    {
+        $angkatans = DB::table('kelas')
+            ->select('angkatan')
+            ->distinct()
+            ->orderBy('angkatan', 'asc')
+            ->pluck('angkatan');
+
+        return view('tugas-akhir-view.import-excel-ta', compact('angkatans'));
     }
 }
