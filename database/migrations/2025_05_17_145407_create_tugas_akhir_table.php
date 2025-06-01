@@ -13,10 +13,7 @@ return new class extends Migration
     {
         Schema::create('tugas_akhir', function (Blueprint $table) {
             $table->string('kota', 7)->primary();
-            $table->string('nim', 9)->nullable();
             $table->string('topik', 255);
-            $table->foreign('nim')->references('nim')->on('mahasiswa')->restrictOnDelete()->restrictOnUpdate();
-            $table->index(['nim'], 'mengerjakan_fk');
             $table->timestamps();
         });
     }

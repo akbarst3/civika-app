@@ -74,7 +74,7 @@ class Mahasiswa extends Model
 
     public function tugasAkhir()
     {
-        return $this->hasMany(TugasAkhir::class, 'nim', 'nim');
+        return $this->belongsTo(TugasAkhir::class, 'kota', 'kota');
     }
 
     public function user()
