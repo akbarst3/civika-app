@@ -75,7 +75,12 @@
                 </h3>
             </div>
 
+
             <!-- Enhanced Control Panel -->
+            @php
+                $jabatan = auth()->user()->dosen->jabatan_dosen ?? null;
+            @endphp
+
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="row align-items-center">
@@ -83,10 +88,20 @@
                             <label class="form-label fw-bold">Program Studi :</label>
                         </div>
                         <div class="col-md-8">
-                            <select class="form-select" id="programSelect">
-                                <option value="D3">D3 - Teknik Informatika</option>
-                                <option value="D4">D4 - Teknik Informatika</option>
-                            </select>
+                            @if(in_array($jabatan, ['Kaprodi-D3', 'Kaprodi-D4']))
+                                @php
+                                    $programValue = $jabatan === 'Kaprodi-D3' ? 'D3' : 'D4';
+                                    $programText = $jabatan === 'Kaprodi-D3' ? 'D3 - Teknik Informatika' : 'D4 - Teknik Informatika';
+                                @endphp
+
+                                <input type="hidden" name="program" id="programSelect" value="{{ $programValue }}">
+                                <span class="form-control-plaintext">{{ $programText }}</span>
+                            @else
+                                <select class="form-select" name="program" id="programSelect">
+                                    <option value="D3">D3 - Teknik Informatika</option>
+                                    <option value="D4">D4 - Teknik Informatika</option>
+                                </select>
+                            @endif
                         </div>
                     </div>
                 </div>
