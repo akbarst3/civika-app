@@ -1,35 +1,22 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title')</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script src="//unpkg.com/alpinejs" defer></script>
 
-    <title>@yield('title', 'Civika App - Sistem Informasi Akademik')</title>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    
-    <!-- Bootstrap & FontAwesome -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <!-- Chart.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    
-    <!-- Additional Styles -->
-    <style>
-        body {
-            font-family: 'Figtree', sans-serif;
-            background-color: #f8f9fa;
-        }
-    </style>
-
-    @stack('styles')
 </head>
-<body class="font-sans antialiased">
-    <div id="app">
-        @yield('content')
+<body>
+    <x-navbar :navtitle="View::getSection('navbar-content') ?? 'Dashboard / Home'" />
+    <div class="d-flex">
+        <x-sidebar />
+        <main class="flex-grow-1 p-3 mt-3" style="margin-left: 15.625rem;">
+            @yield('content')
+        </main>
     </div>
 
     <!-- Loading Spinner -->
@@ -71,4 +58,5 @@
 
     @stack('scripts')
 </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </html>

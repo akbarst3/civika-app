@@ -5,59 +5,10 @@
 @section('content')
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-2 bg-light sidebar p-3">
-            <div class="d-flex align-items-center mb-4">
-                <div class="bg-warning rounded-circle p-2 me-2">
-                    <i class="fas fa-graduation-cap text-white"></i>
-                </div>
-                <span class="fw-bold">Tata Usaha</span>
-            </div>
-            
-            <nav class="nav flex-column">
-                <a class="nav-link text-dark mb-2" href="#">
-                    <i class="fas fa-home me-2"></i> Beranda
-                </a>
-                <a class="nav-link text-dark mb-2" href="#">
-                    <i class="fas fa-users me-2"></i> Data Mahasiswa
-                </a>
-                <a class="nav-link text-dark mb-2" href="#">
-                    <i class="fas fa-file-alt me-2"></i> Data TA/PKL
-                </a>
-                <a class="nav-link text-dark mb-2" href="#">
-                    <i class="fas fa-chart-line me-2"></i> Generate Laporan
-                </a>
-                <a class="nav-link text-dark mb-2" href="#">
-                    <i class="fas fa-book me-2"></i> Pencatatan Akademik
-                </a>
-                
-                <div class="mt-3">
-                    <a class="nav-link text-dark mb-2" href="#">
-                        <i class="fas fa-upload me-2"></i> Import Buku Besar
-                    </a>
-                    <a class="nav-link text-dark mb-2" href="#">
-                        <i class="fas fa-history me-2"></i> History Buku Besar
-                    </a>
-                    <a class="nav-link active bg-warning text-dark rounded mb-2" href="#">
-                        <i class="fas fa-chart-bar me-2"></i> Data Statistik
-                    </a>
-                </div>
-                
-                <div class="mt-auto">
-                    <a class="nav-link text-dark mb-2" href="#">
-                        <i class="fas fa-cog me-2"></i> Pengaturan
-                    </a>
-                    <a class="nav-link text-dark" href="#">
-                        <i class="fas fa-sign-out-alt me-2"></i> Logout
-                    </a>
-                </div>
-            </nav>
-        </div>
-
         <!-- Main Content -->
         <div class="col-md-10 p-4">
             <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            {{-- <div class="d-flex justify-content-between align-items-center mb-4">
                 <h5 class="text-muted">Visualisasi Data Dengan Line Chart</h5>
                 <div class="d-flex align-items-center">
                     <div class="bg-secondary rounded-pill px-3 py-1 me-3">
@@ -66,13 +17,16 @@
                     <i class="fas fa-bell text-muted me-3"></i>
                     <div class="bg-danger rounded-circle" style="width: 40px; height: 40px;"></div>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Program Title (Dynamic) -->
-            <div class="text-center mb-4">
-                <h3 class="text-primary fw-bold" id="programTitle">
-                    Program Studi : D3 - Teknik Komputer dan Informatika
-                </h3>
+            <div class="container-fluid" style="padding-top: 80px;">
+                <div class="text-center mb-4">
+                    <h3 class="text-primary fw-bold" id="programTitle">
+                        Program Studi : D3 - Teknik Komputer dan Informatika
+                    </h3>
+                </div>
+                <!-- Konten lainnya -->
             </div>
 
 
@@ -432,29 +386,29 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('programTitle').textContent = data.title;
         
         // Update summary cards
-        updateSummaryCards(data.summary);
+        // updateSummaryCards(data.summary);
     }
 
     // Update summary cards
-    function updateSummaryCards(summary) {
-        const summaryContainer = document.getElementById('dataSummary');
-        summaryContainer.innerHTML = '';
+    // function updateSummaryCards(summary) {
+    //     const summaryContainer = document.getElementById('dataSummary');
+    //     summaryContainer.innerHTML = '';
 
-        summary.forEach(item => {
-            const cardHtml = `
-                <div class="col-md-3 mb-3">
-                    <div class="card border-${item.color} h-100">
-                        <div class="card-body text-center">
-                            <i class="fas ${item.icon} fa-2x text-${item.color} mb-2"></i>
-                            <h4 class="text-${item.color} fw-bold">${item.value}</h4>
-                            <p class="text-muted mb-0">${item.title}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            summaryContainer.innerHTML += cardHtml;
-        });
-    }
+    //     summary.forEach(item => {
+    //         const cardHtml = `
+    //             <div class="col-md-3 mb-3">
+    //                 <div class="card border-${item.color} h-100">
+    //                     <div class="card-body text-center">
+    //                         <i class="fas ${item.icon} fa-2x text-${item.color} mb-2"></i>
+    //                         <h4 class="text-${item.color} fw-bold">${item.value}</h4>
+    //                         <p class="text-muted mb-0">${item.title}</p>
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //         `;
+    //         summaryContainer.innerHTML += cardHtml;
+    //     });
+    // }
 
     // Event listener for program selection
     document.getElementById('programSelect').addEventListener('change', function() {
@@ -524,29 +478,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function exportData(format) {
-        showLoading();
+    // function exportData(format) {
+    //     showLoading();
         
-        try {
-            if (format === 'excel') {
-                // Simulate Excel export
-                setTimeout(() => {
-                    showNotification('Data berhasil diekspor ke Excel', 'success');
-                    hideLoading();
-                }, 1000);
-            } else if (format === 'pdf') {
-                // Simulate PDF export
-                setTimeout(() => {
-                    showNotification('Data berhasil diekspor ke PDF', 'success');
-                    hideLoading();
-                }, 1000);
-            }
-        } catch (error) {
-            showNotification(`Gagal mengekspor data: ${error.message}`, 'danger');
-        } finally {
-            hideLoading();
-        }
-    }
+    //     try {
+    //         if (format === 'excel') {
+    //             // Simulate Excel export
+    //             setTimeout(() => {
+    //                 showNotification('Data berhasil diekspor ke Excel', 'success');
+    //                 hideLoading();
+    //             }, 1000);
+    //         } else if (format === 'pdf') {
+    //             // Simulate PDF export
+    //             setTimeout(() => {
+    //                 showNotification('Data berhasil diekspor ke PDF', 'success');
+    //                 hideLoading();
+    //             }, 1000);
+    //         }
+    //     } catch (error) {
+    //         showNotification(`Gagal mengekspor data: ${error.message}`, 'danger');
+    //     } finally {
+    //         hideLoading();
+    //     }
+    // }
 
     function applyFilters() {
         applyAdvancedFilters();
@@ -558,30 +512,30 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function performSearch() {
-        const query = document.getElementById('searchInput').value.trim();
-        if (query) {
-            searchStatistik(query);
-        } else {
-            showNotification('Masukkan kata kunci pencarian', 'warning');
-        }
-    }
+    // function performSearch() {
+    //     const query = document.getElementById('searchInput').value.trim();
+    //     if (query) {
+    //         searchStatistik(query);
+    //     } else {
+    //         showNotification('Masukkan kata kunci pencarian', 'warning');
+    //     }
+    // }
 
-    function showComparison() {
-        // Scroll to comparison table
-        const comparisonTable = document.getElementById('comparisonTable');
-        if (comparisonTable) {
-            comparisonTable.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // function showComparison() {
+    //     // Scroll to comparison table
+    //     const comparisonTable = document.getElementById('comparisonTable');
+    //     if (comparisonTable) {
+    //         comparisonTable.scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Highlight the table briefly
-            comparisonTable.classList.add('table-bordered', 'border-primary');
-            setTimeout(() => {
-                comparisonTable.classList.remove('border-primary');
-            }, 2000);
+    //         // Highlight the table briefly
+    //         comparisonTable.classList.add('table-bordered', 'border-primary');
+    //         setTimeout(() => {
+    //             comparisonTable.classList.remove('border-primary');
+    //         }, 2000);
             
-            showNotification('Tabel perbandingan ditampilkan di bawah', 'info');
-        }
-    }
+    //         showNotification('Tabel perbandingan ditampilkan di bawah', 'info');
+    //     }
+    // }
 
     function refreshData() {
         showLoading();
@@ -607,30 +561,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Additional utility functions
-    function toggleFullscreen() {
-        const chartContainer = document.querySelector('.card-body');
-        if (chartContainer) {
-            if (!document.fullscreenElement) {
-                chartContainer.requestFullscreen().catch(err => {
-                    showNotification(`Gagal masuk mode fullscreen: ${err.message}`, 'danger');
-                });
-            } else {
-                document.exitFullscreen();
-            }
-        }
-    }
+    // function toggleFullscreen() {
+    //     const chartContainer = document.querySelector('.card-body');
+    //     if (chartContainer) {
+    //         if (!document.fullscreenElement) {
+    //             chartContainer.requestFullscreen().catch(err => {
+    //                 showNotification(`Gagal masuk mode fullscreen: ${err.message}`, 'danger');
+    //             });
+    //         } else {
+    //             document.exitFullscreen();
+    //         }
+    //     }
+    // }
 
-    function copyChartToClipboard() {
-        const canvas = document.getElementById('statistikChart');
-        canvas.toBlob(function(blob) {
-            const item = new ClipboardItem({ 'image/png': blob });
-            navigator.clipboard.write([item]).then(function() {
-                showNotification('Chart berhasil disalin ke clipboard', 'success');
-            }).catch(function(error) {
-                showNotification(`Gagal menyalin chart ke clipboard: ${error.message}`, 'danger');
-            });
-        });
-    }
+    // function copyChartToClipboard() {
+    //     const canvas = document.getElementById('statistikChart');
+    //     canvas.toBlob(function(blob) {
+    //         const item = new ClipboardItem({ 'image/png': blob });
+    //         navigator.clipboard.write([item]).then(function() {
+    //             showNotification('Chart berhasil disalin ke clipboard', 'success');
+    //         }).catch(function(error) {
+    //             showNotification(`Gagal menyalin chart ke clipboard: ${error.message}`, 'danger');
+    //         });
+    //     });
+    // }
 
     // Initialize with D3 program
     initChart('D3');
