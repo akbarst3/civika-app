@@ -16,7 +16,7 @@ class PKLController extends Controller
         if ($request->jenis_laporan === 'honorKpPkl') {
             return $this->generateHonorKpPkl($request);
         }
-        abort(404);
+        abort(404, 'Jenis Laporan bukan Honor Kp Pkl');
     }
 
     public function generateHonorKpPkl(Request $request)
@@ -110,7 +110,7 @@ class PKLController extends Controller
     // untuk dropdown di tampilan
     public function form()
     {
-        $angkatans = DB::table('mahasiswa')
+        $angkatans = DB::table('kelas')
             ->select('angkatan')
             ->distinct()
             ->orderBy('angkatan', 'asc')
