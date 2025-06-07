@@ -13,15 +13,37 @@ class StatistikController extends Controller
 {    
     public function index(): View
     {
-        $mahasiswa = Mahasiswa::with(['kelas.prodi', 'indeksPrestasiSemester'])->get();
+        $mahasiswa = $this->getMahasiswaWithRelations();
 
-        $grouped = $mahasiswa->groupBy(function ($item) {
+        $grouped = $this->groupMahasiswaByAngkatanAndProdi($mahasiswa);
+
+        $data = $this->calculateAverageIpsPerGroup($grouped);
+
+        $angkatanPerProdi = $this->getAngkatanPerProdi($data);
+
+        return view('statistik-view.statistik-main', [
+            'data' => $data,
+            'dataAngkatan' => $angkatanPerProdi
+        ]);
+    }
+
+    private function getMahasiswaWithRelations()
+    {
+        return Mahasiswa::with(['kelas.prodi', 'indeksPrestasiSemester'])->get();
+    }
+
+    private function groupMahasiswaByAngkatanAndProdi($mahasiswa)
+    {
+        return $mahasiswa->groupBy(function ($item) {
             $angkatan = optional($item->kelas)->angkatan ?? 'unknown';
             $prodi = optional(optional($item->kelas)->prodi)->nama_prodi ?? 'unknown';
             return $angkatan . '_' . $prodi;
         });
+    }
 
-        $data = $grouped->map(function ($group, $key) {
+    private function calculateAverageIpsPerGroup($grouped)
+    {
+        return $grouped->map(function ($group, $key) {
             $totalIps = 0;
             $totalMahasiswa = 0;
 
@@ -44,13 +66,13 @@ class StatistikController extends Controller
             ];
         })->sortBy(function ($item) {
             return (int) $item['angkatan'];
-        })
-        ->values();
+        })->values();
+    }
 
-        $angkatanPerProdi = $data->groupBy('prodi')->map(function ($items) {
+    private function getAngkatanPerProdi($data)
+    {
+        return $data->groupBy('prodi')->map(function ($items) {
             return collect($items)->pluck('angkatan')->unique()->sort()->values()->all();
         });
-
-        return view('statistik-view.statistik-main', ['data' => $data, 'dataAngkatan' => $angkatanPerProdi]);
     }
 }
