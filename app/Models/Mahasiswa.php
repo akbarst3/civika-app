@@ -59,7 +59,7 @@ class Mahasiswa extends Model
 
     public function kpPkl()
     {
-        return $this->hasMany(KpPkl::class, 'nim', 'nim');
+        return $this->hasOne(KpPkl::class, 'nim', 'nim');
     }
 
     public function nilai()

@@ -1,35 +1,45 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5"> <!-- Ubah mt-4 menjadi mt-5 -->
+<div class="container mt-5">
     <h1 class="mt-4 mb-4">Generate Laporan Honor PKL</h1>
     <div class="row">
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <form action="{{ route('generate.honor.pkl') }}" method="POST">
+                    <form id="reportForm" method="GET" action="">
                         @csrf
+                        <input type="hidden" name="jenis_laporan" value="honorKpPkl">
                         <div class="mb-3">
-                            <label for="program_studi" class="form-label">Program Studi</label>
-                            <select class="form-select" id="program_studi" name="program_studi" required>
+                            <label for="prodi" class="form-label">Program Studi</label>
+                            <select class="form-select" id="prodi" name="prodi" required>
                                 <option value="" disabled selected>Pilih Program Studi</option>
-                                <option value="D-3 Teknik Informatika">D-3 Teknik Informatika</option>
-                                <option value="D-4 Teknik Informatika">D-4 Teknik Informatika</option>
+                                <option value="1">D-3 Teknik Informatika</option>
+                                <option value="2">D-4 Teknik Informatika</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="angkatan" class="form-label">Angkatan</label>
                             <select class="form-select" id="angkatan" name="angkatan" required>
                                 <option value="" disabled selected>Pilih Angkatan</option>
-                                <option value="2021">2021</option>
-                                <option value="2022">2022</option>
+                                @foreach($angkatans as $angkatan)
+                                    <option value="{{ $angkatan }}">{{ $angkatan }}</option>
+                                @endforeach
                             </select>
                         </div>
-                        <button type="submit" class="btn custom-button">Generate</button>
+                        <button type="submit" class="btn custom-button" onclick="setFormAction('{{ route('generate.honor.kp-pkl.download') }}')">Generate</button>
+                        <button type="submit" class="btn btn-primary" onclick="setFormAction('{{ route('display.honor.kp-pkl') }}')">Lihat Laporan</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    function setFormAction(action) {
+        console.log('Setting form action to:', action); // Debugging
+        document.getElementById('reportForm').action = action;
+    }
+</script>
 @endsection

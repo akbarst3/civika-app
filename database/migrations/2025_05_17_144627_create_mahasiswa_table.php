@@ -26,8 +26,8 @@ return new class extends Migration
             $table->string('gol_darah', 2);
             $table->integer('anak_ke');
             $table->string('nama_slta', 255);
-            $table->enum('jalur_daftar', ['SNMPTN', 'SBMPTN', 'Mandiri', 'Lainnya']);
-            $table->decimal('nem', 5, 2);
+            $table->enum('jalur_daftar', ['SNBT', 'SNBP', 'SMBM-TES', 'ADIK','Lainnya']);
+            $table->decimal('nem', 5, 2)->nullable();
             $table->unsignedBigInteger('kelas_id');
             $table->foreign('kelas_id')
                 ->references('id')

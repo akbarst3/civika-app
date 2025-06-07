@@ -6,7 +6,7 @@
     <title>@yield('title')</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="//unpkg.com/alpinejs" defer></script>
-
+    @vite('resources/css/generate-report.css')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
 </head>
