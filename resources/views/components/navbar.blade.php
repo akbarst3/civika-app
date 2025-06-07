@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white my-3" 
+<nav class="navbar navbar-expand-lg navbar-light bg-white" 
      style="position: fixed; left: 0; right: 0; height: 56px; margin-left: 260px; z-index: 1030;">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
