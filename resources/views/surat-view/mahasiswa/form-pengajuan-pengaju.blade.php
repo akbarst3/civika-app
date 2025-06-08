@@ -9,7 +9,7 @@
         font-family: 'Poppins', sans-serif;
     }
     .main-content {
-        margin-left: 0; /* Override margin dari app.blade.php agar tidak double */
+        margin-left: 0; 
         flex-grow: 1;
         display: flex;
         justify-content: center;
@@ -18,93 +18,88 @@
     }
     @media (max-width: 768px) {
         .main-content {
-            margin-left: 0; /* Pastikan tidak ada margin di layar kecil */
+            margin-left: 0; 
         }
     }
 </style>
 
     @include('components.sidebar')
-    <!-- Main Content -->
     <main class="main-content">
         <div class="w-full max-w-4xl">
-            <h2 class="text-[#1A237E] font-bold text-lg mb-8 select-none text-center" id="formTitle">Form Pengajuan Surat Beasiswa</h2>
+            <h2 class="text-[#1A237E] font-bold text-lg mb-8 select-none text-center" id="formTitle">
+                Form Pengajuan Surat 
+                {{ $jenisSurat === 'suratBeasiswa' ? 'Beasiswa' : 'Ormawa' }}
+            </h2>
             <form action="{{ route('pengajuan-surat-store') }}" method="POST" enctype="multipart/form-data" class="space-y-5">
                 @csrf
-                <!-- Nama Lengkap -->
+                <input type="hidden" name="jenisSurat" value="{{ $jenisSurat }}">
                 <div class="flex space-x-4">
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="nama">Nama</label>
                         <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                               id="nama" placeholder="Masukkan Nama" name="nama" type="text" value="{{ old('nama', $mahasiswa->nama_mhs ?? '') }}">
+                               id="nama" placeholder="Masukkan Nama Lengkap" name="nama" type="text" required>
                     </div>
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="ipk">IPK</label>
                         <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                               id="ipk" placeholder="Masukkan IPK" name="ipk" type="text" required>
+                               id="ipk" placeholder="Masukkan IPK, contoh: 3,99" name="ipk" type="text" required>
                     </div>
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="kelas">Kelas</label>
                         <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                               id="kelas" placeholder="Masukkan Kelas" name="kelas" type="text" value="{{ old('kelas', $mahasiswa->nama_kelas ?? '') }}">
+                               id="kelas" placeholder="Masukkan Kelas Lengkap, contoh: 1B/ D-III" name="kelas" type="text" required>
                     </div>
                 </div>
-                <!-- NIM -->
                 <div class="flex space-x-4">
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="nim">NIM</label>
                         <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                               id="nim" placeholder="Masukkan NIM" name="nim" type="text" value="{{ old('nim', $mahasiswa->nim ?? '') }}">
+                               id="nim" placeholder="Masukkan NIM, contoh: 231511000" name="nim" type="text" value="{{ old('nim', $data->nim ?? '') }}" readonly>
                     </div>
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="prodi">Prodi</label>
                         <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                               id="prodi" placeholder="Masukkan Prodi" name="prodi" type="text" value="{{ old('prodi', $mahasiswa->kelas->prodi->nama_prodi ?? '') }}">
+                               id="prodi" placeholder="contoh: D3 Teknik Informatika" name="prodi" type="text" required>
                     </div>
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="semester">Semester</label>
                         <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                               id="semester" placeholder="Masukkan Semester" name="semester" type="text" required>
+                               id="semester" placeholder="Masukkan Semester, contoh: 1 " name="semester" type="text" required>
                     </div>
                 </div>
-                <!-- SMT dan Tahun -->
                 <div class="flex space-x-4">
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="smt">SMT</label>
                         <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                               id="smt" placeholder="Masukkan Ganji/Genap" name="smt" type="text" required>
+                               id="smt" placeholder="Masukkan berupa Ganji/Genap, contoh: Ganjil" name="smt" type="text" required>
                     </div>
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="tahun">Tahun</label>
                         <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                               id="tahun" placeholder="Masukkan Tahun" name="tahun" type="text" required>
+                               id="tahun" placeholder="Masukkan Tahun Akademik Sekarang, contoh: 2024/ 2025" name="tahun" type="text" required>
                     </div>
                 </div>
-                <!-- Ditujukan -->
-                <div>
-                    <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="ditujukan">Ditujukan</label>
-                    <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                           id="ditujukan" placeholder="Masukkan Tujuan" name="ditujukan" type="text" required>
-                </div>
-                <!-- Keperluan Surat -->
+                @if ($jenisSurat === 'suratBeasiswa')
+                    <div>
+                        <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="ditujukan">Ditujukan</label>
+                        <input class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
+                            id="ditujukan" placeholder="Masukkan Tujuan" name="ditujukan" type="text" required>
+                    </div>
+                @endif
                 <div>
                     <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="keperluan">Keperluan Surat</label>
                     <textarea class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                              id="keperluan" placeholder="Masukkan Email" name="keperluan" rows="3" required></textarea>
+                            id="keperluan" placeholder="Masukkan Keperluan" name="keperluan" rows="3" required></textarea>
                 </div>
-                <!-- Berkas Pendukung -->
                 <div>
-                    <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="berkas">Berkas Pendukung</label>
-                    <div class="border border-dashed border-gray-300 rounded-md p-4 text-center">
-                        <input type="file" id="berkas" name="berkas" class="hidden">
-                        <label for="berkas" class="cursor-pointer">
-                            <i class="fas fa-cloud-upload-alt text-gray-400 text-2xl mb-2"></i>
-                            <p class="text-xs text-gray-400">Select a file or drag and drop</p>
-                            <p class="text-xs text-gray-400">JPG, PNG, or PDF, File size no more than 10MB</p>
-                            <button type="button" class="mt-2 bg-[#1A237E] text-white font-bold text-xs py-1 px-4 rounded-md hover:brightness-110 transition">Select File</button>
-                        </label>
+                    <div class="mb-4">
+                        <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none" for="berkas">Berkas Pendukung, Upload Berkas-Berkas yang Menjadi Pendukung Kedalam 1 PDF</label>
+                        <input class="block w-full text-sm text-gray-900 cursor-pointer bg-white border-2 border-dashed border-[#FF9A36] rounded-md p-2 font-light transition duration-200 ease-in-out hover:-translate-y-1" id="berkas" type="file" name="berkas">
+                        @error('berkas')
+                            <div class="text-red-600">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
-                <!-- Buttons -->
                 <div class="flex space-x-4">
                     <button type="button" class="w-1/2 bg-gradient-to-r from-[#E11818] to-[#FF6C6C] text-white font-bold text-xs py-2 rounded-md hover:brightness-110 transition" data-bs-toggle="modal" data-bs-target="#confirmationModal">Batal</button>
                     <button type="submit" class="w-1/2 bg-gradient-to-r from-[#00008B] to-[#3B3BBD] text-white font-bold text-xs py-2 rounded-md hover:brightness-110 transition" data-bs-toggle="modal" data-bs-target="#confirmationModal">Ajukan</button>

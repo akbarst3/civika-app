@@ -20,16 +20,11 @@ class Surat extends Model
         // 'id_user',
         'nim',
         'jenis_surat',
-        // 'tgl_surat',
         'status_surat',
         'tahap_verifikasi',
-        // 'kode_surat', 'tujuan_rekomendasi', 'nama_perusahaan', 'program',
-        // 'id_user', 'nim', 'kode_dosen', 'judul_surat', 'jenis_surat',
-        // 'tgl_surat', 'isi_surat', 'pesan', 'status_surat'
     ];
 
     protected $casts = [
-        // 'tgl_surat' => 'date',
         'jenis_surat' => 'string', // Enum: Rekomendasi, Beasiswa, Pengantar, Lainnya
         'status_surat' => 'string', // Enum: Draft, Disetujui, Ditolak, Proses
     ];

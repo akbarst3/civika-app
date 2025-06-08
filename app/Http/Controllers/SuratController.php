@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\StatusSurat;
+use App\Enums\TahapVerifikasi;
+use App\Models\Dosen;
 use App\Models\Surat;
 use App\Models\Mahasiswa;
 use Illuminate\Support\Str;
@@ -10,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SuratController extends Controller
 {
@@ -18,100 +22,212 @@ class SuratController extends Controller
         return view('surat-view.mahasiswa.dashboard-pengaju');
     }
 
-    public function createPengajuan()
+    public function createPengajuan(Request $request)
     {
-         // nama, nim, ipk, kelas, prodi, semester, smt, tahun, ditujukan, keperluan surat, berkas, kode_surat, id_user, jenis_surat, tgl_surat, status_surat
-         $mahasiswa = Mahasiswa::with(['kelas', 'absensi'])
-                    ->where('nim', 230101001)
-                    ->first(); 
-                    
-                    // dd($mahasiswa);
-         return view('surat-view.mahasiswa.form-pengajuan-pengaju', compact('mahasiswa'));
+         $jenisSurat = $request->query('jenis_surat');
 
+        if (is_null($jenisSurat)) {
+            return redirect()->route('dashboard-pengaju')->with('error', 'Harap pilih jenis surat terlebih dahulu.');
+        }
+        
+        $user = auth()->user();
+        $data = null;
+
+        if ($user->role === 'mahasiswa') {
+            $data = Mahasiswa::where('nim', $user->nim)->first();
+        } else {
+            return redirect()->route('dashboard')->with('error', 'Role tidak dikenali.');
+        }
+
+        if (!$data) {
+            return redirect()->route('dashboard')->with('error', 'Data pengguna tidak ditemukan.');
+        }
+                
+        return view('surat-view.mahasiswa.form-pengajuan-pengaju', compact('data', 'jenisSurat'));
     }
 
     public function storePengajuan(Request $request)
     {
-        // dd($request);
-        // Validasi umum
+        $jenisSurat = $request->input('jenisSurat');
         $validator = Validator::make($request->all(), [
-            'ditujukan' => 'required|string|max:255',
+            'ditujukan' => 'required_if:jenisSurat,suratBeasiswa|string|max:255',
             'keperluan' => 'required|string',
-            'berkas' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240',
+            'berkas' => 'nullable|file|mimes:pdf|max:5120',
+        ], [
+            'ditujukan.required_if' => 'Kolom ditujukan wajib diisi untuk jenis surat beasiswa.',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $totalSurat = Surat::count() + 1;
+        $kodeSurat = 'Sr-' . str_pad($totalSurat, 2, '0', STR_PAD_LEFT);
+        
+        $nama = $request->nama;
+        $nim = $request->nim;
+        $ipk = $request->ipk;
+        $kelas = $request->kelas;
+        $prodi = $request->prodi;
+        $semester = $request->semester;
+        $smt = $request->smt;
+        $tahun = $request->tahun;
+        $ditujukan = $request->ditujukan;
+        $keperluan = $request->keperluan;
+
+        $pdfData = compact('nama', 'nim', 'ipk', 'kelas', 'prodi', 'semester', 'smt', 'tahun', 'ditujukan', 'keperluan');
+
+        $jsonPath = "temp/pdfData-{$kodeSurat}.json";
+        Storage::put($jsonPath, json_encode($pdfData));
+
+        $targetDir = public_path('laraview/' . $request->nim . '/' . $kodeSurat);
+        if (!file_exists($targetDir)) {
+            mkdir($targetDir, 0755, true);
         }
 
         $berkasPath = null;
         if ($request->hasFile('berkas')) {
-            $berkasPath = $request->file('berkas')->store('berkas_pengajuan', 'public');
+            $file = $request->file('berkas');
+            $originalName = $kodeSurat . '-berkas-pendukung.pdf';
+            $file->move($targetDir, $originalName);
+            $berkasPath = "laraview/{$nim}/{$kodeSurat}/{$originalName}";
         }
-
-        // nama, nim, ipk, kelas, prodi, semester, smt, tahun, ditujukan, keperluan surat, berkas, kode_surat, id_user, jenis_surat, tgl_surat, status_surat
-        $totalSurat = Surat::count() + 1;
-        $kodeSurat = 'Sr-' . str_pad($totalSurat, 2, '0', STR_PAD_LEFT);
+        
         Surat::create([
             'nim' => $request->nim,
             'kode_surat' => $kodeSurat, 
-            'ditujukan' => $request->input('ditujukan'),
+            'ditujukan' => $jenisSurat === 'suratBeasiswa' ? $request->input('ditujukan') : '-',
             'keperluan' => $request->input('keperluan'),
             'berkas' => $berkasPath,
-            'jenis_surat'=> "Beasiswa",
+            'jenis_surat'=> $jenisSurat,
         ]);
 
-        return redirect()->route('daftar-pengajuan-surat')->with('success', 'Pengajuan surat berhasil dibuat!');
+        if($jenisSurat === 'suratBeasiswa') {
+            $pdf = PDF::loadView('surat-view.template-surat-beasiswa', compact('pdfData', 'kodeSurat'));
+        } else {
+            $pdf = PDF::loadView('surat-view.template-surat-ormawa', compact('pdfData', 'kodeSurat'));
+        }
+        $pdfPath = $targetDir . '/' . $kodeSurat . '-preview-surat.pdf';
+        $pdf->save($pdfPath);
+        
+        return redirect()->route('daftar-pengajuan-surat')->with([
+            'success' => 'Pengajuan surat berhasil dibuat!',
+            'kodeSurat' => $kodeSurat 
+        ]);
     }
 
-
-    public function updateDetailPengajuanSurat(Request $request, $id)
+    public function updatePengajuan(Request $request, $kodeSurat)
     {
-        // dd($request);
-        // Validasi input
+        $surat = Surat::where('kode_surat', $kodeSurat)->firstOrFail();
+
+        $jenisSurat = $surat->jenis_surat;
+
         $validator = Validator::make($request->all(), [
-            'ditujukan' => 'required|string|max:255',
-            'keperluan' => 'required|string',
-            'berkas' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240',
-            'tahap_verifikasi' => 'required|in:Kaprodi,Kajur,WaliDosen',
+            'ditujukan' => 'nullable:jenisSurat,suratBeasiswa|string|max:255',
+            'keperluan' => 'nullable|string',
+        ], [
+            'ditujukan.nullable' => 'Kolom ditujukan wajib diisi untuk jenis surat beasiswa.',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // Ambil data surat lama
-        $surat = Surat::findOrFail($id);
+        $nim = $request->nim;
+        $nama = $request->nama;
+        $ipk = $request->ipk;
+        $kelas = $request->kelas;
+        $prodi = $request->prodi;
+        $semester = $request->semester;
+        $smt = $request->smt;
+        $tahun = $request->tahun;
+        $ditujukan = $request->ditujukan;
+        $keperluan = $request->keperluan;
 
-        // Simpan file baru jika ada, kalau tidak gunakan file lama
-        $berkasPath = $surat->berkas;
-        if ($request->hasFile('berkas')) {
-            // Hapus file lama jika ada
-            if ($berkasPath && Storage::disk('public')->exists($berkasPath)) {
-                Storage::disk('public')->delete($berkasPath);
-            }
+        $pdfData = compact('nama', 'nim', 'ipk', 'kelas', 'prodi', 'semester', 'smt', 'tahun', 'ditujukan', 'keperluan');
 
-            // Simpan file baru
-            $berkasPath = $request->file('berkas')->store('berkas_pengajuan', 'public');
+        $jsonPath = "temp/pdfData-{$kodeSurat}.json";
+        Storage::put($jsonPath, json_encode($pdfData));
+
+        $targetDir = public_path('laraview/' . $nim . '/' . $kodeSurat);
+        if (!file_exists($targetDir)) {
+            mkdir($targetDir, 0755, true);
         }
 
-        // Update field hanya jika ada perubahan
         $surat->update([
-            'nim' => $request->nim ?? $surat->nim,
-            'ditujukan' => $request->input('ditujukan', $surat->ditujukan),
-            'keperluan' => $request->input('keperluan', $surat->keperluan),
-            'berkas' => $berkasPath,
-            'tahap_verifikasi' => $request->tahap_verifikasi,
+            'ditujukan' => $jenisSurat === 'suratBeasiswa' ? $request->input('ditujukan') : '-',
+            'keperluan' => $keperluan,
         ]);
 
+        $pdfPath = $targetDir . '/' . $kodeSurat . '-preview-surat.pdf';
+        if (file_exists($pdfPath)) {
+            unlink($pdfPath);
+        }
+
+        if ($jenisSurat === 'suratBeasiswa') {
+            $pdf = PDF::loadView('surat-view.template-surat-beasiswa', compact('pdfData', 'kodeSurat'));
+        } else {
+            $pdf = PDF::loadView('surat-view.template-surat-ormawa', compact('pdfData', 'kodeSurat'));
+        }
+        $pdf->save($pdfPath);
+        return redirect()->route('detail-pengajuan-surat' , $surat->kode_surat)->with('success', 'Data surat berhasil diperbarui!');
+    }
+
+
+    public function updateDetailPengajuanSurat(Request $request, $kodeSurat)
+    {
+        $jenisSurat = $request->input('jenisSurat');
+        $surat = Surat::where('kode_surat', $kodeSurat)->firstOrFail();
+
+        $user = auth()->user();
+
+        if ($user->role === 'tata_usaha') {
+            $surat->update([
+                'status_surat' => StatusSurat::DIPROSES->value,
+                'tahap_verifikasi' => $request->tahap_verifikasi,
+            ]);
+        } elseif ($user->role === 'dosen') {
+            $jsonPath = "temp/pdfData-{$kodeSurat}.json";
+            $pdfData = null;
+
+            if (Storage::exists($jsonPath)) {
+                $pdfData = json_decode(Storage::get($jsonPath), true);
+            }
+
+            $targetDir = public_path('laraview/' . $surat->nim . '/' . $kodeSurat);
+            if (!file_exists($targetDir)) {
+                mkdir($targetDir, 0755, true);
+            }
+
+            $pdfPath = $targetDir . '/' . $kodeSurat . '-preview-surat.pdf';
+            if (file_exists($pdfPath)) {
+                unlink($pdfPath);
+            }
+            $imagePath = public_path('images/ttd_digital.png');
+            $src = file_exists($imagePath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($imagePath)) : '';
+            if ($jenisSurat === 'suratBeasiswa') {
+                $pdf = PDF::loadView('surat-view.template-surat-beasiswa', compact('src', 'pdfData', 'kodeSurat'));
+            } else {
+                $pdf = PDF::loadView('surat-view.template-surat-ormawa', compact('src', 'pdfData', 'kodeSurat'));
+            }
+            $pdf->save($pdfPath);
+            $surat->update([
+                'status_surat' => StatusSurat::DISETUJUI->value,
+                'tahap_verifikasi' => TahapVerifikasi::TU->value,
+            ]);
+        } else {
+            abort(403, 'Akses ditolak');
+        }
+        
         return redirect()->route('daftar-verifikasi-surat')->with('success', 'Pengajuan surat berhasil diperbarui!');
     }
 
 
     public function indexDaftarSurat()
     {
-         $surats = Surat::where('nim', 230101001)->get();                    
-                    // dd($surats);
+        $user = auth()->user();
+
+        $surats = Surat::where('nim', $user->nim)->get();                    
         return view('surat-view.mahasiswa.daftar-pengajuan-surat', compact('surats'));
     }
 
@@ -120,60 +236,35 @@ class SuratController extends Controller
         return view('surat-view.TU.dashboard-reviewer1');
     }
 
-    public function indexDaftarSuratDisetujui()
-    {
-        //  $surats = Surat::where('nim', 230101001)->get();                    
-        //             // dd($surats);
-        // return view('surat-view.mahasiswa.daftar-pengajuan-surat', compact('surats'));
-    }
-
     public function indexDaftarSuratVerifikasi()
     {
-        $surats = Surat::all();
+        $user = auth()->user(); 
+
+        if ($user->role === 'tata_usaha') {
+            $surats = Surat::all();
+        } elseif ($user->role === 'dosen') {
+            $surats = Surat::whereIn('tahap_verifikasi', ['kaprodi', 'kajur', 'wali dosen'])->where('status_surat', 'diproses')->get();
+        } else {
+            abort(403, 'Akses ditolak');
+        }
+
         return view('surat-view.TU.daftar-verifikasi-surat', compact('surats'));
     }
    
     public function indexDetailPengajuanSurat($kode_surat)
     {
-        // nama, nim, ipk, kelas, prodi, semester, smt, tahun, ditujukan, keperluan surat, berkas, kode_surat, id_user, jenis_surat, tgl_surat, status_surat
-        $mahasiswa = Mahasiswa::with(['kelas', 'absensi'])
-                ->where('nim', 230101001)
-                ->first(); 
+        $user = auth()->user();
+
         $surat = Surat::where('kode_surat', $kode_surat)->first();
-                
-                // dd($mahasiswa);
-        return view('surat-view.TU.detail-pengajuan-surat', compact('mahasiswa', 'surat'));
+        $data = Mahasiswa::where('nim', $surat->nim)->first(); 
 
+        $jsonPath = "temp/pdfData-{$kode_surat}.json";
+        $pdfData = null;
+
+        if (Storage::exists($jsonPath)) {
+            $pdfData = json_decode(Storage::get($jsonPath), true);
+        }
+        
+        return view('surat-view.TU.detail-pengajuan-surat', compact('user', 'surat', 'data', 'pdfData'));
     }
-
-    public function viewDashboardReviewer2()
-    {
-        return view('surat-view.TU.dashboard-reviewer1');
-    }
-
-    public function indexDaftarSuratDisetujui2()
-    {
-         $surats = Surat::where('nim', 230101001)->get();                    
-                    // dd($surats);
-        return view('surat-view.mahasiswa.daftar-pengajuan-surat', compact('surats'));
-    }
-
-    public function indexDaftarSuratVerifikasi2()
-    {
-        $surats = Surat::where('tahap_verifikasi', "kaprodi")->get();    
-        return view('surat-view.TU.daftar-verifikasi-surat', compact('surats'));
-    }
-
-    // // Display form for pengajuan rekomendasi
-    // public function dashboardSuratRokumendasi()
-    // {
-    //     return view('surat-view.form-pengajuan-pengaju_rokumendasi');
-    // }
-
-    // // Display form for pengajuan beasiswa
-    // public function dashboardSuratBeasiswa()
-    // {
-    //     return view('surat-view.form-pengajuan-pengaju_beasiswa');
-    // }
-
 }

@@ -106,8 +106,8 @@
             <div class="space-y-5">
                 <select name="jenis_surat" id="jenis_surat" class="w-full p-2 mb-2 border rounded">
                     <option value="">Pilih Jenis Surat</option>
-                    <option value="Surat Beasiswa">Surat Beasiswa</option>
-                    <option value="Surat Ormawa">Surat Ormawa</option>
+                    <option value="suratBeasiswa">Surat Beasiswa</option>
+                    <option value="suratOrmawa">Surat Ormawa</option>
                 </select>
                 <div class="flex justify-between">
                     <button onclick="redirectToRoute()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Lakukan Pengajuan</button>
@@ -132,15 +132,15 @@
         function redirectToRoute() {
             const jenisSurat = document.getElementById('jenis_surat').value;
             let route;
-            if (jenisSurat === 'Surat Beasiswa') {
+            if (jenisSurat === 'suratBeasiswa') {
                 route = "{{ route('pengajuan-surat') }}";
-            } else if (jenisSurat === 'Surat Ormawa') {
-                route = "{{ route('dashboard-pengaju') }}";
+            } else if (jenisSurat === 'suratOrmawa') {
+                route = "{{ route('pengajuan-surat') }}";
             } else {
                 alert('Pilih jenis surat terlebih dahulu.');
                 return;
             }
-            window.location.href = route;
+            window.location.href = route + '?jenis_surat=' + encodeURIComponent(jenisSurat);
         }
     </script>
 </body>

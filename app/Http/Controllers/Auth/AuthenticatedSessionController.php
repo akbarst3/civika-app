@@ -37,11 +37,11 @@ class AuthenticatedSessionController extends Controller
             /** @var \App\Models\User $user */
             $user = Auth::user();
             if ($user->hasRole('mahasiswa')) {
-                return redirect()->route('welcome');
+                return redirect()->route('dashboard-pengaju');
             } elseif ($user->hasRole('dosen')) {
-                return redirect()->route('welcome');
+                return redirect()->route('dashboard-reviewer1');
             } else {
-                return redirect()->route('welcome');
+                return redirect()->route('dashboard-reviewer1');
             }
         }
 

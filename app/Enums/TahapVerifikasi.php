@@ -4,8 +4,8 @@ namespace App\Enums;
 
 enum TahapVerifikasi: string
 {
-    case TU = 'tu';
+    case TU = 'TU';
     case KAPRODI = 'kaprodi';
     case KAJUR = 'kajur';
-    case WALIDOSEN = 'walidosen';
+    case WALIDOSEN = 'wali dosen';
 }
