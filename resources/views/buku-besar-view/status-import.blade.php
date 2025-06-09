@@ -9,19 +9,28 @@
             <!-- Search box dihapus -->
         </div>
 
-        <div class="d-flex justify-content-start align-items-center mb-3 flex-wrap gap-3">
-            <div class="dropdown-wrapper">
-                <select class="form-select" style="width: 280px;">
-                    <option value="" selected disabled>Tahun Akademik</option>
-                    <option value="2024/2025_semester_genap">2024/2025 Semester Genap</option>
-                    <!-- Opsi lain akan diisi dari BE nanti -->
-                </select>
+        <form method="GET" action="{{ route('import.buku-besar.status') }}">
+            <div class="d-flex justify-content-start align-items-center mb-3 flex-wrap gap-3">
+                <div class="dropdown-wrapper">
+                    <select class="form-select" style="width: 280px;" name="tahun_akademik" onchange="this.form.submit()">
+                        @foreach ($tahunAkademikFilter as $tahun)
+                            <option value="{{ $tahun }} Ganjil"
+                                {{ $tahunAkademikAktif === "$tahun Ganjil" ? 'selected' : '' }}>
+                                {{ $tahun }} Semester Ganjil
+                            </option>
+                            <option value="{{ $tahun }} Genap"
+                                {{ $tahunAkademikAktif === "$tahun Genap" ? 'selected' : '' }}>
+                                {{ $tahun }} Semester Genap
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex-grow-1"></div>
+                <div class="button-wrapper">
+                    <a href="{{ route('import.buku-besar.form') }}" class="import-button">Import Buku Besar</a>
+                </div>
             </div>
-            <div class="flex-grow-1"></div>
-            <div class="button-wrapper">
-                <a href="{{ route('import.buku-besar.form') }}" class="import-button">Import Buku Besar</a>
-            </div>
-        </div>
+        </form>
 
         <div class="table-container">
             <h5 class="table-title">Status Import Buku Besar</h5>
@@ -32,24 +41,19 @@
                         <th>Kelas</th>
                         <th>Prodi</th>
                         <th>Angkatan</th>
+                        <th>Semester</th>
                         <th>Status</th>
                         <th>Buku Besar</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @php
-                        $importStatus = [
-                            ['nama_kelas' => 'D', 'angkatan' => '2023', 'nama_prodi' => 'D3', 'status' => 'imported'],
-                            ['nama_kelas' => '1B', 'angkatan' => '2023', 'nama_prodi' => 'D3', 'status' => 'not_imported'],
-                            ['nama_kelas' => '1C', 'angkatan' => '2023', 'nama_prodi' => 'D3', 'status' => 'imported'],
-                        ];
-                    @endphp
                     @foreach ($importStatus as $item)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item['nama_kelas'] . $item['angkatan'] }}</td>
-                            <td>{{ $item['nama_prodi'] }}</td>
-                            <td>{{ $item['angkatan'] }}</td>
+                            <td>{{ $item['tingkat'] ?? '-' }}-{{ $item['nama_kelas'] ?? '-' }}</td>
+                            <td>{{ $item['nama_prodi'] ?? '-' }}</td>
+                            <td>{{ $item['angkatan'] ?? '-' }}</td>
+                            <td>{{ $item['semester_aktif'] ?? '-' }}</td>
                             <td>
                                 @if ($item['status'] == 'imported')
                                     <span class="badge badge-success">Sudah diimport</span>
@@ -58,9 +62,9 @@
                                 @endif
                             </td>
                             <td>
-                                <button class="btn btn-link text-decoration-none">
+                                <a href="#" class="btn btn-link text-decoration-none">
                                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                </button>
+                                </a>
                             </td>
                         </tr>
                     @endforeach
