@@ -32,16 +32,18 @@ Route::get('/buku-besar', [BukuBesarController::class, 'bukuBesar'])->name('buku
 // Route untuk menangani proses impor file excel
 // Route::post('/import-excel', [ImportBukuBesarController::class, 'importExcel'])->name('excel.import');
 // Rute untuk Status Import Buku Besar
-Route::get('/import-buku-besar', function () {
-    return view('buku-besar-view.status-import');
-})->name('import.buku-besar.index');
+// Route::get('/import-buku-besar', function () {
+//     return view('buku-besar-view.status-import');
+// })->name('import.buku-besar.index');
 
 // Rute untuk Halaman Import Buku Besar
 // Route::get('/import-buku-besar/form', function () {
 //     return view('buku-besar-view.import-buku-besar');
 // })->name('import.buku-besar.form');
 
-Route::get('/import-buku-besar/form', [ImportBukuBesarController::class, 'showUploadForm'])
+Route::get('/import-buku-besar/form', [BukuBesarController::class, 'showUploadForm'])
     ->name('import.buku-besar.form');
-Route::post('/import-excel', [ImportBukuBesarController::class, 'importExcel'])
+Route::get('/import-buku-besar', [BukuBesarController::class, 'cekStatus'])
+    ->name('import.buku-besar.status');
+Route::post('/import-excel', [BukuBesarController::class, 'importExcel'])
     ->name('excel.import');

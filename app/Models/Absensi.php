@@ -17,4 +17,16 @@ class Absensi extends Model
     {
         return $this->belongsTo(Mahasiswa::class, 'nim', 'nim');
     }
+
+    public function kelas()
+    {
+        return $this->hasOneThrough(
+            Kelas::class,
+            Mahasiswa::class,
+            'nim', // Foreign key on Mahasiswa table
+            'id',  // Foreign key on Kelas table
+            'nim', // Local key on Absensi table
+            'kelas_id' // Local key on Mahasiswa table
+        );
+    }
 }
