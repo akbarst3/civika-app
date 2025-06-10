@@ -23,7 +23,8 @@ Route::get('/', function () {
 //     return view('buku-besar-view.tabel-buku-besar');
 // });
 Route::get('/buku-besar', [BukuBesarController::class, 'bukuBesar'])->name('buku-besar');
-
+Route::get('/buku-besar-dosen', [BukuBesarController::class, 'bukuBesarDosen'])->name('buku-besar-dosen');
+Route::get('/buku-besar-wali-mahasiswa', [BukuBesarController::class, 'bukuBesarWaliMahasiswa'])->name('buku-besar-wali-mahasiswa');
 
 
 // Route untuk menampilkan form upload
