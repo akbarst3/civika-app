@@ -156,39 +156,76 @@ class BukuBesarController extends Controller
 
     public function bukuBesar(Request $request)
     {
-        $tahun = $request->input('tahun', '2025');
-        $semester = $request->input('semester', 3);
-        $kelas = $request->input('kelas_id');
-        $program_studi = $request->input('program_studi', 1);
+        // 1. Ambil angkatan terakhir yang memiliki data indeks prestasi
+        $angkatanTerakhir = Kelas::whereIn('id', function ($query) {
+            $query->select('kelas_id')->from('mahasiswa')->whereIn('nim', function ($sub) {
+                $sub->select('nim')->from('indeks_prestasi_semester');
+            });
+        })->max('angkatan');
 
+        // 2. Ambil semester terakhir dari angkatan tersebut
+        $semesterTerakhir = IndeksPrestasiSemester::whereIn('nim', function ($query) use ($angkatanTerakhir) {
+            $query->select('nim')
+                ->from('mahasiswa')
+                ->whereIn('kelas_id', function ($subquery) use ($angkatanTerakhir) {
+                    $subquery->select('id')
+                        ->from('kelas')
+                        ->where('angkatan', $angkatanTerakhir);
+                });
+        })->max('semester') ?? 1;
+
+        // 3. Ambil prodi default: D3
+        $defaultProdi = Prodi::where('nama_prodi', 'D3')->first();
+
+        // 4. Ambil kelas A dari prodi D3 dan angkatan terakhir
+        $defaultKelas = Kelas::where([
+            ['nama_kelas', 'A'],
+            ['kode_prodi', $defaultProdi->kode_prodi ?? 0],
+            ['angkatan', $angkatanTerakhir]
+        ])->first();
+
+        // 5. Gunakan nilai dari request atau fallback ke default
+        $tahun = $request->input('tahun', $angkatanTerakhir);
+        $semester = $request->input('semester', $semesterTerakhir);
+        $kelas = $request->input('kelas_id', $defaultKelas->id ?? null);
+        $program_studi = $request->input('program_studi', $defaultProdi->kode_prodi ?? null);
         $tahun_akademik = $tahun . '/' . ($tahun + 1);
 
-        // data prodi untuk dropdown
+        // 6. Data referensi
         $prodis = Prodi::all();
-        // data kelas untuk dropdown
-        $kelasList = Kelas::all();
-        // data matkul untuk dropdown
+        $kelasList = Kelas::with('prodi')->get();
         $mataKuliahs = MataKuliah::whereIn('kode_matkul', function ($query) use ($semester) {
             $query->select('kode_matkul')->from('nilai')->where('semester_ke', $semester);
-        })->get();
+        })
+        ->get();
+        // dd($mataKuliahs);
 
-        Log::info('MataKuliahs:', ['count' => $mataKuliahs->count(), 'data' => $mataKuliahs->pluck('kode_matkul')->toArray()]);
-
-        $mahasiswas = Mahasiswa::with([
+        // 7. Query mahasiswa dengan relasi
+        $mahasiswaQuery = Mahasiswa::with([
             'kelas.prodi',
-            'nilai' => function ($query) {
-                $query->with(['mataKuliah', 'dosen']);
-            },
-            'absensi' => function ($query) use ($semester) {
-                $query->where('semester', $semester);
-            },
-            'indeksPrestasiSemester' => function ($query) use ($semester) {
-                $query->whereIn('semester', [$semester, $semester - 1]);
-            },
-        ])->get();
+            'nilai' => fn($query) => $query->with(['mataKuliah', 'dosen']),
+            'absensi' => fn($query) => $query->where('semester', $semester),
+            'indeksPrestasiSemester' => fn($query) => $query->whereIn('semester', [$semester, $semester - 1]),
+        ]);
 
+        // Filter berdasarkan kelas atau prodi dan tahun
+        if ($kelas) {
+            $mahasiswaQuery->where('kelas_id', $kelas);
+        } else {
+            $mahasiswaQuery->whereHas('kelas', function ($query) use ($program_studi, $tahun) {
+                if ($program_studi) {
+                    $query->where('kode_prodi', $program_studi);
+                }
+                if ($tahun) {
+                    $query->where('angkatan', $tahun);
+                }
+            });
+        }
+
+        $mahasiswas = $mahasiswaQuery->get();
         $totalSemesters = IndeksPrestasiSemester::select('semester')->distinct()->count();
 
+        // 8. Proses data per mahasiswa
         $data = $mahasiswas->map(function ($mhs, $index) use ($semester) {
             $nilaiSemester = $mhs->nilai->where('semester_ke', $semester);
 
@@ -202,6 +239,7 @@ class BukuBesarController extends Controller
             $totalBobot = $mhs->indeksPrestasiSemester->sum('nilai_bobot');
             $totalSksAll = $mhs->nilai->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0);
             $ipk = $totalSksAll > 0 ? round($totalBobot / $totalSksAll, 2) : 0;
+            $ipAverage = round($mhs->indeksPrestasiSemester->pluck('indeks_prestasi')->avg(), 2);
 
             $absensi = $mhs->absensi->first();
             $jml = $absensi ? $absensi->jml_sakit + $absensi->jml_izin + $absensi->jml_alfa : 0;
@@ -218,8 +256,6 @@ class BukuBesarController extends Controller
                 'jumlah_sks' => $n->mataKuliah->jumlah_sks ?? 0,
                 'indeks_nilai' => $n->indeks_nilai ?? '-',
             ])->values();
-            // $nilaiSemester = $mhs->nilai->where('semester_ke', $semester);
-            // $nilaiDetail = $nilaiSemester->keyBy('kode_matkul');
 
             return [
                 'no' => $index + 1,
@@ -243,9 +279,18 @@ class BukuBesarController extends Controller
             ];
         });
 
-        return view('buku-besar-view.tabel-buku-besar', compact('data', 'totalSemesters', 'tahun_akademik', 'semester', 'mataKuliahs', 'prodis', 'kelas', 'tahun', 'program_studi'));
-
-        // dd($data);
+        return view('buku-besar-view.tabel-buku-besar', compact(
+            'data',
+            'totalSemesters',
+            'tahun_akademik',
+            'semester',
+            'mataKuliahs',
+            'prodis',
+            'kelasList',
+            'kelas',
+            'tahun',
+            'program_studi'
+        ));
     }
 
     public function cekStatus(Request $request)
