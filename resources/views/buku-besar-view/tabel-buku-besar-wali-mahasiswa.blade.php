@@ -286,10 +286,37 @@
             </table>
         </div>
 
+        <!-- Modal for Student Selection -->
+        <div class="modal fade" id="studentSelectionModal" tabindex="-1" aria-labelledby="studentSelectionModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-custom-bg" style="border-radius: 10px; border-width: 2px; border-color: #dee2e6;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="color: #00008B;">Pilih Mahasiswa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <p style="font-weight: bold;">Nama Mahasiswa</p>
+                        <p style="font-size: 12px; color: #666;">*Harap pilih nama mahasiswa.</p>
+                        <div class="mb-3" style="width: 70%; margin: 0 auto;">
+                            <select class="form-select" id="studentDropdown">
+                                <option value="" selected disabled>Pilih Nama Mahasiswa</option>
+                                <option value="1">Andi Santoso</option>
+                                <option value="2">Budi Wijaya</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn" style="background: linear-gradient(90deg, #E11818, #FF6C6C); color: white; border-radius: 8px;" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn" style="background: linear-gradient(90deg, #32BB35, #8BE52E); color: white; border-radius: 8px;" id="nextToFileTypeBtn">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal for File Type Selection -->
         <div class="modal fade" id="fileTypeModal" tabindex="-1" aria-labelledby="fileTypeModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content modal-custom-bg" style="border-radius: 10px;">
+                <div class="modal-content modal-custom-bg" style="border-radius: 10px; border-width: 2px; border-color: #dee2e6;">
                     <div class="modal-header">
                         <h5 class="modal-title" style="color: #00008B;">Buat Laporan</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -311,7 +338,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn" style="background: linear-gradient(90deg, #E11818, #FF6C6C); color: white; border-radius: 8px;" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn" style="background: linear-gradient(90deg, #E11818, #FF6C6C); color: white; border-radius: 8px;" id="backToStudentBtn" data-bs-toggle="modal" data-bs-target="#studentSelectionModal">Back</button>
                         <button type="button" class="btn" style="background: linear-gradient(90deg, #32BB35, #8BE52E); color: white; border-radius: 8px;" id="nextModalBtn">Next</button>
                     </div>
                 </div>
@@ -321,7 +348,7 @@
         <!-- Modal for Report Options -->
         <div class="modal fade" id="reportOptionsModal" tabindex="-1" aria-labelledby="reportOptionsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content modal-custom-bg" style="border-radius: 10px;">
+                <div class="modal-content modal-custom-bg" style="border-radius: 10px; border-width: 2px; border-color: #dee2e6;">
                     <div class="modal-header">
                         <h5 class="modal-title" style="color: #00008B;">Buat Laporan</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -355,186 +382,199 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <style>
-            .table-container {
-                max-height: 600px;
-                overflow-y: auto;
-            }
-
-            .table-bordered th, .table-bordered td {
+    <style>
+        .table thead th {
+            vertical-align: middle;
+            padding: 10px;
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #333;
+        }
+        .table td {
+            padding: 8px;
+            vertical-align: middle;
+        }
+        .table-bordered th, .table-bordered td {
             border: 1px solid #dee2e6;
-            }
+        }
+        .three-dots {
+            font-size: 18px;
+            line-height: 1;
+        }
+        .dropdown-item:hover {
+            background: linear-gradient(90deg, #32BB35, #8BE52E);
+            color: white;
+        }
+        .dropdown-item:active {
+            background: linear-gradient(90deg, #E11818, #FF6C6C);
+            color: white;
+        }
+        .dropdown-menu {
+            border-radius: 8px;
+            padding: 0;
+            border-width: 2px;
+            border-color: #dee2e6;
+        }
+        .dropdown-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        /* Gaya untuk menyamakan warna latar belakang modal */
+        .modal-custom-bg {
+            background-color: #ffffff !important; /* Warna latar belakang putih konsisten */
+        }
+        /* Menghilangkan ikon segitiga dari dropdown-toggle */
+        .dropdown-toggle::after {
+            display: none !important;
+        }
+        /* Menebalkan border modal */
+        .modal-content {
+            border-width: 2px;
+            border-color: #dee2e6;
+        }
+        .table-container {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .custom-dropdown {
+            width: 100%;
+            max-width: 180px;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #333;
+            font-size: 14px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20fill='gray'%20class='bi%20bi-caret-down-fill'%20viewBox='0%200%2016%2016'%3E%3Cpath%20d='M7.247%2011.14l-4.796-5.481c-.566-.647-.106-1.659.753-1.659h9.592c.86%200%201.32%201.012.753%201.659l-4.796%205.48a1%201%200%200%201-1.506%200z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px 16px;
+        }
+        .custom-dropdown:focus {
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25);
+            outline: none;
+        }
+        .custom-dropdown:hover {
+            border-color: #7c3aed;
+        }
+        .custom-search {
+            width: 100%;
+            max-width: 200px;
+            border-radius: 20px;
+            border: 1px solid #ced4da;
+            padding: 8px 15px;
+        }
+        .custom-search::placeholder {
+            color: #6c757d;
+        }
+        .semester-1, .semester-2, .semester-3, .semester-4, .semester-5, .semester-6, .semester-7, .semester-8 {
+            display: none;
+        }
+        .semester-active {
+            display: table-cell;
+        }
+        .highlight {
+            font-weight: bold;
+            background-color: #f8f9fa;
+        }
+        .highlight th {
+            font-weight: bold;
+            color: #333;
+        }
+        .table thead th {
+            vertical-align: middle !important;
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+        .table th {
+            text-align: center;
+        }
+    </style>
 
-            .custom-dropdown {
-                width: 100%;
-                max-width: 180px; /* ✅ Responsive: tetap sempit di desktop, tapi fleksibel di mobile */
-                padding: 10px 12px;
-                border: 1px solid #ced4da;
-                border-radius: 8px;
-                background-color: #fff;
-                color: #333;
-                font-size: 14px;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-                transition: border 0.3s ease, box-shadow 0.3s ease;
-                appearance: none;
-                background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20fill='gray'%20class='bi%20bi-caret-down-fill'%20viewBox='0%200%2016%2016'%3E%3Cpath%20d='M7.247%2011.14l-4.796-5.481c-.566-.647-.106-1.659.753-1.659h9.592c.86%200%201.32%201.012.753%201.659l-4.796%205.48a1%201%200%200%201-1.506%200z'/%3E%3C/svg%3E");
-                background-repeat: no-repeat;
-                background-position: right 10px center;
-                background-size: 16px 16px;
-            }
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Trigger untuk membuka modal Student Selection dari dropdown
+            document.getElementById('downloadTrigger').addEventListener('click', function() {
+                resetAndShowModal('#studentSelectionModal');
+                resetReportOptions(); // Reset checkbox saat membuka alur baru
+            });
 
-            .custom-dropdown:focus {
-                border-color: #7c3aed;
-                box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25);
-                outline: none;
-            }
-
-            .custom-dropdown:hover {
-                border-color: #7c3aed;
-            }
-
-            .custom-search {
-                width: 100%;
-                max-width: 200px;
-                border-radius: 20px;
-                border: 1px solid #ced4da;
-                padding: 8px 15px;
-            }
-
-            .custom-search::placeholder {
-                color: #6c757d;
-            }
-
-            .semester-1, .semester-2, .semester-3, .semester-4, .semester-5, .semester-6, .semester-7, .semester-8 {
-                display: none;
-            }
-
-            .semester-active {
-                display: table-cell;
-            }
-
-            .highlight {
-                font-weight: bold;
-                background-color: #f8f9fa;
-            }
-
-            .highlight th {
-                font-weight: bold;
-                color: #333;
-            }
-
-            .table thead th {
-                vertical-align: middle !important;
-                padding-top: 15px;
-                padding-bottom: 15px;
-            }
-
-            .table th {
-                text-align: center;
-            }
-
-            .table thead th {
-                vertical-align: middle;
-                padding: 10px;
-                background-color: #f8f9fa;
-                font-weight: bold;
-                color: #333;
-            }
-            .table td {
-                padding: 8px;
-                vertical-align: middle;
-            }
-            .three-dots {
-                font-size: 18px;
-                line-height: 1;
-            }
-            .dropdown-item:hover {
-                background: linear-gradient(90deg, #32BB35, #8BE52E);
-                color: white;
-            }
-            .dropdown-item:active {
-                background: linear-gradient(90deg, #E11818, #FF6C6C);
-                color: white;
-            }
-            .dropdown-menu {
-                border-radius: 8px;
-                padding: 0;
-            }
-            .dropdown-item {
-                padding: 10px 15px;
-                border-bottom: 1px solid #dee2e6;
-            }
-            .dropdown-item:last-child {
-                border-bottom: none;
-            }
-            /* Gaya untuk menyamakan warna latar belakang modal */
-            .modal-custom-bg {
-                background-color: #ffffff !important; /* Warna latar belakang putih konsisten */
-            }
-            /* Menghilangkan ikon segitiga dari dropdown-toggle */
-            .dropdown-toggle::after {
-                display: none !important;
-            }
-        </style>
-
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Trigger untuk membuka modal File Type dari dropdown
-                document.getElementById('downloadTrigger').addEventListener('click', function() {
-                    resetAndShowModal('#fileTypeModal');
-                    resetReportOptions(); // Reset checkbox saat membuka alur baru
-                });
-
-                document.getElementById('nextModalBtn').addEventListener('click', function() {
-                    $('#fileTypeModal').modal('hide');
-                    $('#reportOptionsModal').modal('show');
-                });
-
-                document.getElementById('generateReportBtn').addEventListener('click', function() {
-                    $('#reportOptionsModal').modal('hide');
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Succeed',
-                        text: 'Laporan berhasil disimpan.',
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#32BB35',
-                        customClass: {
-                            confirmButton: 'btn',
-                            popup: 'swal2-custom'
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            // Reset state modal dan backdrop
-                            $('.modal-backdrop').remove();
-                            $('body').removeClass('modal-open');
-                            $('body').css('overflow', 'auto');
-                            // Reinisialisasi semua modal
-                            $('#fileTypeModal').modal('dispose');
-                            $('#reportOptionsModal').modal('dispose');
-                            $('#fileTypeModal').modal({ show: false });
-                            $('#reportOptionsModal').modal({ show: false });
-                            resetReportOptions(); // Reset checkbox setelah laporan dibuat
-                        }
-                    });
-                });
-
-                // Pastikan tombol Back berfungsi
-                const backButton = document.getElementById('backButton');
-                if (backButton) {
-                    backButton.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        $('#reportOptionsModal').modal('hide').then(() => {
-                            resetAndShowModal('#fileTypeModal');
-                            resetReportOptions(); // Reset checkbox saat kembali ke File Type
-                        });
-                        console.log('Tombol Back diklik, mencoba menampilkan #fileTypeModal');
-                    });
+            // Lanjut ke modal File Type setelah memilih mahasiswa
+            document.getElementById('nextToFileTypeBtn').addEventListener('click', function() {
+                const selectedStudent = document.getElementById('studentDropdown').value;
+                if (selectedStudent) {
+                    $('#studentSelectionModal').modal('hide');
+                    $('#fileTypeModal').modal('show');
                 } else {
-                    console.log('Tombol Back tidak ditemukan!');
+                    alert('Harap pilih nama mahasiswa terlebih dahulu.');
                 }
             });
+
+            // Kembali ke modal Student Selection dari File Type
+            document.getElementById('backToStudentBtn').addEventListener('click', function() {
+                $('#fileTypeModal').modal('hide');
+                $('#studentSelectionModal').modal('show');
+            });
+
+            document.getElementById('nextModalBtn').addEventListener('click', function() {
+                $('#fileTypeModal').modal('hide');
+                $('#reportOptionsModal').modal('show');
+            });
+
+            document.getElementById('generateReportBtn').addEventListener('click', function() {
+                $('#reportOptionsModal').modal('hide');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Succeed',
+                    text: 'Laporan berhasil disimpan.',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#32BB35',
+                    customClass: {
+                        confirmButton: 'btn',
+                        popup: 'swal2-custom'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Reset state modal dan backdrop
+                        $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open');
+                        $('body').css('overflow', 'auto');
+                        // Reinisialisasi semua modal
+                        $('#studentSelectionModal').modal('dispose');
+                        $('#fileTypeModal').modal('dispose');
+                        $('#reportOptionsModal').modal('dispose');
+                        $('#studentSelectionModal').modal({ show: false });
+                        $('#fileTypeModal').modal({ show: false });
+                        $('#reportOptionsModal').modal({ show: false });
+                        resetReportOptions(); // Reset checkbox setelah laporan dibuat
+                    }
+                });
+            });
+
+            // Pastikan tombol Back berfungsi
+            const backButton = document.getElementById('backButton');
+            if (backButton) {
+                backButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    $('#reportOptionsModal').modal('hide').then(() => {
+                        resetAndShowModal('#fileTypeModal');
+                        resetReportOptions(); // Reset checkbox saat kembali ke File Type
+                    });
+                    console.log('Tombol Back diklik, mencoba menampilkan #fileTypeModal');
+                });
+            } else {
+                console.log('Tombol Back tidak ditemukan!');
+            }
 
             // Fungsi untuk reset dan menampilkan modal
             function resetAndShowModal(modalId) {
@@ -618,5 +658,6 @@
 
             document.getElementById('program_studi').dispatchEvent(new Event('change'));
             document.getElementById('semester').dispatchEvent(new Event('change'));
-        </script>
-    @endsection
+        });
+    </script>
+@endsection
