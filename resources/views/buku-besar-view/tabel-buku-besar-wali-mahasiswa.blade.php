@@ -6,7 +6,17 @@
 
 @section('content')
     <div class="container mt-5">
-        <h2>History Buku Besar</h2>
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>History Buku Besar</h2>
+            <div class="dropdown" style="margin-top: -3px;">
+                <button class="btn btn-secondary dropdown-toggle rounded-circle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="background: linear-gradient(90deg, #666666, #999999); color: white; width: 30px; height: 30px; padding: 0; border: none; display: flex; align-items: center; justify-content: center;">
+                    <span class="three-dots" style="font-size: 18px; line-height: 1;">⋮</span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="border-radius: 8px; padding: 0;">
+                    <li><a class="dropdown-item" href="#" id="downloadTrigger" style="padding: 10px 15px; border-bottom: 1px solid #dee2e6;">Download</a></li>
+                </ul>
+            </div>
+        </div>
         <div class="row mb-3">
             <div class="col-12 col-sm-6 col-md-2 mb-2">
                 <label for="semester" class="form-label">Semester</label>
@@ -17,28 +27,12 @@
                 </select>
             </div>
             <div class="col-12 col-sm-6 col-md-2 mb-2">
-                <label for="search" class="form-label">&nbsp;</label>
+                <label for="search" class="form-label"> </label>
                 <input type="text" class="form-control custom-search w-100" id="search" placeholder="Search">
             </div>
-            {{-- <div class="col-12 col-sm-6 col-md-2 mb-2">
-                <label for="kelas" class="form-label">Kelas</label>
-                <select class="form-select custom-dropdown w-100" id="kelas">
-                    <option value="2C" selected>2C</option>
-                    <option value="2B">2B</option>
-                    <option value="2A">2A</option>
-                </select>
-            </div> --}}
         </div>
 
         <div class="row mb-3">
-            {{-- <div class="col-12 col-sm-6 col-md-2 mb-2">
-                <label for="tahun" class="form-label">Tahun</label>
-                <select class="form-select custom-dropdown w-100" id="tahun">
-                    @for ($i = 2020; $i <= date('Y'); $i++)
-                    <option value="{{ $i }}" {{ $i == $tahun ? 'selected' : '' }}>{{ $i }}</option>
-                    @endfor
-                </select>
-            </div> --}}
             <div class="col-12 col-sm-6 col-md-2 mb-2 d-none">
                 <label for="program_studi" class="form-label">Program Studi</label>
                 <select class="form-select custom-dropdown w-100" id="program_studi">
@@ -50,10 +44,7 @@
                     @endforeach
                 </select>
             </div>
-
         </div>
-
-
 
         <div class="table-responsive mt-4">
             <table class="table table-bordered text-center align-middle small">
@@ -114,29 +105,6 @@
                         <th>LALU</th>
                         <th>SEKARANG</th>
                     </tr>
-
-                    {{--
-                    <tr class="highlight">
-                        @foreach ($data[2]['nilai_per_matkul'] as $mk)
-                            <th>{{ $mk['kode_dosen'] }}</th>
-                        @endforeach
-                    </tr>
-
-                    @for ($i = 1; $i <= 8; $i++)
-                        <th class="semester-{{ $i }}">{{ $semester_sks[$i] ?? "" }}</th>
-                    @endfor
-
-                    <tr class="highlight">
-                        @foreach ($mataKuliahs as $mk)
-                            <th>{{ $mk['jumlah_sks'] }}</th>
-                        @endforeach
-
-                        @foreach ($mataKuliahs as $mk)
-                            <th>{{ $mk['totalSksAll'] }}</th>
-                        @endforeach
-                    </tr>
-                    --}}
-
                 </thead>
 
                 <tbody>
@@ -152,7 +120,6 @@
                             @endforeach
                             @for ($i = 1; $i <= 8; $i++)
                                 <td class="semester-{{ $i }} {{ $i <= $semester ? 'semester-active' : '' }}">
-                                    {{-- {{ $mhs['semester_sks'][$i] ?? "" }} --}}
                                     @if ($i == $semester)
                                         {{ $mhs['jumlah_d'] ?? "" }}
                                     @else
@@ -160,12 +127,6 @@
                                     @endif
                                 </td>
                             @endfor
-                            {{-- @for ($i = 1; $i <= 8; $i++)
-                                <td class="semester-{{ $i }} {{ $i <= $semester ? 'semester-active' : '' }}">
-                                    {{ $mhs['semester_sks'][$i] ?? 0 }}
-                                </td>
-                            @endfor --}}
-                            {{-- <td>{{ $mhs['jumlah_d'] }}</td> --}}
                             <td>{{ $mhs['sks_d'] }}</td>
                             <td>{{ $mhs['nilai_bobot'] }}</td>
                             <td>{{ $mhs['ip_semester']['lalu'] }}</td>
@@ -178,27 +139,6 @@
                             <td>{{ $mhs['nilai_penghayatan'] }}</td>
                             <td>{{ $mhs['status'] }}</td>
                             <td>{{ $mhs['keterangan'] }}</td>
-                            {{-- <td>{{ $mhs[''] }}</td> --}}
-                            {{-- <td class="semester-1"></td>
-                            <td class="semester-2"></td>
-                            <td class="semester-3"></td>
-                            <td class="semester-4"></td>
-                            <td class="semester-5"></td>
-                            <td class="semester-6"></td>
-                            <td class="semester-7"></td>
-                            <td class="semester-8"></td> --}}
-                            {{-- <td></td>
-                            <td>2.95</td>
-                            <td>2.95</td>
-                            <td>2.95</td>
-                            <td></td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td></td>
-                            <td>LL</td>
-                            <td>-</td> --}}
                         </tr>
                     @endforeach
                 </tbody>
@@ -346,6 +286,76 @@
             </table>
         </div>
 
+        <!-- Modal for File Type Selection -->
+        <div class="modal fade" id="fileTypeModal" tabindex="-1" aria-labelledby="fileTypeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-custom-bg" style="border-radius: 10px;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="color: #00008B;">Buat Laporan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <p style="font-weight: bold;">Jenis File</p>
+                        <p style="font-size: 12px; color: #666;">*Harap pilih salah satu jenis file untuk diunduh.</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3" style="width: 77%;">
+                            <label style="margin-left: 100px;">PDF</label>
+                            <div class="form-check" style="margin-left: 50px;">
+                                <input class="form-check-input" type="radio" name="fileType" id="pdf" value="pdf" checked>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2" style="width: 77%;">
+                            <label style="margin-left: 100px;">Excel</label>
+                            <div class="form-check" style="margin-left: 50px;">
+                                <input class="form-check-input" type="radio" name="fileType" id="excel" value="excel">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn" style="background: linear-gradient(90deg, #E11818, #FF6C6C); color: white; border-radius: 8px;" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn" style="background: linear-gradient(90deg, #32BB35, #8BE52E); color: white; border-radius: 8px;" id="nextModalBtn">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Report Options -->
+        <div class="modal fade" id="reportOptionsModal" tabindex="-1" aria-labelledby="reportOptionsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-custom-bg" style="border-radius: 10px;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="color: #00008B;">Buat Laporan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <p style="font-weight: bold;">Pilihan Tambahan</p>
+                        <p style="font-size: 12px; color: #666;">*Anda dapat memilih beberapa pilihan ataupun tidak memilih sama sekali.</p>
+                        <div class="d-flex justify-content-between align-items-center mt-3" style="width: 70%;">
+                            <label>Sertakan Nilai Mata Kuliah</label>
+                            <div class="form-check" style="margin-left: 50px;">
+                                <input class="form-check-input" type="checkbox" id="includeCourseGrade">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2" style="width: 70%;">
+                            <label>Sertakan Nilai IP Kelas</label>
+                            <div class="form-check" style="margin-left: 50px;">
+                                <input class="form-check-input" type="checkbox" id="includeClassIP">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2" style="width: 70%;">
+                            <label>Sertakan Nilai IPK Kelas</label>
+                            <div class="form-check" style="margin-left: 50px;">
+                                <input class="form-check-input" type="checkbox" id="includeClassIPK">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn" style="background: linear-gradient(90deg, #E11818, #FF6C6C); color: white; border-radius: 8px;" id="backButton" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#fileTypeModal">Back</button>
+                        <button type="button" class="btn" style="background: linear-gradient(90deg, #32BB35, #8BE52E); color: white; border-radius: 8px;" id="generateReportBtn">Buat Laporan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <style>
             .table-container {
                 max-height: 600px;
@@ -423,9 +433,138 @@
             .table th {
                 text-align: center;
             }
+
+            .table thead th {
+                vertical-align: middle;
+                padding: 10px;
+                background-color: #f8f9fa;
+                font-weight: bold;
+                color: #333;
+            }
+            .table td {
+                padding: 8px;
+                vertical-align: middle;
+            }
+            .three-dots {
+                font-size: 18px;
+                line-height: 1;
+            }
+            .dropdown-item:hover {
+                background: linear-gradient(90deg, #32BB35, #8BE52E);
+                color: white;
+            }
+            .dropdown-item:active {
+                background: linear-gradient(90deg, #E11818, #FF6C6C);
+                color: white;
+            }
+            .dropdown-menu {
+                border-radius: 8px;
+                padding: 0;
+            }
+            .dropdown-item {
+                padding: 10px 15px;
+                border-bottom: 1px solid #dee2e6;
+            }
+            .dropdown-item:last-child {
+                border-bottom: none;
+            }
+            /* Gaya untuk menyamakan warna latar belakang modal */
+            .modal-custom-bg {
+                background-color: #ffffff !important; /* Warna latar belakang putih konsisten */
+            }
+            /* Menghilangkan ikon segitiga dari dropdown-toggle */
+            .dropdown-toggle::after {
+                display: none !important;
+            }
         </style>
 
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Trigger untuk membuka modal File Type dari dropdown
+                document.getElementById('downloadTrigger').addEventListener('click', function() {
+                    resetAndShowModal('#fileTypeModal');
+                    resetReportOptions(); // Reset checkbox saat membuka alur baru
+                });
+
+                document.getElementById('nextModalBtn').addEventListener('click', function() {
+                    $('#fileTypeModal').modal('hide');
+                    $('#reportOptionsModal').modal('show');
+                });
+
+                document.getElementById('generateReportBtn').addEventListener('click', function() {
+                    $('#reportOptionsModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Succeed',
+                        text: 'Laporan berhasil disimpan.',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#32BB35',
+                        customClass: {
+                            confirmButton: 'btn',
+                            popup: 'swal2-custom'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Reset state modal dan backdrop
+                            $('.modal-backdrop').remove();
+                            $('body').removeClass('modal-open');
+                            $('body').css('overflow', 'auto');
+                            // Reinisialisasi semua modal
+                            $('#fileTypeModal').modal('dispose');
+                            $('#reportOptionsModal').modal('dispose');
+                            $('#fileTypeModal').modal({ show: false });
+                            $('#reportOptionsModal').modal({ show: false });
+                            resetReportOptions(); // Reset checkbox setelah laporan dibuat
+                        }
+                    });
+                });
+
+                // Pastikan tombol Back berfungsi
+                const backButton = document.getElementById('backButton');
+                if (backButton) {
+                    backButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        $('#reportOptionsModal').modal('hide').then(() => {
+                            resetAndShowModal('#fileTypeModal');
+                            resetReportOptions(); // Reset checkbox saat kembali ke File Type
+                        });
+                        console.log('Tombol Back diklik, mencoba menampilkan #fileTypeModal');
+                    });
+                } else {
+                    console.log('Tombol Back tidak ditemukan!');
+                }
+            });
+
+            // Fungsi untuk reset dan menampilkan modal
+            function resetAndShowModal(modalId) {
+                $(modalId).modal('dispose'); // Hapus instance modal
+                $(modalId).modal({ show: false }); // Reinisialisasi modal
+                $(modalId).modal('show'); // Tampilkan modal
+            }
+
+            // Fungsi untuk reset checkbox di Report Options
+            function resetReportOptions() {
+                document.getElementById('includeCourseGrade').checked = false;
+                document.getElementById('includeClassIP').checked = false;
+                document.getElementById('includeClassIPK').checked = false;
+            }
+
+            // Tambahkan gaya CSS untuk gradasi hijau pada tombol OK SweetAlert
+            const style = document.createElement('style');
+            style.innerHTML = `
+                .swal2-custom .swal2-confirm {
+                    background: linear-gradient(90deg, #32BB35, #8BE52E) !important;
+                    border-radius: 8px !important;
+                    color: white !important;
+                    padding: 10px 20px !important;
+                }
+                .swal2-custom .swal2-confirm:hover {
+                    background: linear-gradient(90deg, #2A9D34, #76C517) !important;
+                }
+            `;
+            document.head.appendChild(style);
+
             document.getElementById('program_studi').addEventListener('change', function () {
                 const programStudi = this.value;
                 const semesterDropdown = document.getElementById('semester');
