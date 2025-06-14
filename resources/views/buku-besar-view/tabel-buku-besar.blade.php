@@ -7,222 +7,196 @@
 @section('content')
     <div class="container mt-5">
         <h2>History Buku Besar</h2>
-        <div class="row mb-3">
-            <div class="col-md-2">
-                <label for="kelas" class="form-label">Kelas</label>
-                <select class="form-select custom-dropdown" id="kelas">
-                    <option value="2C" selected>2C</option>
-                    <option value="2B">2B</option>
-                    <option value="2A">2A</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label for="semester" class="form-label">Semester</label>
-                <select class="form-select custom-dropdown" id="semester">
-                    @for ($i = 1; $i <= $totalSemesters; $i++)
-                        <option value="{{ $i }}" {{ $i == $semester ? 'selected' : '' }}>{{ $i }}</option>
-                    @endfor
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label for="search" class="form-label"> </label>
-                <input type="text" class="form-control custom-search" id="search" placeholder="Search">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-2">
-                <label for="tahun" class="form-label">Tahun</label>
-                <select class="form-select custom-dropdown" id="tahun">
-                    @for ($i = 2020; $i <= date('Y'); $i++)
-                        <option value="{{ $i }}" {{ $i == $tahun ? 'selected' : '' }}>{{ $i }}</option>
-                    @endfor
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label for="program_studi" class="form-label">Program Studi</label>
-                <select class="form-select custom-dropdown" id="program_studi">
-                    <option value="" hidden>Silakan Pilih Program Studi</option>
-                    @foreach ($prodis as $prodi)
-                        <option value="{{ $prodi->id }}" {{ $prodi->id == $program_studi ? 'selected' : '' }}>
-                            {{ $prodi->nama_prodi }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
+        <form id="filterForm" method="GET" action="{{ route('buku-besar') }}">
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <label for="kelas" class="form-label">Kelas</label>
+                    <select class="form-select custom-dropdown" id="kelas" name="kelas_id">
+                        <option value="" hidden>Silakan Pilih Kelas</option>
+                    </select>
+                </div>
 
-        <div class="table-responsive mt-4">
-            <table class="table table-bordered text-center align-middle small">
-                <thead>
-                    <tr>
-                        <th rowspan="4">NO</th>
-                        <th rowspan="4">NIM</th>
-                        <th rowspan="4">NAMA</th>
-                        <th colspan="7">MATA KULIAH</th>
-                        <th id="sks-d-header" colspan="8" rowspan="2">JUMLAH SKS NILAI D SEMESTER</th>
-                        <th colspan="2" rowspan="3">KUMULATIF</th>
-                        <th colspan="2" rowspan="3">IP SEMESTER</th>
-                        <th rowspan="4">IPK</th>
-                        <th rowspan="4">S</th>
-                        <th rowspan="4">I</th>
-                        <th rowspan="4">A</th>
-                        <th rowspan="4">JML</th>
-                        <th rowspan="4">N.P</th>
-                        <th rowspan="4">STATUS</th>
-                        <th rowspan="4">KET.</th>
-                    </tr>
-                    <tr class="highlight">
-                        @foreach ($data[2]['nilai_per_matkul'] as $mk)
-                            <th>{{ $mk['kode_dosen'] }}</th>
+                <div class="col-md-2">
+                    <label for="semester" class="form-label">Semester</label>
+                    <select class="form-select custom-dropdown" id="semester" name="semester">
+                        <option value="" hidden>Silakan Pilih Semester</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="search" class="form-label">Pencarian</label>
+                    <input type="text" class="form-control custom-search" id="search" name="search" placeholder="Cari mahasiswa..." value="{{ request('search') }}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <label for="tahun" class="form-label">Tahun (Angkatan)</label>
+                    @php
+                        $angkatanList = $kelasList->pluck('angkatan')->unique()->sortDesc();
+                    @endphp
+                    <select class="form-select custom-dropdown" id="tahun" name="tahun">
+                        <option value="" hidden>Silakan Pilih Angkatan</option>
+                        @foreach ($angkatanList as $angkatan)
+                            <option value="{{ $angkatan }}" {{ $angkatan == request('tahun', $tahun) ? 'selected' : '' }}>
+                                {{ $angkatan }}
+                            </option>
                         @endforeach
-                    </tr>
-                    <tr class="highlight">
-                        @foreach ($mataKuliahs as $mk)
-                            <th>{{ $mk['kode_matkul'] }}</th>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label for="program_studi" class="form-label">Program Studi</label>
+                    <select class="form-select custom-dropdown" id="program_studi" name="program_studi">
+                        <option value="" hidden>Silakan Pilih Program Studi</option>
+                        @foreach ($prodis as $prodi)
+                            <option value="{{ $prodi->kode_prodi }}" {{ $prodi->kode_prodi == request('program_studi', $program_studi) ? 'selected' : '' }}>
+                                {{ $prodi->nama_prodi }}
+                            </option>
                         @endforeach
-                            @for ($i = 1; $i <= 8; $i++)
-                                    <th class="semester-{{ $i }}">
-                                        @if ($i == $semester)
-                                            {{ $totalSks[$i] ?? "" }}
-                                        @else
-                                            {{ "" }}
-                                        @endif
-                                    </th>
-                                @endfor
-                            {{-- @for ($i = 1; $i <= 8; $i++)
-                            <th class="semester-{{ $i }}">{{ $semester_sks[$i] ?? "" }}</th>
-                        @endfor --}}
-                    </tr>
-                    <tr class="highlight">
-                        @foreach ($mataKuliahs as $mk)
-                            <th>{{ $mk['jumlah_sks'] }}</th>
-                        @endforeach
-                        <th class="semester-1">I</th>
-                        <th class="semester-2">II</th>
-                        <th class="semester-3">III</th>
-                        <th class="semester-4">IV</th>
-                        <th class="semester-5">V</th>
-                        <th class="semester-6">VI</th>
-                        <th class="semester-7">VII</th>
-                        <th class="semester-8">VIII</th>
-                        <th>SKS D</th>
-                        <th>NxB</th>
-                        <th>LALU</th>
-                        <th>SEKARANG</th>
-                        {{-- @foreach ($mataKuliahs as $mk)
-                            <th>{{ $mk['totalSksAll'] }}</th>
-                        @endforeach --}}
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($data as $mhs)
+                    </select>
+                </div>
+            </div>  
+        </form>          
+    </div>            
+
+        @if ($data->isEmpty())
+            <div class="alert alert-info mt-4" role="alert">
+                Tidak ada data buku besar yang ditemukan untuk filter yang dipilih. Silakan coba filter lain atau pastikan data sudah diimpor.
+            </div>
+        @else
+            <div class="table-responsive mt-4">
+                <table class="table table-bordered text-center align-middle small">
+                    <thead>
                         <tr>
-                            <td>{{ $mhs['no'] }}</td>
-                            <td>{{ $mhs['nim'] }}</td>
-                            <td>{{ $mhs['nama_mhs'] }}</td>
-                            @foreach($mhs['nilai_per_matkul'] as $nilai)
-                                <td>
-                                    {{ $nilai['indeks_nilai'] }}
-                                </td>
-                            @endforeach
-                            @for ($i = 1; $i <= 8; $i++)
-                                <td class="semester-{{ $i }} {{ $i <= $semester ? 'semester-active' : '' }}">
-                                    {{-- {{ $mhs['semester_sks'][$i] ?? "" }} --}}
-                                    @if ($i == $semester)
-                                        {{ $mhs['jumlah_d'] ?? "" }}
-                                    @else
-                                        {{ "" }}
-                                    @endif
-                                </td>
-                            @endfor
-                            {{-- @for ($i = 1; $i <= 8; $i++)
-                                <td class="semester-{{ $i }} {{ $i <= $semester ? 'semester-active' : '' }}">
-                                    {{ $mhs['semester_sks'][$i] ?? 0 }}
-                                </td>
-                            @endfor --}}
-                            {{-- <td>{{ $mhs['jumlah_d'] }}</td> --}}
-                            <td>{{ $mhs['sks_d'] }}</td>
-                            <td>{{ $mhs['nilai_bobot'] }}</td>
-                            <td>{{ $mhs['ip_semester']['lalu'] }}</td>
-                            <td>{{ $mhs['ip_semester']['sekarang'] }}</td>
-                            <td>{{ $mhs['ipk'] }}</td>
-                            <td>{{ $mhs['jml_sakit'] }}</td>
-                            <td>{{ $mhs['jml_izin'] }}</td>
-                            <td>{{ $mhs['jml_alfa'] }}</td>
-                            <td>{{ $mhs['jml'] }}</td>
-                            <td>{{ $mhs['nilai_penghayatan'] }}</td>
-                            <td>{{ $mhs['status'] }}</td>
-                            <td>{{ $mhs['keterangan'] }}</td>
-                            {{-- <td>{{ $mhs[''] }}</td> --}}
-                            {{-- <td class="semester-1"></td>
-                            <td class="semester-2"></td>
-                            <td class="semester-3"></td>
-                            <td class="semester-4"></td>
-                            <td class="semester-5"></td>
-                            <td class="semester-6"></td>
-                            <td class="semester-7"></td>
-                            <td class="semester-8"></td> --}}
-                            {{-- <td></td>
-                            <td>2.95</td>
-                            <td>2.95</td>
-                            <td>2.95</td>
-                            <td></td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td></td>
-                            <td>LL</td>
-                            <td>-</td> --}}
+                            <th rowspan="4">NO</th>
+                            <th rowspan="4">NIM</th>
+                            <th rowspan="4">NAMA</th>
+                            <th colspan="{{ count($mataKuliahs) }}">MATA KULIAH</th>
+                            <th id="sks-d-header" colspan="8" rowspan="2">JUMLAH SKS NILAI D SEMESTER</th>
+                            <th colspan="2" rowspan="3">KUMULATIF</th>
+                            <th colspan="2" rowspan="3">IP SEMESTER</th>
+                            <th rowspan="4">IPK</th>
+                            <th rowspan="4">S</th>
+                            <th rowspan="4">I</th>
+                            <th rowspan="4">A</th>
+                            <th rowspan="4">JML</th>
+                            <th rowspan="4">N.P</th>
+                            <th rowspan="4">STATUS</th>
+                            <th rowspan="4">KET.</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <div class="table-responsive mt-4">
-            <table class="table table-bordered text-center align-middle small">
-                <thead>
-                    <tr>
-                        <th rowspan="2">NO</th>
-                        <th rowspan="2">KODE MATA KULIAH</th>
-                        <th rowspan="2">NAMA MATA KULIAH</th>
-                        <th rowspan="2">DOSEN</th>
-                        <th colspan="8">JUMLAH MAHASISWA YANG MENDAPAT NILAI</th>
-                    </tr>
-                    <tr>
-                        <th>A</th>
-                        <th>AB</th>
-                        <th>B</th>
-                        <th>BC</th>
-                        <th>C</th>
-                        <th>CD</th>
-                        <th>D</th>
-                        <th>E</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($mataKuliahs as $index => $mk)
-                        @php
-                            $nilaiCounts = ['A' => 0, 'AB' => 0, 'B' => 0, 'BC' => 0, 'C' => 0, 'CD' => 0, 'D' => 0, 'E' => 0];
-                            $nilaiDetails = [];
-                            foreach ($data as $mhs) {
-                                $nilai = $mhs['nilai_per_matkul']->where('kode_matkul', $mk->kode_matkul)->first();
-                                if ($nilai && !in_array($nilai['nama_dosen'], $nilaiDetails)) {
-                                    $nilaiDetails[] = $nilai['nama_dosen'];
-                                }
-                                $nilaiIndex = $nilai['indeks_nilai'] ?? '-';
-                                if (array_key_exists($nilaiIndex, $nilaiCounts)) {
-                                    $nilaiCounts[$nilaiIndex]++;
-                                }
-                            }
-                        @endphp
-                        @foreach ($nilaiDetails as $dosen)
+                        <tr class="highlight">
+                            @foreach ($mataKuliahs as $mk)
+                                <th>{{ $mk->kode_dosen ?? '-' }}</th>
+                            @endforeach
+                        </tr>
+                        <tr class="highlight">
+                            @foreach ($mataKuliahs as $mk)
+                                <th>{{ $mk->kode_matkul }}</th>
+                            @endforeach
+                                @for ($i = 1; $i <= 8; $i++)
+                                    <th class="semester-{{ $i }}"></th> {{-- These will be dynamically filled via JS if needed, or left blank as per original --}}
+                                @endfor
+                        </tr>
+                        <tr class="highlight">
+                             @foreach ($mataKuliahs as $mk)
+                                <th>{{ $mk->jumlah_sks }}</th>
+                            @endforeach
+                            <th class="semester-1">I</th>
+                            <th class="semester-2">II</th>
+                            <th class="semester-3">III</th>
+                            <th class="semester-4">IV</th>
+                            <th class="semester-5">V</th>
+                            <th class="semester-6">VI</th>
+                            <th class="semester-7">VII</th>
+                            <th class="semester-8">VIII</th>
+                            <th>SKS D</th>
+                            <th>NxB</th>
+                            <th>LALU</th>
+                            <th>SEKARANG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($data as $mhs)
                             <tr>
-                                <td>{{ $loop->parent->index + 1 }}</td>
+                                <td>{{ $mhs['no'] }}</td>
+                                <td>{{ $mhs['nim'] }}</td>
+                                <td>{{ $mhs['nama_mhs'] }}</td>
+                                @foreach ($mataKuliahs as $mk)
+                                    @php
+                                        $nilai = collect($mhs['nilai_per_matkul'])->firstWhere('kode_matkul', $mk->kode_matkul);
+                                    @endphp
+                                    <td>{{ $nilai['indeks_nilai'] ?? '-' }}</td>
+                                @endforeach
+                                @for ($i = 1; $i <= 8; $i++)
+                                    <td class="semester-{{ $i }} {{ $i <= $semester ? 'semester-active' : '' }}">
+                                        @if ($i == $semester)
+                                            {{ $mhs['jumlah_d'] ?? '' }}
+                                        @endif
+                                    </td>
+                                @endfor
+                                <td>{{ $mhs['sks_d'] }}</td>
+                                <td>{{ $mhs['nilai_bobot'] }}</td>
+                                <td>{{ $mhs['ip_semester']['lalu'] }}</td>
+                                <td>{{ $mhs['ip_semester']['sekarang'] }}</td>
+                                <td>{{ $mhs['ipk'] }}</td>
+                                <td>{{ $mhs['jml_sakit'] }}</td>
+                                <td>{{ $mhs['jml_izin'] }}</td>
+                                <td>{{ $mhs['jml_alfa'] }}</td>
+                                <td>{{ $mhs['jml'] }}</td>
+                                <td>{{ $mhs['nilai_penghayatan'] }}</td>
+                                <td>{{ $mhs['status'] }}</td>
+                                <td>{{ $mhs['keterangan'] }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-responsive mt-4">
+                <table class="table table-bordered text-center align-middle small">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">NO</th>
+                            <th rowspan="2">KODE MATA KULIAH</th>
+                            <th rowspan="2">NAMA MATA KULIAH</th>
+                            <th rowspan="2">DOSEN</th>
+                            <th colspan="8">JUMLAH MAHASISWA YANG MENDAPAT NILAI</th>
+                        </tr>
+                        <tr>
+                            <th>A</th>
+                            <th>AB</th>
+                            <th>B</th>
+                            <th>BC</th>
+                            <th>C</th>
+                            <th>CD</th>
+                            <th>D</th>
+                            <th>E</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($mataKuliahs as $index => $mk)
+                            @php
+                                $nilaiCounts = ['A' => 0, 'AB' => 0, 'B' => 0, 'BC' => 0, 'C' => 0, 'CD' => 0, 'D' => 0, 'E' => 0];
+                                $dosenForMk = []; // Store unique dosens for this matkul
+                                foreach ($data as $mhs) {
+                                    $nilai = $mhs['nilai_per_matkul']->where('kode_matkul', $mk->kode_matkul)->first();
+                                    if ($nilai) {
+                                        if (!in_array($nilai['nama_dosen'], $dosenForMk) && $nilai['nama_dosen'] != '-') {
+                                            $dosenForMk[] = $nilai['nama_dosen'];
+                                        }
+                                        $nilaiIndex = $nilai['indeks_nilai'] ?? '-';
+                                        if (array_key_exists($nilaiIndex, $nilaiCounts)) {
+                                            $nilaiCounts[$nilaiIndex]++;
+                                        }
+                                    }
+                                }
+                            @endphp
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
                                 <td>{{ $mk->kode_matkul }}</td>
                                 <td>{{ $mk->nama_matkul }}</td>
-                                <td>{{ $dosen }}</td>
+                                <td>{{ implode(', ', $dosenForMk) }}</td> {{-- Display all unique dosens for this matkul --}}
                                 <td>{{ $nilaiCounts['A'] }}</td>
                                 <td>{{ $nilaiCounts['AB'] }}</td>
                                 <td>{{ $nilaiCounts['B'] }}</td>
@@ -233,93 +207,94 @@
                                 <td>{{ $nilaiCounts['E'] }}</td>
                             </tr>
                         @endforeach
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="table-responsive mt-4">
-            <table class="table table-bordered text-center align-middle small">
-                <thead>
-                    <tr>
-                        <th rowspan="2">IP</th>
-                        <th rowspan="2">JUMLAH MAHASISWA</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php
-                        $ipCounts = [
-                            'IP<=2.75' => 0,
-                            '2.75<IP<=3.50' => 0,
-                            'IP>3.50' => 0,
-                        ];
-                        foreach ($data as $mhs) {
-                            $ip = $mhs['ip_semester']['sekarang'];
-                            if ($ip <= 2.75) {
-                                $ipCounts['IP<=2.75']++;
-                            } elseif ($ip <= 3.50) {
-                                $ipCounts['2.75<IP<=3.50']++;
-                            } else {
-                                $ipCounts['IP>3.50']++;
+            <div class="table-responsive mt-4">
+                <table class="table table-bordered text-center align-middle small">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">IP</th>
+                            <th rowspan="2">JUMLAH MAHASISWA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $ipCounts = [
+                                'IP<=2.75' => 0,
+                                '2.75<IP<=3.50' => 0,
+                                'IP>3.50' => 0,
+                            ];
+                            foreach ($data as $mhs) {
+                                $ip = $mhs['ip_semester']['sekarang'];
+                                if ($ip <= 2.75) {
+                                    $ipCounts['IP<=2.75']++;
+                                } elseif ($ip <= 3.50) {
+                                    $ipCounts['2.75<IP<=3.50']++;
+                                } else {
+                                    $ipCounts['IP>3.50']++;
+                                }
                             }
-                        }
-                    @endphp
-                    <tr>
-                        <td>IP<=2.75</td>
-                        <td>{{ $ipCounts['IP<=2.75'] }}</td>
-                    </tr>
-                    <tr>
-                        <td>2.75<IP<=3.50</td>
-                        <td>{{ $ipCounts['2.75<IP<=3.50'] }}</td>
-                    </tr>
-                    <tr>
-                        <td>IP>3.50</td>
-                        <td>{{ $ipCounts['IP>3.50'] }}</td>
-                    </tr>
-            </table>
-        </div>
+                        @endphp
+                        <tr>
+                            <td>IP<=2.75</td>
+                            <td>{{ $ipCounts['IP<=2.75'] }}</td>
+                        </tr>
+                        <tr>
+                            <td>2.75<IP<=3.50</td>
+                            <td>{{ $ipCounts['2.75<IP<=3.50'] }}</td>
+                        </tr>
+                        <tr>
+                            <td>IP>3.50</td>
+                            <td>{{ $ipCounts['IP>3.50'] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="table-responsive mt-4">
-            <table class="table table-bordered text-center align-middle small">
-                <thead>
-                    <tr>
-                        <th rowspan="2">IPK</th>
-                        <th rowspan="2">JUMLAH MAHASISWA</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php
-                        $ipkCounts = [
-                            'IPK<=2.75' => 0,
-                            '2.75<IPK<=3.50' => 0,
-                            'IPK>3.50' => 0,
-                        ];
-                        foreach ($data as $mhs) {
-                            $ipk = $mhs['ipk'];
-                            if ($ipk <= 2.75) {
-                                $ipkCounts['IPK<=2.75']++;
-                            } elseif ($ipk <= 3.50) {
-                                $ipkCounts['2.75<IPK<=3.50']++;
-                            } else {
-                                $ipkCounts['IPK>3.50']++;
+            <div class="table-responsive mt-4">
+                <table class="table table-bordered text-center align-middle small">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">IPK</th>
+                            <th rowspan="2">JUMLAH MAHASISWA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            $ipkCounts = [
+                                'IPK<=2.75' => 0,
+                                '2.75<IPK<=3.50' => 0,
+                                'IPK>3.50' => 0,
+                            ];
+                            foreach ($data as $mhs) {
+                                $ipk = $mhs['ipk'];
+                                if ($ipk <= 2.75) {
+                                    $ipkCounts['IPK<=2.75']++;
+                                } elseif ($ipk <= 3.50) {
+                                    $ipkCounts['2.75<IPK<=3.50']++;
+                                } else {
+                                    $ipkCounts['IPK>3.50']++;
+                                }
                             }
-                        }
-                    @endphp
-                    <tr>
-                        <td>IPK<=2.75</td>
-                        <td>{{ $ipkCounts['IPK<=2.75'] }}</td>
-                    </tr>
-                    <tr>
-                        <td>2.75<IPK<=3.50</td>
-                        <td>{{ $ipkCounts['2.75<IPK<=3.50'] }}</td>
-                    </tr>
-                    <tr>
-                        <td>IPK>3.50</td>
-                        <td>{{ $ipkCounts['IPK>3.50'] }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                        @endphp
+                        <tr>
+                            <td>IPK<=2.75</td>
+                            <td>{{ $ipkCounts['IPK<=2.75'] }}</td>
+                        </tr>
+                        <tr>
+                            <td>2.75<IPK<=3.50</td>
+                            <td>{{ $ipkCounts['2.75<IPK<=3.50'] }}</td>
+                        </tr>
+                        <tr>
+                            <td>IPK>3.50</td>
+                            <td>{{ $ipkCounts['IPK>3.50'] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        @endif
 
         <style>
             .table-container {
@@ -394,58 +369,124 @@
         </style>
 
         <script>
-            document.getElementById('program_studi').addEventListener('change', function () {
-                const programStudi = this.value;
+            document.addEventListener('DOMContentLoaded', function() {
+                const programStudiDropdown = document.getElementById('program_studi');
+                const tahunDropdown = document.getElementById('tahun');
+                const kelasDropdown = document.getElementById('kelas');
                 const semesterDropdown = document.getElementById('semester');
+                const filterForm = document.getElementById('filterForm');
 
-                semesterDropdown.innerHTML = '';
+                // Get initial values from PHP Blade, which reflect the current request or defaults
+                const initialProgramStudi = "{{ request('program_studi', $program_studi) }}";
+                const initialTahun = "{{ request('tahun', $tahun) }}";
+                const initialKelas = "{{ request('kelas_id', $kelas) }}";
+                const initialSemester = "{{ request('semester', $semester) }}";
 
-                const maxSemester = programStudi === '1' ? 8 : 6;
+                // Raw kelas data from PHP
+                const allKelasData = @json($kelasList);
 
-                for (let i = 1; i <= maxSemester; i++) {
-                    const option = document.createElement('option');
-                    option.value = i;
-                    option.text = i;
-                    if (i === 1) option.selected = true;
-                    semesterDropdown.appendChild(option);
+                function populateKelasDropdown(selectedProgramStudi, selectedTahun) {
+                    kelasDropdown.innerHTML = '<option value="" hidden>Silakan Pilih Kelas</option>';
+                    const filteredKelas = allKelasData.filter(kls => {
+                        return (selectedProgramStudi === '' || kls.kode_prodi == selectedProgramStudi) &&
+                               (selectedTahun === '' || kls.angkatan == selectedTahun);
+                    });
+
+                    // Add unique class names (A, B, C, etc.) to the dropdown
+                    const uniqueKelasNames = [...new Set(filteredKelas.map(kls => kls.nama_kelas))].sort();
+
+                    uniqueKelasNames.forEach(nama_kelas => {
+                        // Find the first matching class to get its ID, as multiple classes might have the same name but different prodi/angkatan
+                        const kls = filteredKelas.find(k => k.nama_kelas === nama_kelas);
+                        if (kls) {
+                            const option = document.createElement('option');
+                            option.value = kls.id; // Use the actual class ID
+                            option.text = `${nama_kelas}`; // Just show A, B, C
+                            if (kls.id == initialKelas) {
+                                option.selected = true;
+                            }
+                            kelasDropdown.appendChild(option);
+                        }
+                    });
                 }
 
-                semesterDropdown.dispatchEvent(new Event('change'));
-            });
+                function populateSemesterDropdown(selectedProgramStudi) {
+                    semesterDropdown.innerHTML = '<option value="" hidden>Silakan Pilih Semester</option>';
+                    let maxSemester = 8; // Default for D4 (assuming kode_prodi '1' is D4 based on typical setups, adjust if needed)
 
-            document.getElementById('semester').addEventListener('change', function () {
-                const selectedSemester = parseInt(this.value) || 1;
-                updateSemesterColumns(selectedSemester);
-            });
+                    // You need to map program_studi kode to its name or directly to max semesters
+                    // Assuming 'D3' has a specific kode_prodi, let's say '2' for example
+                    const selectedProdi = @json($prodis).find(prodi => prodi.kode_prodi == selectedProgramStudi);
+                    if (selectedProdi && selectedProdi.nama_prodi.toLowerCase().includes('D3')) {
+                        maxSemester = 6;
+                    }
 
-            function updateSemesterColumns(selectedSemester) {
-                for (let i = 1; i <= 8; i++) {
-                    const cells = document.querySelectorAll(`.semester-${i}`);
-                    cells.forEach(cell => cell.classList.remove('semester-active'));
+                    for (let i = 1; i <= maxSemester; i++) {
+                        const option = document.createElement('option');
+                        option.value = i;
+                        option.text = i;
+                        if (i == initialSemester) {
+                            option.selected = true;
+                        }
+                        semesterDropdown.appendChild(option);
+                    }
                 }
 
-                const sksDHeader = document.getElementById('sks-d-header');
-                sksDHeader.setAttribute('colspan', selectedSemester || 1);
+                function updateSemesterColumns(selectedSemester) {
+                    for (let i = 1; i <= 8; i++) {
+                        const cells = document.querySelectorAll(`.semester-${i}`);
+                        cells.forEach(cell => cell.classList.remove('semester-active'));
+                    }
 
-                for (let i = 1; i <= selectedSemester && i <= 8; i++) {
-                    const cells = document.querySelectorAll(`.semester-${i}`);
-                    cells.forEach(cell => cell.classList.add('semester-active'));
+                    const sksDHeader = document.getElementById('sks-d-header');
+                    // Adjust colspan based on the selected semester
+                    sksDHeader.setAttribute('colspan', selectedSemester > 0 ? selectedSemester : 1);
+
+                    for (let i = 1; i <= selectedSemester && i <= 8; i++) {
+                        const cells = document.querySelectorAll(`.semester-${i}`);
+                        cells.forEach(cell => cell.classList.add('semester-active'));
+                    }
                 }
 
-                const rows = document.querySelectorAll('tbody tr');
+                // Event Listeners for filter changes
+                programStudiDropdown.addEventListener('change', function() {
+                    populateKelasDropdown(this.value, tahunDropdown.value);
+                    populateSemesterDropdown(this.value);
+                    filterForm.submit();
+                });
 
-                rows.forEach(row => {
-                    const sksDCell = row.querySelector('td:nth-child(17)');
-                    if (selectedSemester === 0) {
-                        sksDCell.textContent = '0';
-                    } else {
-                        const selectedSemesterCell = row.querySelector(`.semester-${selectedSemester}`);
-                        sksDCell.textContent = selectedSemesterCell ? selectedSemesterCell.textContent : '0';
+                tahunDropdown.addEventListener('change', function() {
+                    populateKelasDropdown(programStudiDropdown.value, this.value);
+                    filterForm.submit();
+                });
+
+                kelasDropdown.addEventListener('change', function() {
+                    filterForm.submit();
+                });
+
+                semesterDropdown.addEventListener('change', function() {
+                    updateSemesterColumns(parseInt(this.value));
+                    filterForm.submit();
+                });
+
+                document.getElementById('search').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault(); // Prevent default form submission
+                        filterForm.submit();
                     }
                 });
-            }
 
-            document.getElementById('program_studi').dispatchEvent(new Event('change'));
-            document.getElementById('semester').dispatchEvent(new Event('change'));
+                // Initial population and update on page load
+                populateKelasDropdown(initialProgramStudi, initialTahun);
+                populateSemesterDropdown(initialProgramStudi);
+                updateSemesterColumns(parseInt(initialSemester));
+
+                // Set initial values for dropdowns from request or default
+                programStudiDropdown.value = initialProgramStudi;
+                tahunDropdown.value = initialTahun;
+                kelasDropdown.value = initialKelas;
+                semesterDropdown.value = initialSemester;
+
+            });
         </script>
     @endsection
