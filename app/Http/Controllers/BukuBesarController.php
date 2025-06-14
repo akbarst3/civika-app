@@ -226,23 +226,35 @@ class BukuBesarController extends Controller
         $totalSemesters = IndeksPrestasiSemester::select('semester')->distinct()->count();
 
         // 8. Proses data per mahasiswa
-        $data = $mahasiswas->map(function ($mhs, $index) use ($semester) {
+        $data = $mahasiswas
+        ->filter(function ($mhs) use ($semester) {
+            return
+                $mhs->nilai->where('semester_ke', $semester)->isNotEmpty() ||
+                $mhs->indeksPrestasiSemester->where('semester', $semester)->isNotEmpty() ||
+                $mhs->absensi->isNotEmpty();
+        })
+        ->values()
+        ->map(function ($mhs, $index) use ($semester) {
             $nilaiSemester = $mhs->nilai->where('semester_ke', $semester);
+            $ipSmtNow = $mhs->indeksPrestasiSemester->firstWhere('semester', $semester);
+            $ipSmtBefore = $mhs->indeksPrestasiSemester->firstWhere('semester', $semester - 1);
+            $absensi = $mhs->absensi->first();
 
             $totalSks = $nilaiSemester->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0);
-            $jumlah_d = $mhs->indeksPrestasiSemester->firstWhere('semester', $semester)->jumlah_d ?? 0;
-            $totalSksD = $mhs->indeksPrestasiSemester->sum('jumlah_d');
-            $ipSekarang = optional($mhs->indeksPrestasiSemester->firstWhere('semester', $semester))->indeks_prestasi ?? 0;
-            $ipLalu = optional($mhs->indeksPrestasiSemester->firstWhere('semester', $semester - 1))->indeks_prestasi ?? 0;
-            $nilai_bobot = optional($mhs->indeksPrestasiSemester->firstWhere('semester', $semester))->nilai_bobot ?? 0;
-
-            $totalBobot = $mhs->indeksPrestasiSemester->sum('nilai_bobot');
             $totalSksAll = $mhs->nilai->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0);
+            $totalBobot = $mhs->indeksPrestasiSemester->sum('nilai_bobot');
+            $jumlahD = $ipSmtNow->jumlah_d ?? 0;
+            $sksD = $mhs->indeksPrestasiSemester->sum('jumlah_d');
+            $ipNow = $ipSmtNow->indeks_prestasi ?? 0;
+            $ipPrev = $ipSmtBefore->indeks_prestasi ?? 0;
+            $nilaiBobot = $ipSmtNow->nilai_bobot ?? 0;
             $ipk = $totalSksAll > 0 ? round($totalBobot / $totalSksAll, 2) : 0;
             $ipAverage = round($mhs->indeksPrestasiSemester->pluck('indeks_prestasi')->avg(), 2);
 
-            $absensi = $mhs->absensi->first();
-            $jml = $absensi ? $absensi->jml_sakit + $absensi->jml_izin + $absensi->jml_alfa : 0;
+            $jml_sakit = $absensi->jml_sakit ?? 0;
+            $jml_izin = $absensi->jml_izin ?? 0;
+            $jml_alfa = $absensi->jml_alfa ?? 0;
+            $jml = $jml_sakit + $jml_izin + $jml_alfa;
 
             $semesterSks = collect(range(1, 8))->mapWithKeys(fn($s) => [
                 $s => $mhs->nilai->where('semester_ke', $s)->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0)
@@ -263,19 +275,22 @@ class BukuBesarController extends Controller
                 'nama_mhs' => $mhs->nama_mhs,
                 'nilai_per_matkul' => $nilaiDetail,
                 'total_sks' => $totalSks,
-                'jumlah_d' => $jumlah_d,
-                'sks_d' => $totalSksD,
+                'jumlah_d' => $jumlahD,
+                'sks_d' => $sksD,
                 'semester_sks' => $semesterSks->toArray(),
-                'nilai_bobot' => $nilai_bobot,
-                'ip_semester' => ['lalu' => $ipLalu, 'sekarang' => $ipSekarang],
+                'nilai_bobot' => $nilaiBobot,
+                'ip_semester' => [
+                    'lalu' => $ipPrev,
+                    'sekarang' => $ipNow
+                ],
                 'ipk' => $ipk,
-                'jml_sakit' => $absensi->jml_sakit ?? 0,
-                'jml_izin' => $absensi->jml_izin ?? 0,
-                'jml_alfa' => $absensi->jml_alfa ?? 0,
+                'jml_sakit' => $jml_sakit,
+                'jml_izin' => $jml_izin,
+                'jml_alfa' => $jml_alfa,
                 'jml' => $jml,
                 'nilai_penghayatan' => $absensi->nilai_penghayatan ?? '-',
-                'status' => optional($mhs->indeksPrestasiSemester->firstWhere('semester', $semester))->status ?? 'N/A',
-                'keterangan' => optional($mhs->indeksPrestasiSemester->firstWhere('semester', $semester))->keterangan ?? '-',
+                'status' => $ipSmtNow->status ?? 'N/A',
+                'keterangan' => $ipSmtNow->keterangan ?? '-',
             ];
         });
 
@@ -355,6 +370,8 @@ class BukuBesarController extends Controller
                 'tingkat' => $tingkat_kelas,
                 'semester_aktif' => $semesterAktif,
                 'status' => $sudahDiisi ? 'imported' : 'not_imported',
+                'kelas_id' => $kls->id,
+                'kode_prodi' => $kls->prodi->kode_prodi ?? null,
             ];
         
         })->filter()->sortBy([
