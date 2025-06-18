@@ -43,6 +43,17 @@ class Dosen extends Model
         return $this->hasMany(Menguji::class, 'kode_dosen', 'kode_dosen');
     }
 
+    public function membimbingKpPkl()
+    {
+        return $this->hasMany(MembimbingKpPkl::class, 'kode_dosen', 'kode_dosen');
+    }
+
+    public function mengujiKpPkl()
+    {
+        return $this->hasMany(MengujiKpPkl::class, 'kode_dosen', 'kode_dosen');
+    }
+
+
     public function user()
     {
         return $this->hasOne(User::class, 'kode_dosen', 'kode_dosen');

@@ -22,7 +22,7 @@ class KpPkl extends Model
     {
         return $this->belongsTo(Dosen::class, 'kode_dosen', 'kode_dosen');
     }
-    
+
     public function pembimbing1()
     {
         return $this->hasOne(MembimbingKpPkl::class, 'id_perusahaan', 'id_perusahaan')
@@ -49,5 +49,15 @@ class KpPkl extends Model
         return $this->hasOne(MengujiKpPkl::class, 'id_perusahaan', 'id_perusahaan')
             ->whereColumn('tahun', 'tahun')
             ->where('penguji_ke', 2);
+    }
+
+    public function membimbingKpPkl()
+    {
+        return $this->hasOne(MembimbingKpPkl::class, 'id_perusahaan', 'id_perusahaan');
+    }
+
+    public function mengujiKpPkl()
+    {
+        return $this->hasOne(MengujiKpPkl::class, 'id_perusahaan', 'id_perusahaan');
     }
 }

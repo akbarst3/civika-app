@@ -30,3 +30,7 @@ Route::get('/datapkl/import', function () {
 })->name('kp-pkl.import.form');
 Route::get('/generate-pdpt-pkl', [PKLController::class, 'form'])->name('generate.laporan.form');
 Route::get('/laporan/download', [PKLController::class, 'handleDownload'])->name('laporan.download');
+
+
+Route::get('/kp-pkl/form', [PKLController::class, 'form'])->name('kp-pkl.form');
+Route::get('/kp-pkl/download', [PKLController::class, 'downloadHonorKpPkl'])->name('kp-pkl.download');
