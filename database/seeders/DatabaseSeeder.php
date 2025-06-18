@@ -29,7 +29,8 @@ class DatabaseSeeder extends Seeder
 //            MengujiTASeeder::class,
             KpPklSeeder::class,
             MembimbingKpPklSeeder::class,
-            MengujiKpPklSeeder::class
+            MengujiKpPklSeeder::class,
+            TugasAkhirSeeder::class,
         ]);
     }
 }

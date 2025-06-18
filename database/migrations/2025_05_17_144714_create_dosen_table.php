@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('dosen', function (Blueprint $table) {
             $table->string('kode_dosen', 6)->primary();
             $table->string('nip', 16)->nullable();
+            $table->string('nidn', 10)->unique()->nullable();
             $table->string('nama_dosen', 255);
-            $table->string('nidn', 10)->unique();
             $table->string('jabatan_dosen', 20)->nullable(); // Enum: Kajur, Kaprodi
             $table->string('ttd', 254)->nullable();
             $table->timestamps();

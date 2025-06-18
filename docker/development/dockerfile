@@ -12,7 +12,14 @@ RUN apt-get update && apt-get install -y \
     curl \
     zip \
     unzip \
+    gnupg \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libfontconfig1 \
+    libxrender1 \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) pdo pdo_pgsql gd mbstring dom zlib
     && docker-php-ext-install zip gd pdo pdo_pgsql
 
 # Install Composer
@@ -27,7 +34,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x -o nodesource_setup.sh && \
     npm install -g npm && \
     echo "📦 npm version (after update):" && npm -v && \
     rm nodesource_setup.sh
-    
+
 # Set working directory
 WORKDIR /var/www/html
 

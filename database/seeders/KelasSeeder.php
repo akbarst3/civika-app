@@ -8,47 +8,16 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class KelasSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $kelas = [
-            [
-                'nama_kelas' => 'A',
-                'angkatan' => '2023',
-                'kode_prodi' => 1,
-            ],
-            [
-                'nama_kelas' => 'B',
-                'angkatan' => '2023',
-                'kode_prodi' => 1,
-            ],
-            [
-                'nama_kelas' => 'C',
-                'angkatan' => '2023',
-                'kode_prodi' => 1,
-            ],
-            [
-                'nama_kelas' => 'A',
-                'angkatan' => '2023',
-                'kode_prodi' => 2,
-            ],
-            [
-                'nama_kelas' => 'B',
-                'angkatan' => '2023',
-                'kode_prodi' => 2,
-            ],
-            [
-                'nama_kelas' => 'A',
-                'angkatan' => '2021',
-                'kode_prodi' => 1,
-            ],
-            [
-                'nama_kelas' => 'B',
-                'angkatan' => '2021',
-                'kode_prodi' => 1,
-            ],
+            ['nama_kelas' => 'A', 'angkatan' => '2023', 'kode_prodi' => '1'],
+            ['nama_kelas' => 'B', 'angkatan' => '2023', 'kode_prodi' => '1'],
+            ['nama_kelas' => 'C', 'angkatan' => '2023', 'kode_prodi' => '1'],
+            ['nama_kelas' => 'A', 'angkatan' => '2023', 'kode_prodi' => '2'],
+            ['nama_kelas' => 'B', 'angkatan' => '2023', 'kode_prodi' => '2'],
+            ['nama_kelas' => 'B', 'angkatan' => '2021', 'kode_prodi' => '1'],
+            ['nama_kelas' => 'A', 'angkatan' => '2021', 'kode_prodi' => '1',],
         ];
 
         Kelas::insert($kelas);

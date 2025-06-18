@@ -33,6 +33,9 @@ return new class extends Migration
                 ->restrictOnDelete()
                 ->restrictOnUpdate();
             $table->timestamps();
+            $table->string('kota', 7)->nullable();
+            $table->foreign('kota')->references('kota')->on('tugas_akhir')->restrictOnDelete()->restrictOnUpdate();
+            $table->index(['kota'], 'tugas_akhir_fk');
         });
     }
 

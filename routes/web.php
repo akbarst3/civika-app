@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\TugasAkhirController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PKLController;
 use App\Models\Prodi;
@@ -44,9 +46,38 @@ Route::get('/data-kp-pkl/generate-pdpt', [PKLController::class, 'formGeneratePDP
 Route::get('/data-kp-pkl/generate-honor', [PKLController::class, 'formGenerateHonorKpPkl'])->name('data-kp-pkl.generate-honor-form');
 
 Route::get('/data-kp-pkl/generate-pdpt/download', [PKLController::class, 'generatePDPTKpPkl'])->name('data-kp-pkl.generate-pdpt-download');
+// Generate Honor Tugas Akhir
+Route::get('data-ta/generate-honor-ta', [TugasAkhirController::class, 'formGenerateHonor'])->name('data-ta.honor.form');
+Route::post('data-ta/generate-honor-ta', [TugasAkhirController::class, 'handleDownloadHonor'])->name('data-ta.generate.honor');
+Route::get('data-ta/display-honor-ta', [TugasAkhirController::class, 'displayHonorTA'])->name('data-ta.display.honor.ta');
+Route::get('data-ta/ta/form', [TugasAkhirController::class, 'form'])->name('ta.form');
+Route::get('data-ta/ta/download', [TugasAkhirController::class, 'handleDownload'])->name('data-ta.honor.download');
+
+// Generate PDPT Tugas Akhir
+Route::get('data-ta/generate-pdpt-ta', [TugasAkhirController::class, 'pdptForm'])->name('data-ta.generate.pdpt.form');
+Route::post('data-ta/generate-pdpt-ta', [TugasAkhirController::class, 'handleDownloadPDPT'])->name('data-ta.generate.pdpt');
+Route::post('data-ta/generate-pdpt-success', function () {
+    return redirect()->route('data-ta.generate.pdpt.form')->with('success', 'Laporan PDPT TA generated successfully!');
+})->name('data-ta.generate.pdpt.success');
+
+// Import Tugas Akhir
+Route::post('data-ta/import-data-ta', [TugasAkhirController::class, 'import'])->name('data-ta.import.form');
+Route::get('data-ta/import-data-ta', [TugasAkhirController::class, 'formImport'])->name('data-ta.import');
+
+// Default Data TA
+Route::get('data-ta', function () {
+    return view('tugas-akhir-view/data-ta');
+})->name('data.ta');
 
 Route::get('/data-kp-pkl/laporan-honor/download', [PKLController::class, 'generateHonorKpPkl'])->name('data-kp-pkl.laporan-honor-download');
+Route::get('/datamahasiswa', function () {
+    return view('mahasiswa-view/datamhs');
+})->name('datamahasiswa');
 
 Route::get('/data-kp-pkl/generate-honor/generate', [PKLController::class, 'generateHonorKpPkl'])->name('data-kp-pkl.generate-honor-download');
 
 Route::get('/data-kp-pkl/laporan-honor/display', [PKLController::class, 'displayHonorKpPkl'])->name('data-kp-pkl.laporan-honor-display');
+
+Route::get('/datamahasiswa/import', function () {
+    return view('mahasiswa-view/importdatamhs');
+})->name('datamahasiswa.import');

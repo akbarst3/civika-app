@@ -69,10 +69,10 @@ class MahasiswaController extends Controller
 
         try {
             Excel::import(new DataMahasiswaImport($request->angkatan), $request->file('file'));
-            return redirect()->back()->with('success', 'Data mahasiswa berhasil diimpor.');
+            return redirect()->back()->with('success', 'Data imported successfully.');
         } catch (\Exception $e) {
             Log::error('Error importing data: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal mengimpor data mahasiswa: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to import data: ' . $e->getMessage());
         }
     }
 }
