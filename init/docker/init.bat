@@ -76,7 +76,9 @@ docker compose -f %COMPOSE_FILE% exec -d %SERVICE_NAME% php artisan serve --host
 echo ✅ Setup selesai! Civika tersedia di http://localhost:8000
 echo ⚠️ Untuk Menjalankan vite, jalankan perintah berikut:
 echo 1. npm install
+npm install
 echo 2. npm run dev
+npm run dev
 
 
 endlocal
