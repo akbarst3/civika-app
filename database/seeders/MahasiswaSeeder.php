@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\Mahasiswa;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Faker\Factory as Faker;
 
 class MahasiswaSeeder extends Seeder

@@ -3,6 +3,11 @@ FROM php:8.3-fpm
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     libpq-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libfreetype6-dev \
+    libzip-dev \
+    pkg-config \
     git \
     curl \
     zip \
@@ -15,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     libxrender1 \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) pdo pdo_pgsql gd mbstring dom zlib
+    && docker-php-ext-install zip gd pdo pdo_pgsql
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
