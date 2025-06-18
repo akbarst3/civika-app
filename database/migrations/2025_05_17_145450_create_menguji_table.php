@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('kode_dosen', 6);
             $table->unsignedTinyInteger('penguji_ke');
             $table->primary(['kota', 'kode_dosen']);
-            $table->unsignedTinyInteger('penguji_ke');
             $table->foreign('kota')->references('kota')->on('tugas_akhir')->restrictOnDelete()->restrictOnUpdate();
             $table->foreign('kode_dosen')->references('kode_dosen')->on('dosen')->restrictOnDelete()->restrictOnUpdate();
             $table->index(['kode_dosen'], 'menguji2_fk');

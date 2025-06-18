@@ -13,12 +13,12 @@
             <div class="collapse" id="dataMahasiswaCollapse">
                 <ul class="nav nav-pills flex-column ms-4">
                     <li class="nav-item">
-                        <a href="{{ route('data-mahasiswa.import') }}" class="nav-link text-dark">
+                        <a href="#" class="nav-link text-dark">
                             <i class="fas fa-file-excel me-2"></i> Import Excel
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('data-mahasiswa.list') }}" class="nav-link text-dark">
+                        <a href="#" class="nav-link text-dark">
                             <i class="fas fa-table me-2"></i> Lihat Data
                         </a>
                     </li>
@@ -29,6 +29,31 @@
             <a href="#" class="nav-link text-dark" data-bs-toggle="collapse" data-bs-target="#dataTaPklCollapse">
                 <i class="fas fa-book"></i> Data TA/PKL
             </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link text-dark d-flex align-items-center" data-bs-toggle="collapse" data-bs-target="#dataTugasAkhirCollapse" aria-expanded="false">
+                <i class="fas fa-users me-2"></i> Data Tugas Akhir
+                <i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="dataTugasAkhirCollapse">
+                <ul class="nav nav-pills flex-column ms-4">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link text-dark">
+                            <i class="fas fa-file-excel me-2"></i> Import Excel
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link text-dark">
+                            <i class="fas fa-table me-2"></i> Data Pembimbing & Penguji
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link text-dark">
+                            <i class="fas fa-table me-2"></i> Data Honor
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </li>
         <li class="nav-item">
             <a href="#" class="nav-link text-dark" data-bs-toggle="collapse" data-bs-target="#generateLaporanCollapse">
