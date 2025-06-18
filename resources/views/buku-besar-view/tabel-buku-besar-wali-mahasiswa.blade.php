@@ -285,6 +285,17 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <form action="{{ route('laporan.mahasiswa.generate') }}" method="POST" id="hiddenLaporanForm" style="display: none;">
+        @csrf
+        <input type="hidden" name="mahasiswa_nim" id="form_mahasiswa_nim">
+        <input type="hidden" name="format" id="form_format">
+        <input type="hidden" name="sertakan_nilai_matkul" id="form_sertakan_nilai_matkul">
+        <input type="hidden" name="semester_nilai" id="form_semester_nilai">
+        <input type="hidden" name="sertakan_ip_kelas" id="form_sertakan_ip_kelas">
+        <input type="hidden" name="sertakan_ipk_kelas" id="form_sertakan_ipk_kelas">
+    </form>
 
         <!-- Modal for Student Selection -->
         <div class="modal fade" id="studentSelectionModal" tabindex="-1" aria-labelledby="studentSelectionModalLabel" aria-hidden="true">
@@ -300,8 +311,9 @@
                         <div class="mb-3" style="width: 70%; margin: 0 auto;">
                             <select class="form-select" id="studentDropdown">
                                 <option value="" selected disabled>Pilih Nama Mahasiswa</option>
-                                <option value="1">Andi Santoso</option>
-                                <option value="2">Budi Wijaya</option>
+                                @foreach ($data as $mhs)
+                                    <option value="{{ $mhs['nim'] }}">{{ $mhs['nama_mhs'] }} ({{ $mhs['nim'] }})</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -323,23 +335,18 @@
                     </div>
                     <div class="modal-body text-center">
                         <p style="font-weight: bold;">Jenis File</p>
-                        <p style="font-size: 12px; color: #666;">*Harap pilih salah satu jenis file untuk diunduh.</p>
-                        <div class="d-flex justify-content-between align-items-center mt-3" style="width: 77%;">
-                            <label style="margin-left: 100px;">PDF</label>
-                            <div class="form-check" style="margin-left: 50px;">
-                                <input class="form-check-input" type="radio" name="fileType" id="pdf" value="pdf" checked>
-                            </div>
+                        <div class="form-check w-50 mx-auto text-start">
+                            <input class="form-check-input" type="radio" name="fileTypeOptions" id="fileTypePdf" value="pdf" checked>
+                            <label class="form-check-label" for="fileTypePdf">PDF</label>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mt-2" style="width: 77%;">
-                            <label style="margin-left: 100px;">Excel</label>
-                            <div class="form-check" style="margin-left: 50px;">
-                                <input class="form-check-input" type="radio" name="fileType" id="excel" value="excel">
-                            </div>
+                        <div class="form-check w-50 mx-auto text-start">
+                            <input class="form-check-input" type="radio" name="fileTypeOptions" id="fileTypeExcel" value="excel">
+                            <label class="form-check-label" for="fileTypeExcel">Excel</label>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn" style="background: linear-gradient(90deg, #E11818, #FF6C6C); color: white; border-radius: 8px;" id="backToStudentBtn" data-bs-toggle="modal" data-bs-target="#studentSelectionModal">Back</button>
-                        <button type="button" class="btn" style="background: linear-gradient(90deg, #32BB35, #8BE52E); color: white; border-radius: 8px;" id="nextModalBtn">Next</button>
+                        <button type="button" class="btn" style="background: linear-gradient(90deg, #6c757d, #999999); color: white; border-radius: 8px;" id="backToStudentBtn">Back</button>
+                        <button type="button" class="btn" style="background: linear-gradient(90deg, #32BB35, #8BE52E); color: white; border-radius: 8px;" id="nextToOptionsBtn">Next</button>
                     </div>
                 </div>
             </div>
@@ -353,36 +360,36 @@
                         <h5 class="modal-title" style="color: #00008B;">Buat Laporan</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body text-center">
-                        <p style="font-weight: bold;">Pilihan Tambahan</p>
-                        <p style="font-size: 12px; color: #666;">*Anda dapat memilih beberapa pilihan ataupun tidak memilih sama sekali.</p>
-                        <div class="d-flex justify-content-between align-items-center mt-3" style="width: 70%;">
-                            <label>Sertakan Nilai Mata Kuliah</label>
-                            <div class="form-check" style="margin-left: 50px;">
-                                <input class="form-check-input" type="checkbox" id="includeCourseGrade">
-                            </div>
+                    <div class="modal-body">
+                        <p class="fw-bold text-center">Pilihan Tambahan</p>
+                        <div class="form-check form-switch w-75 mx-auto">
+                            <input class="form-check-input" type="checkbox" role="switch" id="includeCourseGrade" value="true">
+                            <label class="form-check-label" for="includeCourseGrade">Sertakan Nilai Mata Kuliah</label>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mt-2" style="width: 70%;">
-                            <label>Sertakan Nilai IP Kelas</label>
-                            <div class="form-check" style="margin-left: 50px;">
-                                <input class="form-check-input" type="checkbox" id="includeClassIP">
-                            </div>
+                        <div id="finalSemesterOptionsContainer" class="mt-2 w-75 mx-auto" style="display: none; padding-left: 2.5rem;">
+                            <label for="finalSemesterDropdown" class="form-label-sm">Pilih Semester:</label>
+                            <select id="finalSemesterDropdown" class="form-select form-select-sm w-50">
+                                @for ($i = 1; $i <= $totalSemesters; $i++)
+                                    <option value="{{ $i }}" {{ $i == $semester ? 'selected' : '' }}>Semester {{ $i }}</option>
+                                @endfor
+                            </select>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mt-2" style="width: 70%;">
-                            <label>Sertakan Nilai IPK Kelas</label>
-                            <div class="form-check" style="margin-left: 50px;">
-                                <input class="form-check-input" type="checkbox" id="includeClassIPK">
-                            </div>
+                        <div class="form-check form-switch w-75 mx-auto mt-2">
+                            <input class="form-check-input" type="checkbox" role="switch" id="includeClassIP" value="true" disabled>
+                            <label class="form-check-label" for="includeClassIP">Sertakan Nilai IP Kelas</label>
+                        </div>
+                        <div class="form-check form-switch w-75 mx-auto">
+                            <input class="form-check-input" type="checkbox" role="switch" id="includeClassIPK" value="true">
+                            <label class="form-check-label" for="includeClassIPK">Sertakan Nilai IPK Kelas</label>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn" style="background: linear-gradient(90deg, #E11818, #FF6C6C); color: white; border-radius: 8px;" id="backButton" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#fileTypeModal">Back</button>
+                        <button type="button" class="btn" style="background: linear-gradient(90deg, #6c757d, #999999); color: white; border-radius: 8px;" id="backToFileTypeBtn">Back</button>
                         <button type="button" class="btn" style="background: linear-gradient(90deg, #32BB35, #8BE52E); color: white; border-radius: 8px;" id="generateReportBtn">Buat Laporan</button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
     <style>
         .table thead th {
@@ -500,164 +507,114 @@
         }
     </style>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Trigger untuk membuka modal Student Selection dari dropdown
-            document.getElementById('downloadTrigger').addEventListener('click', function() {
-                resetAndShowModal('#studentSelectionModal');
-                resetReportOptions(); // Reset checkbox saat membuka alur baru
-            });
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log("Skrip Halaman Dimuat.");
 
-            // Lanjut ke modal File Type setelah memilih mahasiswa
-            document.getElementById('nextToFileTypeBtn').addEventListener('click', function() {
-                const selectedStudent = document.getElementById('studentDropdown').value;
-                if (selectedStudent) {
-                    $('#studentSelectionModal').modal('hide');
-                    $('#fileTypeModal').modal('show');
-                } else {
-                    alert('Harap pilih nama mahasiswa terlebih dahulu.');
-                }
-            });
+        // Cek dependensi utama
+        if (typeof bootstrap === 'undefined') {
+            console.error("KRITIS: Pustaka JavaScript Bootstrap tidak ditemukan.");
+            return;
+        }
 
-            // Kembali ke modal Student Selection dari File Type
-            document.getElementById('backToStudentBtn').addEventListener('click', function() {
-                $('#fileTypeModal').modal('hide');
-                $('#studentSelectionModal').modal('show');
-            });
+        // Ambil semua elemen penting
+        const studentModalEl = document.getElementById('studentSelectionModal');
+        const fileTypeModalEl = document.getElementById('fileTypeModal');
+        const optionsModalEl = document.getElementById('reportOptionsModal');
+        const hiddenForm = document.getElementById('hiddenLaporanForm');
+        const downloadTrigger = document.getElementById('downloadTrigger');
 
-            document.getElementById('nextModalBtn').addEventListener('click', function() {
-                $('#fileTypeModal').modal('hide');
-                $('#reportOptionsModal').modal('show');
-            });
+        // Inisialisasi modal
+        const studentModal = new bootstrap.Modal(studentModalEl);
+        const fileTypeModal = new bootstrap.Modal(fileTypeModalEl);
+        const optionsModal = new bootstrap.Modal(optionsModalEl);
 
-            document.getElementById('generateReportBtn').addEventListener('click', function() {
-                $('#reportOptionsModal').modal('hide');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Succeed',
-                    text: 'Laporan berhasil disimpan.',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#32BB35',
-                    customClass: {
-                        confirmButton: 'btn',
-                        popup: 'swal2-custom'
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Reset state modal dan backdrop
-                        $('.modal-backdrop').remove();
-                        $('body').removeClass('modal-open');
-                        $('body').css('overflow', 'auto');
-                        // Reinisialisasi semua modal
-                        $('#studentSelectionModal').modal('dispose');
-                        $('#fileTypeModal').modal('dispose');
-                        $('#reportOptionsModal').modal('dispose');
-                        $('#studentSelectionModal').modal({ show: false });
-                        $('#fileTypeModal').modal({ show: false });
-                        $('#reportOptionsModal').modal({ show: false });
-                        resetReportOptions(); // Reset checkbox setelah laporan dibuat
-                    }
-                });
-            });
-
-            // Pastikan tombol Back berfungsi
-            const backButton = document.getElementById('backButton');
-            if (backButton) {
-                backButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    $('#reportOptionsModal').modal('hide').then(() => {
-                        resetAndShowModal('#fileTypeModal');
-                        resetReportOptions(); // Reset checkbox saat kembali ke File Type
-                    });
-                    console.log('Tombol Back diklik, mencoba menampilkan #fileTypeModal');
-                });
-            } else {
-                console.log('Tombol Back tidak ditemukan!');
-            }
-
-            // Fungsi untuk reset dan menampilkan modal
-            function resetAndShowModal(modalId) {
-                $(modalId).modal('dispose'); // Hapus instance modal
-                $(modalId).modal({ show: false }); // Reinisialisasi modal
-                $(modalId).modal('show'); // Tampilkan modal
-            }
-
-            // Fungsi untuk reset checkbox di Report Options
-            function resetReportOptions() {
-                document.getElementById('includeCourseGrade').checked = false;
-                document.getElementById('includeClassIP').checked = false;
-                document.getElementById('includeClassIPK').checked = false;
-            }
-
-            // Tambahkan gaya CSS untuk gradasi hijau pada tombol OK SweetAlert
-            const style = document.createElement('style');
-            style.innerHTML = `
-                .swal2-custom .swal2-confirm {
-                    background: linear-gradient(90deg, #32BB35, #8BE52E) !important;
-                    border-radius: 8px !important;
-                    color: white !important;
-                    padding: 10px 20px !important;
-                }
-                .swal2-custom .swal2-confirm:hover {
-                    background: linear-gradient(90deg, #2A9D34, #76C517) !important;
-                }
-            `;
-            document.head.appendChild(style);
-
-            document.getElementById('program_studi').addEventListener('change', function () {
-                const programStudi = this.value;
-                const semesterDropdown = document.getElementById('semester');
-
-                semesterDropdown.innerHTML = '';
-
-                const maxSemester = programStudi === '1' ? 8 : 6;
-
-                for (let i = 1; i <= maxSemester; i++) {
-                    const option = document.createElement('option');
-                    option.value = i;
-                    option.text = i;
-                    if (i === 1) option.selected = true;
-                    semesterDropdown.appendChild(option);
-                }
-
-                semesterDropdown.dispatchEvent(new Event('change'));
-            });
-
-            document.getElementById('semester').addEventListener('change', function () {
-                const selectedSemester = parseInt(this.value) || 1;
-                updateSemesterColumns(selectedSemester);
-            });
-
-            function updateSemesterColumns(selectedSemester) {
-                for (let i = 1; i <= 8; i++) {
-                    const cells = document.querySelectorAll(`.semester-${i}`);
-                    cells.forEach(cell => cell.classList.remove('semester-active'));
-                }
-
-                const sksDHeader = document.getElementById('sks-d-header');
-                sksDHeader.setAttribute('colspan', selectedSemester || 1);
-
-                for (let i = 1; i <= selectedSemester && i <= 8; i++) {
-                    const cells = document.querySelectorAll(`.semester-${i}`);
-                    cells.forEach(cell => cell.classList.add('semester-active'));
-                }
-
-                const rows = document.querySelectorAll('tbody tr');
-
-                rows.forEach(row => {
-                    const sksDCell = row.querySelector('td:nth-child(17)');
-                    if (selectedSemester === 0) {
-                        sksDCell.textContent = '0';
-                    } else {
-                        const selectedSemesterCell = row.querySelector(`.semester-${selectedSemester}`);
-                        sksDCell.textContent = selectedSemesterCell ? selectedSemesterCell.textContent : '0';
-                    }
-                });
-            }
-
-            document.getElementById('program_studi').dispatchEvent(new Event('change'));
-            document.getElementById('semester').dispatchEvent(new Event('change'));
+        // Listener untuk membuka alur modal
+        downloadTrigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('studentDropdown').value = "";
+            studentModal.show();
         });
+
+        // Listener untuk tombol Next/Back
+        document.getElementById('nextToFileTypeBtn').addEventListener('click', function() {
+            const nim = document.getElementById('studentDropdown').value;
+            if(nim) {
+                hiddenForm.querySelector('#form_mahasiswa_nim').value = nim;
+                studentModal.hide();
+                fileTypeModal.show();
+            } else {
+                Swal.fire('Peringatan', 'Harap pilih mahasiswa.', 'warning');
+            }
+        });
+        document.getElementById('nextToOptionsBtn').addEventListener('click', function() {
+            const format = document.querySelector('input[name="fileTypeOptions"]:checked').value;
+            hiddenForm.querySelector('#form_format').value = format;
+            fileTypeModal.hide();
+            optionsModal.show();
+        });
+        document.getElementById('backToStudentBtn').addEventListener('click', () => { fileTypeModal.hide(); studentModal.show(); });
+        document.getElementById('backToFileTypeBtn').addEventListener('click', () => { optionsModal.hide(); fileTypeModal.show(); });
+
+        // Listener untuk checkbox di modal terakhir
+        document.getElementById('includeCourseGrade').addEventListener('change', function() {
+            const container = document.getElementById('finalSemesterOptionsContainer');
+            const checkbox = document.getElementById('includeClassIP');
+            container.style.display = this.checked ? 'block' : 'none';
+            checkbox.disabled = !this.checked;
+            if (!this.checked) checkbox.checked = false;
+        });
+
+        // Listener untuk tombol GENERATE (YANG SUDAH DIPERBAIKI)
+        document.getElementById('generateReportBtn').addEventListener('click', function() {
+            // 1. Kumpulkan data
+            const includeGrade = document.getElementById('includeCourseGrade').checked;
+            hiddenForm.querySelector('#form_sertakan_nilai_matkul').value = includeGrade;
+            hiddenForm.querySelector('#form_sertakan_ip_kelas').value = document.getElementById('includeClassIP').checked;
+            hiddenForm.querySelector('#form_sertakan_ipk_kelas').value = document.getElementById('includeClassIPK').checked;
+            hiddenForm.querySelector('#form_semester_nilai').value = includeGrade ? document.getElementById('finalSemesterDropdown').value : '';
+
+            // 2. Tampilkan notifikasi loading yang akan hilang otomatis
+            Swal.fire({
+                title: 'Membuat Laporan...',
+                text: 'Mohon tunggu, file Anda sedang disiapkan.',
+                imageUrl: 'https://media.tenor.com/wpSo-8CrXqUAAAAi/loading-loading-forever.gif',
+                imageWidth: 100,
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                timer: 15000, // Waktu maksimal loading 15 detik
+                timerProgressBar: true,
+            });
+
+            // 3. Kirim form
+            hiddenForm.submit();
+
+            // 4. Tutup modal terakhir
+            optionsModal.hide();
+
+            // 5. Ganti notifikasi setelah jeda untuk memberi waktu download dimulai
+            setTimeout(() => {
+                // Cek apakah Swal masih ada, baru ganti.
+                if (Swal.isVisible()) {
+                    Swal.update({
+                        title: 'Selesai!',
+                        text: 'File laporan Anda telah berhasil dibuat dan proses download akan dimulai oleh browser.',
+                        icon: 'success',
+                        imageUrl: null, // Hapus gif loading
+                        showConfirmButton: true,
+                        confirmButtonText: 'Ok',
+                        confirmButtonColor: '#32BB35'
+                    });
+                }
+            }, 2500); // Tunggu 2.5 detik
+        });
+    });
     </script>
+    @endpush
+
 @endsection

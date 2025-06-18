@@ -48,3 +48,8 @@ Route::get('/import-buku-besar', [BukuBesarController::class, 'cekStatus'])
     ->name('import.buku-besar.status');
 Route::post('/import-excel', [BukuBesarController::class, 'importExcel'])
     ->name('excel.import');
+
+// export pdf
+Route::get('/generate-pdf', [BukuBesarController::class, 'generatePdf'])->name('generate.pdf');
+// Route::post('/import-buku-besar/generate-laporan', [BukuBesarController::class, 'generateLaporan'])->name('buku.besar.generateLaporan'); //->middleware('auth'); // Pastikan route ini dilindungi
+Route::post('/laporan/generate-mahasiswa', [BukuBesarController::class, 'generateLaporan'])->name('laporan.mahasiswa.generate');

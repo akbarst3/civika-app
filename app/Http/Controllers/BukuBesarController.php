@@ -12,9 +12,10 @@ use App\Models\MataKuliah;
 use App\Models\ProgramStudi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use App\Imports\DataAkademikImport;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\IndeksPrestasiSemester;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -463,4 +464,113 @@ class BukuBesarController extends Controller
         return view('buku-besar-view.tabel-buku-besar-wali-mahasiswa', compact('data', 'totalSemesters', 'tahun_akademik', 'semester', 'mataKuliahs', 'prodis', 'kelas', 'tahun', 'program_studi'));
     }
 
+
+    public function generateLaporan(Request $request)
+    {
+        Log::info('Fungsi generateLaporan dipanggil.', $request->all());
+
+        $validator = Validator::make($request->all(), [
+            'mahasiswa_nim' => 'required|string|exists:mahasiswa,nim',
+            'format' => 'required|in:pdf,excel',
+            'sertakan_nilai_matkul' => 'nullable|present',
+            'semester_nilai' => 'required_if:sertakan_nilai_matkul,true|integer',
+            'sertakan_ip_kelas' => 'nullable|present',
+            'sertakan_ipk_kelas' => 'nullable|present',
+        ]);
+
+        if ($validator->fails()) {
+            Log::error('validasi generateLaporan gagal.', $validator->errors()->toArray());
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $nim = $request->input('mahasiswa_nim');
+        $format = $request->input('format');
+        $semester = (int) $request->input('semester_nilai');
+
+        $mahasiswa = Mahasiswa::with(['kelas.prodi', 'nilai.mataKuliah', 'indeksPrestasiSemester', 'absensi'])
+            ->where('nim', $nim)->firstOrFail();
+
+        $totalBobotAll = $mahasiswa->indeksPrestasiSemester->sum('nilai_bobot');
+        $totalSksAll = $mahasiswa->nilai->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0);
+        $ipk = $totalSksAll > 0 ? round($totalBobotAll / $totalSksAll, 2) : 0;
+
+        $data = [
+            'mahasiswa' => $mahasiswa,
+            'ipk' => $ipk,
+            'current_date' => Carbon::now()->isoFormat('D MMMM YYYY'),
+        ];
+
+        if ($request->input('sertakan_nilai_matkul')) {
+            $nilaiSemester = $mahasiswa->nilai->where('semester_ke', $semester);
+
+            $data['include_nilai_semester'] = true;
+            $data['semester'] = $semester;
+            $data['nilai_semester'] = $nilaiSemester->map(fn($n) => [
+                'nama_matkul' => $n->mataKuliah->nama_matkul ?? '-',
+                'sks' => $n->mataKuliah->jumlah_sks ?? 0,
+                'nilai' => $n->indeks_nilai ?? '-',
+            ])->values();
+
+            $data['total_sks_semester'] = $nilaiSemester->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0);
+            $data['ip_semester'] = optional($mahasiswa->indeksPrestasiSemester->firstWhere('semester', $semester))->indeks_prestasi ?? 0;
+        }
+
+        if ($request->input('sertakan_ip_kelas') && $request->input('sertakan_nilai_matkul')) {
+            $mahasiswaSatuKelas = Mahasiswa::where('kelas_id', $mahasiswa->kelas_id)
+                ->with(['indeksPrestasiSemester' => fn($q) => $q->where('semester', $semester)])
+                ->get();
+
+            $totalIpKelas = 0;
+            $jumlahMahasiswaDenganIp = 0;
+            foreach ($mahasiswaSatuKelas as $mhs) {
+                $ips = $mhs->indeksPrestasiSemester->first();
+                if ($ips) {
+                    $totalIpKelas += $ips->indeks_prestasi;
+                    $jumlahMahasiswaDenganIp++;
+                }
+            }
+
+            $data['include_ip_kelas'] = true;
+            $data['rata_rata_ip_kelas'] = $jumlahMahasiswaDenganIp > 0 ? round($totalIpKelas / $jumlahMahasiswaDenganIp, 2) : 0;
+        }
+
+        if ($request->input('sertakan_ipk_kelas')) {
+            $mahasiswaSatuKelas = Mahasiswa::where('kelas_id', $mahasiswa->kelas_id)
+                ->with('indeksPrestasiSemester')
+                ->get();
+
+            $totalIpk = 0;
+            $jumlahMahasiswa = 0;
+
+            foreach ($mahasiswaSatuKelas as $mhs) {
+                $ipAverage = round($mhs->indeksPrestasiSemester->pluck('indeks_prestasi')->avg(), 2);
+                if (!is_nan($ipAverage)) {
+                    $totalIpk += $ipAverage;
+                    $jumlahMahasiswa++;
+                }
+            }
+
+            $data['include_ipk_kelas'] = true;
+            $data['rata_rata_ipk_kelas'] = $jumlahMahasiswa > 0 ? round($totalIpk / $jumlahMahasiswa, 2) : 0;
+        }
+
+        $fileName = 'Laporan_Akademik_' . $mahasiswa->nim . '_' . $mahasiswa->nama_mhs . '.' . $format;
+
+        if ($format == 'pdf') {
+
+            Log::info("membuat PDF untuk {$fileName} dengan data:", $data);
+
+            $pdf = Pdf::loadView('buku-besar-view.laporan-mahasiswa', $data); // Kita akan buat view ini
+            return $pdf->download($fileName);
+
+            Log::info("PDF berhasil");
+        }
+
+        if ($format == 'excel') {
+            // return Excel::download(new LaporanMahasiswaExport($data), $fileName);
+            return response()->json(['message' => 'fungsi export Excel dalam proses'], 501);
+        }
+
+            return redirect()->back()->with('error', 'Format file tidak valid.');
+    }
 }
