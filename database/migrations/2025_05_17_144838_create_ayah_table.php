@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('ayah', function (Blueprint $table) {
             $table->string('nim', 9)->primary();
-            $table->string('nama_ayah', 255);
-            $table->string('pekerjaan_ayah', 255);
-            $table->string('alamat_ayah', 255); 
-            $table->string('telepon_ayah', 255); 
-            $table->string('kota_ayah', 255);
-            $table->string('instansi_ayah', 255);
-            $table->string('telepon_instansi_ayah', 255);
-            $table->string('kode_pos_ayah', 5);
-            $table->integer('penghasilan_ayah');
+            $table->string('nama_ayah', 255)->nullable();
+            $table->string('pekerjaan_ayah', 255)->nullable();
+            $table->string('alamat_ayah', 255)->nullable();
+            $table->string('telepon_ayah', 255)->nullable();
+            $table->string('kota_ayah', 255)->nullable();
+            $table->enum('pendidikan_ayah', ['S1', 'S2', 'D3', 'SLTA', 'SLTP', 'SD', 'TIDAK SD'])->nullable();
+            $table->string('instansi_ayah', 255)->nullable();
+            $table->string('telepon_instansi_ayah', 255)->nullable();
+            $table->string('kode_pos_ayah', 5)->nullable();
+            $table->string('penghasilan_ayah')->nullable();
             $table->foreign('nim')->references('nim')->on('mahasiswa')->restrictOnDelete()->restrictOnUpdate();
             $table->timestamps();
         });

@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('menguji', function (Blueprint $table) {
-            $table->string('kota', 7);
+        Schema::create('menguji_kp_pkl', function (Blueprint $table) {
+            $table->integer('id_perusahaan');
+            $table->integer('tahun');
             $table->string('kode_dosen', 6);
             $table->unsignedTinyInteger('penguji_ke');
-            $table->primary(['kota', 'kode_dosen']);
-            $table->unsignedTinyInteger('penguji_ke');
-            $table->foreign('kota')->references('kota')->on('tugas_akhir')->restrictOnDelete()->restrictOnUpdate();
+            $table->primary(['id_perusahaan', 'tahun', 'kode_dosen']);
+            $table->foreign(['id_perusahaan', 'tahun'])->references(['id_perusahaan', 'tahun'])->on('kp_pkl')->restrictOnDelete()->restrictOnUpdate();
             $table->foreign('kode_dosen')->references('kode_dosen')->on('dosen')->restrictOnDelete()->restrictOnUpdate();
-            $table->index(['kode_dosen'], 'menguji2_fk');
-            $table->index(['kota'], 'menguji_fk');
+            $table->index(['id_perusahaan', 'tahun'], 'menguji_kp_pkl_fk');
+            $table->index('kode_dosen', 'menguji_kp_pkl2_fk');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('menguji');
+        Schema::dropIfExists('menguji_kp_pkl');
     }
 };

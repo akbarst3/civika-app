@@ -12,7 +12,7 @@ class Dosen extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = ['kode_dosen', 'nip', 'nidn','nama_dosen', 'jabatan_dosen', 'ttd'];
+    protected $fillable = ['kode_dosen', 'nip', 'nidn', 'nama_dosen', 'jabatan_dosen', 'ttd'];
 
     protected $casts = [
         'jabatan_dosen' => 'string', // Enum: Kajur, Kaprodi

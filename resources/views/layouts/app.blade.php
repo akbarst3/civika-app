@@ -8,7 +8,6 @@
     <script src="//unpkg.com/alpinejs" defer></script>
     @vite('resources/css/generate-report.css')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
 </head>
 <body>
     <x-navbar :navtitle="View::getSection('navbar-content') ?? 'Dashboard / Home'" />
