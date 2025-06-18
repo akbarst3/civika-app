@@ -24,7 +24,7 @@
                     @endif
 
                     <!-- Form to Display Table -->
-                    <form action="{{ route('display.honor.ta') }}" method="GET" id="displayForm">
+                    <form action="{{ route('data-ta.display.honor.ta') }}" method="GET" id="displayForm">
                         <div class="mb-3">
                             <label for="prodi" class="form-label">Program Studi:</label>
                             <select name="prodi" id="prodi" class="form-control" required>
@@ -51,7 +51,7 @@
                     </form>
 
                     <!-- Form to Generate PDF -->
-                    <form action="{{ route('generate.honor.ta') }}" method="POST" style="margin-top: 10px;" id="pdfForm">
+                    <form action="{{ route('data-ta.generate.honor') }}" method="POST" style="margin-top: 10px;" id="pdfForm">
                         @csrf
                         <input type="hidden" name="prodi" id="pdfProdi">
                         <input type="hidden" name="angkatan" id="pdfAngkatan">
@@ -88,7 +88,7 @@
     displayForm.addEventListener('submit', function(e) {
         const prodiValue = prodiSelect.value;
         const angkatanValue = angkatanSelect.value;
-        console.log('Form submitted to:', '{{ route('display.honor.ta') }}');
+        console.log('Form submitted to:', '{{ route('data-ta.display.honor.ta') }}');
         console.log('Prodi:', prodiValue, 'Angkatan:', angkatanValue);
         if (!prodiValue || !angkatanValue) {
             e.preventDefault(); // Hentikan submit jika ada field kosong
