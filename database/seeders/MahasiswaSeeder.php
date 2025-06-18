@@ -16,44 +16,37 @@ class MahasiswaSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Faker::create('id_ID');
-        Mahasiswa::create([
-            'nim' => 'M0000001',
-            'nama_mhs' => 'Budi Santoso',
-            'no_ktp' => $faker->nik(),
-            'email' => 'budi@example.com',
-            'telepon' => $faker->phoneNumber,
-            'tgl_lahir' => '2000-05-15',
-            'kota_lahir' => 'Jakarta',
-            'jenis_kelamin' => 1,
-            'agama' => 'Islam',
-            'gol_darah' => 'A',
-            'anak_ke' => 1,
-            'nama_slta' => 'SMA Negeri 1',
-            'jalur_daftar' => 'SNBT',
-            'nem' => 85.50,
-            'kelas_id' => 1, // Asumsi kelas ada
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        Mahasiswa::create([
-            'nim' => 'M0000002',
-            'nama_mhs' => 'Ani Wijaya',
-            'no_ktp' => $faker->nik(),
-            'email' => 'ani@example.com',
-            'telepon' => $faker->phoneNumber,
-            'tgl_lahir' => '2001-08-20',
-            'kota_lahir' => 'Bandung',
-            'jenis_kelamin' => 0,
-            'agama' => 'Kristen',
-            'gol_darah' => 'B',
-            'anak_ke' => 2,
-            'nama_slta' => 'SMA Negeri 2',
-            'jalur_daftar' => 'SNBP',
-            'nem' => 90.25,
-            'kelas_id' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $data = [
+            ['nim' => '211511003', 'nama_mhs' => 'Aldrin Rayhan Putra'],
+            ['nim' => '211511004', 'nama_mhs' => 'Ananta Destawardhana'],
+            ['nim' => '211511020', 'nama_mhs' => 'M. Fatur Maulidan Azzahra'],
+            ['nim' => '211511001', 'nama_mhs' => 'Achmadya Ridwan Ilyawan'],
+            ['nim' => '211511007', 'nama_mhs' => 'Ari Maulana Hardan'],
+            ['nim' => '211511032', 'nama_mhs' => 'Wildan Setya Nugraha'],
+            ['nim' => '211511009', 'nama_mhs' => 'Arief Rahman Ahmadhusein'],
+            ['nim' => '211511015', 'nama_mhs' => 'Hilman Permana'],
+            ['nim' => '211511018', 'nama_mhs' => 'Lolla Mariah'],
+        ];
+
+        foreach ($data as $mhs) {
+            DB::table('mahasiswa')->insert([
+                'nim' => $mhs['nim'],
+                'nama_mhs' => $mhs['nama_mhs'],
+                'no_ktp' => Str::random(16),
+                'email' => Str::slug($mhs['nama_mhs'], '.') . '@example.com',
+                'telepon' => '0812' . rand(10000000, 99999999),
+                'tgl_lahir' => '2003-01-01',
+                'kota_lahir' => 'Bandung',
+                'jenis_kelamin' => true,
+                'agama' => 'Islam',
+                'gol_darah' => 'O',
+                'anak_ke' => 1,
+                'nama_slta' => 'SMAN 1 Bandung',
+                'jalur_daftar' => 'SNBT',
+                'kelas_id' => 5,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }

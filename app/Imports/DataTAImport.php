@@ -7,6 +7,7 @@ use App\Models\Dosen;
 use App\Models\TugasAkhir;
 use App\Models\Membimbing;
 use App\Models\Menguji;
+use App\Models\Kelas;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
@@ -18,52 +19,36 @@ class DataTAImport implements ToCollection, WithStartRow, WithChunkReading
 {
     private $lastKota = null;
     private $angkatan;
+    private $kodeProdi;
 
-    public function __construct($angkatan, $prodi)
+    public function __construct($angkatan, $kodeProdi)
     {
         $this->angkatan = $angkatan;
-        $this->kode_prodi = $prodi;
+        $this->kodeProdi = $kodeProdi;
     }
 
-
-    /**
-     * Specify the starting row for the import (row 2 as header).
-     *
-     * @return int
-     */
     public function startRow(): int
     {
         return 2;
     }
 
-    /**
-     * Specify chunk size for reading the Excel file.
-     *
-     * @return int
-     */
     public function chunkSize(): int
     {
         return 100;
     }
 
-    /**
-     * Process the collection of rows.
-     *
-     * @param Collection $rows
-     * @return void
-     */
     public function collection(Collection $rows)
     {
         foreach ($rows as $index => $row) {
             Log::debug('Processing row ' . ($index + 2) . ': ' . json_encode($row));
 
-            // Map columns explicitly based on index
+            // Map columns based on Excel structure (adjusted to match the image)
             $data = [
                 'no' => $row[0] ?? null,
-                'kota' => $row[1] ?? null,
-                'nim' => $row[2] ?? null,
+                'kota' => $row[1] ?? null, // KoTA
+                'nim' => $row[2] ?? null, // NIM
                 'anggota_kota' => $row[3] ?? null,
-                'topik_sesuai_fta_sidang' => $row[4] ?? null,
+                'topik' => $row[4] ?? null, // Topik Sesuai FTA Sidang
                 'tempat' => $row[5] ?? null,
                 'pembimbing_1_nama' => $row[6] ?? null,
                 'pembimbing_1_nidn' => $row[7] ?? null,
@@ -100,105 +85,113 @@ class DataTAImport implements ToCollection, WithStartRow, WithChunkReading
                 continue;
             }
 
-            $mahasiswa = Mahasiswa::where('nim', $data['nim'])->first();
-            $mahasiswaProdi = $mahasiswa->kelas->kode_prodi;
-            if ($mahasiswaProdi != $this->kode_prodi) {
-                Log::warning("Prodi mismatch for NIM {$data['nim']}: expected {$this->kode_prodi}, got {$mahasiswaProdi}");
-                continue;
-            }
-            if (!$mahasiswa) {
-                Log::error("Skipping row " . ($index + 2) . ": NIM {$data['nim']} not found in Mahasiswa table");
-                continue;
-            }
-
-            // Validate Pembimbing 1 NIDN
-            if (empty($data['pembimbing_1_nidn'])) {
-                Log::error("Skipping row " . ($index + 2) . ": Pembimbing 1 NIDN is missing for NIM {$data['nim']}");
-                continue;
-            }
-            $pembimbing1 = Dosen::where('nidn', $data['pembimbing_1_nidn'])->first();
-            if (!$pembimbing1) {
-                Log::error("Skipping row " . ($index + 2) . ": Pembimbing 1 NIDN {$data['pembimbing_1_nidn']} not found in Dosen table for NIM {$data['nim']}");
-                continue;
-            }
-
-            // Validate Pembimbing 2 NIDN
-            if (empty($data['pembimbing_2_nidn'])) {
-                Log::error("Skipping row " . ($index + 2) . ": Pembimbing 2 NIDN is missing for NIM {$data['nim']}");
-                continue;
-            }
-            $pembimbing2 = Dosen::where('nidn', $data['pembimbing_2_nidn'])->first();
-            if (!$pembimbing2) {
-                Log::error("Skipping row " . ($index + 2) . ": Pembimbing 2 NIDN {$data['pembimbing_2_nidn']} not found in Dosen table for NIM {$data['nim']}");
-                continue;
-            }
-
-            // Validate Penguji 1 NIDN
-            if (empty($data['penguji_1_nidn'])) {
-                Log::error("Skipping row " . ($index + 2) . ": Penguji 1 NIDN is missing for NIM {$data['nim']}");
-                continue;
-            }
-            $penguji1 = Dosen::where('nidn', $data['penguji_1_nidn'])->first();
-            if (!$penguji1) {
-                Log::error("Skipping row " . ($index + 2) . ": Penguji 1 NIDN {$data['penguji_1_nidn']} not found in Dosen table for NIM {$data['nim']}");
-                continue;
-            }
-
-            // Validate Penguji 2 NIDN
-            if (empty($data['penguji_2_nidn'])) {
-                Log::error("Skipping row " . ($index + 2) . ": Penguji 2 NIDN is missing for NIM {$data['nim']}");
-                continue;
-            }
-            $penguji2 = Dosen::where('nidn', $data['penguji_2_nidn'])->first();
-            if (!$penguji2) {
-                Log::error("Skipping row " . ($index + 2) . ": Penguji 2 NIDN {$data['penguji_2_nidn']} not found in Dosen table for NIM {$data['nim']}");
-                continue;
-            }
-
             DB::beginTransaction();
             try {
                 // Create or update TugasAkhir
                 $tugasAkhir = TugasAkhir::firstOrCreate(
                     ['kota' => $kota],
-                    [
-                        'topik' => $data['topik_sesuai_fta_sidang']
-                    ]
+                    ['topik' => $data['topik'] ?? null, 'created_at' => now(), 'updated_at' => now()]
                 );
 
-                $mahasiswa = Mahasiswa::updateOrCreate(
+                // Get or create Kelas based on prodi and angkatan
+                $kelas = Kelas::where('kode_prodi', $this->kodeProdi)
+                    ->where('angkatan', $this->angkatan)
+                    ->first();
+                if (!$kelas) {
+                    Log::error("Skipping row " . ($index + 2) . ": No Kelas found for Prodi {$this->kodeProdi} and Angkatan {$this->angkatan}");
+                    DB::rollBack();
+                    continue;
+                }
+
+                // Create or update Mahasiswa
+                $mahasiswa = Mahasiswa::firstOrCreate(
                     ['nim' => $data['nim']],
                     [
-                        'kota' => $kota
+                        'nama_mhs' => null, // Tambahkan logika jika nama_mhs tersedia di Excel
+                        'kota' => $kota,
+                        'kelas_id' => $kelas->id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]
                 );
 
-                // Insert into Membimbing for Pembimbing 1
-                Membimbing::firstOrCreate([
-                    'kota' => $kota,
-                    'kode_dosen' => $pembimbing1->kode_dosen,
-                    'pembimbing_ke' => 1,
-                ]);
+                // Validate and get Dosen for Pembimbing 1
+                if (empty($data['pembimbing_1_nidn'])) {
+                    Log::error("Skipping row " . ($index + 2) . ": Pembimbing 1 NIDN is missing for NIM {$data['nim']}");
+                    DB::rollBack();
+                    continue;
+                }
+                $pembimbing1 = Dosen::where('nidn', $data['pembimbing_1_nidn'])->first();
+                if (!$pembimbing1) {
+                    Log::error("Skipping row " . ($index + 2) . ": Pembimbing 1 NIDN {$data['pembimbing_1_nidn']} not found in Dosen table for NIM {$data['nim']}");
+                    DB::rollBack();
+                    continue;
+                }
 
-                // Insert into Membimbing for Pembimbing 2
-                Membimbing::firstOrCreate([
-                    'kota' => $kota,
-                    'kode_dosen' => $pembimbing2->kode_dosen,
-                    'pembimbing_ke' => 2,
-                ]);
+                // Validate and get Dosen for Pembimbing 2
+                if (!empty($data['pembimbing_2_nidn'])) { // Optional, bisa kosong
+                    $pembimbing2 = Dosen::where('nidn', $data['pembimbing_2_nidn'])->first();
+                    if (!$pembimbing2) {
+                        Log::error("Skipping row " . ($index + 2) . ": Pembimbing 2 NIDN {$data['pembimbing_2_nidn']} not found in Dosen table for NIM {$data['nim']}");
+                        DB::rollBack();
+                        continue;
+                    }
+                } else {
+                    $pembimbing2 = null;
+                }
+
+                // Validate and get Dosen for Penguji 1
+                if (empty($data['penguji_1_nidn'])) {
+                    Log::error("Skipping row " . ($index + 2) . ": Penguji 1 NIDN is missing for NIM {$data['nim']}");
+                    DB::rollBack();
+                    continue;
+                }
+                $penguji1 = Dosen::where('nidn', $data['penguji_1_nidn'])->first();
+                if (!$penguji1) {
+                    Log::error("Skipping row " . ($index + 2) . ": Penguji 1 NIDN {$data['penguji_1_nidn']} not found in Dosen table for NIM {$data['nim']}");
+                    DB::rollBack();
+                    continue;
+                }
+
+                // Validate and get Dosen for Penguji 2
+                if (!empty($data['penguji_2_nidn'])) { // Optional, bisa kosong
+                    $penguji2 = Dosen::where('nidn', $data['penguji_2_nidn'])->first();
+                    if (!$penguji2) {
+                        Log::error("Skipping row " . ($index + 2) . ": Penguji 2 NIDN {$data['penguji_2_nidn']} not found in Dosen table for NIM {$data['nim']}");
+                        DB::rollBack();
+                        continue;
+                    }
+                } else {
+                    $penguji2 = null;
+                }
+
+                // Insert into Membimbing for Pembimbing 1
+                Membimbing::firstOrCreate(
+                    ['kota' => $kota, 'kode_dosen' => $pembimbing1->kode_dosen, 'pembimbing_ke' => 1],
+                    ['created_at' => now(), 'updated_at' => now()]
+                );
+
+                // Insert into Membimbing for Pembimbing 2 (jika ada)
+                if ($pembimbing2) {
+                    Membimbing::firstOrCreate(
+                        ['kota' => $kota, 'kode_dosen' => $pembimbing2->kode_dosen, 'pembimbing_ke' => 2],
+                        ['created_at' => now(), 'updated_at' => now()]
+                    );
+                }
 
                 // Insert into Menguji for Penguji 1
-                Menguji::firstOrCreate([
-                    'kota' => $kota,
-                    'kode_dosen' => $penguji1->kode_dosen,
-                    'penguji_ke' => 1,
-                ]);
+                Menguji::firstOrCreate(
+                    ['kota' => $kota, 'kode_dosen' => $penguji1->kode_dosen, 'penguji_ke' => 1],
+                    ['created_at' => now(), 'updated_at' => now()]
+                );
 
-                // Insert into Menguji for Penguji 2
-                Menguji::firstOrCreate([
-                    'kota' => $kota,
-                    'kode_dosen' => $penguji2->kode_dosen,
-                    'penguji_ke' => 2,
-                ]);
+                // Insert into Menguji for Penguji 2 (jika ada)
+                if ($penguji2) {
+                    Menguji::firstOrCreate(
+                        ['kota' => $kota, 'kode_dosen' => $penguji2->kode_dosen, 'penguji_ke' => 2],
+                        ['created_at' => now(), 'updated_at' => now()]
+                    );
+                }
 
                 DB::commit();
                 Log::info("Successfully processed row " . ($index + 2) . " for NIM {$data['nim']} with KoTA {$kota}");
@@ -207,45 +200,6 @@ class DataTAImport implements ToCollection, WithStartRow, WithChunkReading
                 Log::error("Failed to process row " . ($index + 2) . " for NIM {$data['nim']}: " . $e->getMessage());
                 continue;
             }
-
-//            // Create or update TugasAkhir
-//            $tugasAkhir = TugasAkhir::firstOrCreate(
-//                ['kota' => $kota],
-//                [
-//                    'topik' => $data['topik_sesuai_fta_sidang'],
-//                    'nim' => $data['nim'],
-//                ]
-//            );
-//
-//            // Insert into Membimbing for Pembimbing 1
-//            Membimbing::firstOrCreate([
-//                'kota' => $kota,
-//                'kode_dosen' => $pembimbing1->kode_dosen,
-//                'pembimbing_ke' => 1,
-//            ]);
-//
-//            // Insert into Membimbing for Pembimbing 2
-//            Membimbing::firstOrCreate([
-//                'kota' => $kota,
-//                'kode_dosen' => $pembimbing2->kode_dosen,
-//                'pembimbing_ke' => 2,
-//            ]);
-//
-//            // Insert into Menguji for Penguji 1
-//            Menguji::firstOrCreate([
-//                'kota' => $kota,
-//                'kode_dosen' => $penguji1->kode_dosen,
-//                'penguji_ke' => 1,
-//            ]);
-//
-//            // Insert into Menguji for Penguji 2
-//            Menguji::firstOrCreate([
-//                'kota' => $kota,
-//                'kode_dosen' => $penguji2->kode_dosen,
-//                'penguji_ke' => 2,
-//            ]);
-//
-//            Log::info("Successfully processed row " . ($index + 2) . " for NIM {$data['nim']} with KoTA {$kota}");
         }
     }
 }

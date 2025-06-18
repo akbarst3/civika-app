@@ -23,8 +23,8 @@ class DatabaseSeeder extends Seeder
             ProdiSeeder::class,
             KelasSeeder::class,
             TugasAkhirSeeder::class,
-//            DosenSeeder::class,
-//            MahasiswaSeeder::class
+            DosenSeeder::class,
+            MahasiswaSeeder::class
 //            TugasAkhirSeeder::class,
 //            MembimbingTASeeder::class,
 //            MengujiTASeeder::class,

@@ -13,7 +13,7 @@
             <div class="card-body">
                 <p class="card-text">Upload data TA dengan format excel sebanyak 16 file, dari masing-masing kelas tiap angkatan.</p>
 
-                <form action="{{ route('data-ta.importData') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('data-ta.import.form') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <div class="mb-3">
@@ -40,7 +40,7 @@
 
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
-                            <input type="file" name="file" accept=".xlsx,.xls,.csv" class="form-control" required>
+                            <input type="file" name="file" class="form-control" required>
                             @error('file')
                             <span class="text-danger">{{ $message }}</span>
                             @enderror

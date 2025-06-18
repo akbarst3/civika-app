@@ -286,17 +286,20 @@ class TugasAkhirController extends Controller
 
     public function import(Request $request)
     {
+        // Validating the uploaded file
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
-            'angkatan' => 'required|digits:4|integer',
+            'angkatan' => 'required|digits:4',
             'prodi' => 'required|exists:prodi,kode_prodi',
         ]);
 
         try {
-            Excel::import(new DataTAImport($request->angkatan, $request->prodi), $request->file('file'));
+            // Importing the file with specific sheet "pembimbing_pdpt"
+            Excel::import(new DataTAImport($request->angkatan, $request->prodi), $request->file('file')->getRealPath(), null, \Maatwebsite\Excel\Excel::XLSX, ['sheet' => 'pembimbing_pdpt']);
+
             return redirect()->back()->with('success', 'Data Tugas Akhir berhasil diimpor.');
         } catch (\Exception $e) {
-            Log::error('Error importing Tugas Akhir data: ' . $e->getMessage());
+            Log::error('Error importing Tugas Akhir data: ' . $e->getMessage(), ['exception' => $e->getTraceAsString(), 'request' => $request->all()]);
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
         }
     }
