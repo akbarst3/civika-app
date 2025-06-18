@@ -16,7 +16,12 @@ class MengujiKpPkl extends Model
 
     public function kpPkl()
     {
-        return $this->belongsTo(KpPkl::class, ['id_perusahaan', 'tahun'], ['id_perusahaan', 'tahun']);
+        return $this->belongsTo(KpPkl::class, 'id_perusahaan', 'id_perusahaan')
+            ->addSelect(['*']) // Force the query to include all columns
+            ->join('menguji_kp_pkl', function($join) {
+                $join->on('kp_pkl.id_perusahaan', '=', 'menguji_kp_pkl.id_perusahaan')
+                     ->on('kp_pkl.tahun', '=', 'menguji_kp_pkl.tahun');
+            });
     }
 
     public function dosen()
