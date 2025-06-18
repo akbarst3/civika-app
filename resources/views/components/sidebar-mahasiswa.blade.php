@@ -1,0 +1,33 @@
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 250px; height: calc(100vh - 56px); position: fixed; top: 56px; left: 0;">
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a href="#" class="nav-link text-dark" data-bs-toggle="collapse" data-bs-target="#dashboardCollapse">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link text-dark" data-bs-toggle="collapse" data-bs-target="#formPengajuanCollapse">
+                <i class="fas fa-file-alt"></i> Form Pengajuan
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link text-dark" data-bs-toggle="collapse" data-bs-target="#riwayatPengajuanCollapse">
+                <i class="fas fa-history"></i> Riwayat Pengajuan
+            </a>
+        </li>
+    </ul>
+    <div class="mt-auto">
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="#" class="nav-link text-dark" data-bs-toggle="collapse" data-bs-target="#pengaturanCollapse">
+                    <i class="fas fa-cog"></i> Pengaturan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link text-danger" data-bs-toggle="collapse" data-bs-target="#logoutCollapse">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
