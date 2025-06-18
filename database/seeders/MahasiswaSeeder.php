@@ -43,7 +43,7 @@ class MahasiswaSeeder extends Seeder
                 'anak_ke' => 1,
                 'nama_slta' => 'SMAN 1 Bandung',
                 'jalur_daftar' => 'SNBT',
-                'kelas_id' => 5,
+                'kelas_id' => 6,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

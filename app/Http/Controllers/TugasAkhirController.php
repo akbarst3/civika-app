@@ -54,6 +54,12 @@ class TugasAkhirController extends Controller
 
             $kaprodi = Dosen::where('jabatan_dosen', 'Kaprodi')->first();
 
+            // Debugging: Cek kelas yang tersedia
+            $availableKelas = Kelas::where('kode_prodi', $prodi->kode_prodi)
+                ->where('angkatan', $request->angkatan)
+                ->get();
+            Log::info('Available Kelas for prodi ' . $prodi->kode_prodi . ' and angkatan ' . $request->angkatan . ': ', $availableKelas->toArray());
+
             $data = TugasAkhir::with([
                 'mahasiswa.kelas',
                 'membimbing.dosen',
@@ -85,8 +91,11 @@ class TugasAkhirController extends Controller
                     ];
                 });
 
+            // Debugging: Cek data yang dihasilkan
+            Log::info('Generated PDPT data: ', $data->toArray());
+
             if ($data->isEmpty()) {
-                return redirect()->route('data-ta.honor.form')->with('error', 'Tidak ada data untuk program studi dan angkatan yang dipilih.');
+                return redirect()->route('data-ta.generate.pdpt.form')->with('error', 'Tidak ada data untuk program studi dan angkatan yang dipilih. Periksa log untuk detail.');
             }
 
             $currentDate = now()->format('d-m-Y');
@@ -96,7 +105,8 @@ class TugasAkhirController extends Controller
 
             return $pdf->download($filename);
         } catch (\Exception $e) {
-            return redirect()->route('data-ta.honor.form')->with('error', 'Gagal menghasilkan laporan: ' . $e->getMessage());
+            Log::error('Error generating PDPT: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return redirect()->route('data-ta.generate.pdpt.form')->with('error', 'Gagal menghasilkan laporan: ' . $e->getMessage());
         }
     }
     public function handleDownloadHonor(Request $request)
