@@ -14,8 +14,8 @@
         }
 
         thead th {
-            background-color: #f4f4f4e8 !important;
-            color: #000000cd !important;
+            background-color: #e9ecef !important;
+            color: #333 !important;
             font-weight: 700;
             text-align: center;
         }
@@ -30,7 +30,7 @@
 
         .pagination .page-link {
             border: none;
-            color: #000;
+            color: #333;
             background-color: transparent;
             transition: background-color 0.3s ease;
             border-radius: 0;
@@ -41,7 +41,7 @@
         }
 
         .pagination .page-item.active .page-link {
-            background-color: #ffa500; 
+            background-color: #ffa500;
             color: #fff;
             border-radius: 8px;
             font-weight: 600;
@@ -50,7 +50,7 @@
 
         .pagination .page-link:hover {
             background-color: #ffd59a;
-            color: #000;
+            color: #333;
             border-radius: 8px;
         }
 
@@ -60,7 +60,7 @@
         }
 
         .sidebar-nav .nav-link:hover {
-            background-color: rgba(255, 158, 0, 0.5); 
+            background-color: rgba(255, 165, 0, 0.2);
         }
 
         .sidebar-nav .nav-link i {
@@ -73,7 +73,6 @@
             overflow-y: auto;
         }
 
-        /* Styling untuk search box dengan ikon */
         .custom-search-container {
             position: relative;
             width: 200px;
@@ -82,10 +81,11 @@
         .custom-search {
             border-radius: 20px;
             border: 1px solid #ced4da;
-            padding: 8px 15px 8px 35px; /* Padding kiri lebih besar untuk memberi ruang pada ikon */
+            padding: 8px 15px 8px 35px;
             color: #333;
             width: 100%;
             font-family: "Poppins", sans-serif;
+            background-color: #fff;
         }
 
         .custom-search::placeholder {
@@ -101,31 +101,29 @@
             font-size: 14px;
         }
 
-        /* Styling untuk dropdown angkatan dengan ikon */
-        .custom-dropdown-container {
+        .custom-filter-container {
             position: relative;
             width: 180px;
+            margin-right: 10px;
         }
 
-        .custom-dropdown {
+        .custom-filter {
             width: 100%;
-            padding: 10px 12px 10px 35px; /* Padding kiri lebih besar untuk memberi ruang pada ikon */
+            padding: 8px 12px 8px 35px;
             border: 1px solid #ced4da;
             border-radius: 20px;
             background-color: #fff;
             color: #333;
             font-size: 14px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-            transition: border 0.3s ease, box-shadow 0.3s ease;
             appearance: none;
-            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20fill='gray'%20class='bi%20bi-caret-down-fill'%20viewBox='0%200%2016%2016'%3E%3Cpath%20d='M7.247%2011.14l-4.796-5.481c-.566-.647-.106-1.659.753-1.659h9.592c.86%200%201.32%201.012.753%201.659l-4.796%205.48a1%201%200%200%201-1.506%200z'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20fill='%236c757d'%20class='bi%20bi-caret-down-fill'%20viewBox='0%200%2016%2016'%3E%3Cpath%20d='M7.247%2011.14l-4.796-5.481c-.566-.647-.106-1.659.753-1.659h9.592c.86%200%201.32%201.012.753%201.659l-4.796%205.48a1%201%200%200%201-1.506%200z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 10px center;
             background-size: 16px 16px;
             font-family: "Poppins", sans-serif;
         }
 
-        .custom-dropdown-icon {
+        .custom-filter-icon {
             position: absolute;
             left: 10px;
             top: 50%;
@@ -134,14 +132,13 @@
             font-size: 14px;
         }
 
-        .custom-dropdown:focus {
-            border-color: #7c3aed;
-            box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25);
+        .custom-filter:focus {
+            border-color: #007bff;
             outline: none;
         }
 
-        .custom-dropdown:hover {
-            border-color: #7c3aed;
+        .custom-filter:hover {
+            border-color: #007bff;
         }
 
         .custom-filter-button {
@@ -154,12 +151,12 @@
         }
 
         .custom-filter-button:hover {
-            border-color: #7c3aed;
+            border-color: #007bff;
         }
 
         .custom-filter-button:focus {
-            border-color: #7c3aed;
-            box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25);
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
             outline: none;
         }
 
@@ -185,12 +182,12 @@
         }
 
         .custom-pagination-button:hover {
-            border-color: #7c3aed;
+            border-color: #007bff;
         }
 
         .custom-pagination-button:focus {
-            border-color: #7c3aed;
-            box-shadow: 0 0 0 0.2rem rgba(124, 58, 237, 0.25);
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
             outline: none;
         }
 
@@ -201,280 +198,154 @@
         }
 
         .custom-detail-icon:hover {
-            color: #7c3aed;
+            color: #007bff;
         }
     </style>
 
     <div class="container mt-5">
         <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
             <h2 class="mb-0 custom-header">Data Mahasiswa</h2>
-
             <div class="d-flex gap-3 flex-wrap">
-                <!-- Search Box -->
-                <form class="d-flex custom-search-container" role="search">
+                <form class="d-flex custom-search-container" role="search" method="GET" action="{{ route('data-mahasiswa.list') }}">
                     <i class="fas fa-magnifying-glass custom-search-icon"></i>
                     <input
                         type="search"
+                        name="search"
                         class="form-control custom-search"
                         placeholder="Search"
                         aria-label="Search"
+                        value="{{ request('search') }}"
                     />
                 </form>
-
-                <!-- Filter Angkatan -->
-                <form class="custom-dropdown-container">
-                    <i class="fas fa-users custom-dropdown-icon"></i>
-                    <select class="custom-dropdown">
-                        <option value="" selected>Angkatan</option>
-                        <option value="20">Angkatan 20</option>
-                        <option value="21">Angkatan 21</option>
-                        <option value="22">Angkatan 22</option>
-                        <option value="23">Angkatan 23</option>
-                        <option value="24">Angkatan 24</option>
-                        <option value="25">Angkatan 25</option>
+                <form class="custom-filter-container" method="GET" action="{{ route('data-mahasiswa.list') }}">
+                    <i class="fas fa-users custom-filter-icon"></i>
+                    <select class="custom-filter" name="angkatan" onchange="this.form.submit()">
+                        <option value="" {{ !request('angkatan') ? 'selected' : '' }}>Any</option>
+                        @foreach ($angkatanList as $angkatan)
+                            <option value="{{ $angkatan }}" {{ request('angkatan') == $angkatan ? 'selected' : '' }}>
+                                {{ $angkatan }}
+                            </option>
+                        @endforeach
                     </select>
                 </form>
-
-                <!-- Filter Button -->
-                <button class="custom-filter-button">
-                    <i class="fas fa-filter"></i> Filters
-                </button>
+                <form class="custom-filter-container" method="GET" action="{{ route('data-mahasiswa.list') }}">
+                    <i class="fas fa-graduation-cap custom-filter-icon"></i>
+                    <select class="custom-filter" name="prodi" onchange="this.form.submit()">
+                        <option value="" {{ !request('prodi') ? 'selected' : '' }}>Any</option>
+                        @foreach ($prodiList as $kode_prodi => $nama_prodi)
+                            <option value="{{ $kode_prodi }}" {{ request('prodi') == $kode_prodi ? 'selected' : '' }}>
+                                {{ $nama_prodi }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+                <form class="custom-filter-container" method="GET" action="{{ route('data-mahasiswa.list') }}">
+                    <i class="fas fa-chalkboard custom-filter-icon"></i>
+                    <select class="custom-filter" name="kelas" onchange="this.form.submit()">
+                        <option value="" {{ !request('kelas') ? 'selected' : '' }}>Any</option>
+                        @foreach ($kelasList as $kelas)
+                            <option value="{{ $kelas }}" {{ request('kelas') == $kelas ? 'selected' : '' }}>
+                                {{ $kelas }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
             </div>
         </div>
 
-        <!-- Table for Data Mahasiswa -->
         <div class="table-container">
             <table class="table table-bordered custom-table">
                 <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>NIM</th>
-                        <th>Nama Mahasiswa</th>
-                        <th>Kota Lahir</th>
-                        <th>Tanggal Lahir</th>
-                        <th>Status<br>Mahasiswa</th>
-                        <!-- <th>Alamat Mahasiswa</th>
-                        <th>Nama Kabupaten</th>
-                        <th>Kode Pos</th> -->
-                        <th>Telepon</th>
-                        <th>Email</th>
-                        <th>Detail</th>
-                    </tr>
+                <tr>
+                    <th>No</th>
+                    <th>NIM</th>
+                    <th>Nama Mahasiswa</th>
+                    <th>Kota Lahir</th>
+                    <th>Tanggal Lahir</th>
+                    <th>Status<br>Mahasiswa</th>
+                    <th>Telepon</th>
+                    <th>Email</th>
+                    <th>Detail</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <!-- Sample Data -->
+                @forelse ($mahasiswa as $index => $mhs)
                     <tr>
-                        <td>1</td>
-                        <td>231511070</td>
-                        <td>Aulia Putri Ramadhani</td>
-                        <td>Kab. Garut</td>
-                        <td>6 November 2006</td>
+                        <td>{{ $mahasiswa->firstItem() + $index }}</td>
+                        <td>{{ $mhs->nim }}</td>
+                        <td>{{ $mhs->nama_mhs }}</td>
+                        <td>{{ $mhs->kota_lahir }}</td>
+                        <td>{{ $mhs->tgl_lahir ? $mhs->tgl_lahir->format('d F Y') : '-' }}</td>
                         <td>Aktif</td>
-                        <!-- <td>Jalan Ciwuruga No. 20</td>
-                        <td>Kab. Bandung Barat</td>
-                        <td>44151</td> -->
-                        <td>081234567890</td>
-                        <td>aulia@gmail.com</td>
+                        <td>{{ $mhs->telepon ?? '-' }}</td>
+                        <td>{{ $mhs->email ?? '-' }}</td>
                         <td>
-                        </a>
-                                <class="custom-detail-icon">
+                            <a href="{{ route('data-mahasiswa.show', $mhs->nim) }}" class="custom-detail-icon">
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </a>
                         </td>
                     </tr>
-                    <!-- Repeated for pagination simulation -->
+                @empty
                     <tr>
-                        <td>2</td>
-                        <td>231511070</td>
-                        <td>Aulia Putri Ramadhani</td>
-                        <td>Kab. Garut</td>
-                        <td>6 November 2006</td>
-                        <td>Aktif</td>
-                        <!-- <td>Jalan Ciwuruga No. 20</td>
-                        <td>Kab. Bandung Barat</td>
-                        <td>44151</td> -->
-                        <td>081234567890</td>
-                        <td>aulia@gmail.com</td>
-                        <td>
-                        </a>
-                                <class="custom-detail-icon">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
-                        </td>
+                        <td colspan="9" class="text-center">No data available</td>
                     </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>231511070</td>
-                        <td>Aulia Putri Ramadhani</td>
-                        <td>Kab. Garut</td>
-                        <td>6 November 2006</td>
-                        <td>Aktif</td>
-                        <!-- <td>Jalan Ciwuruga No. 20</td>
-                        <td>Kab. Bandung Barat</td>
-                        <td>44151</td> -->
-                        <td>081234567890</td>
-                        <td>aulia@gmail.com</td>
-                        <td>
-                        </a>
-                                <class="custom-detail-icon">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>231511070</td>
-                        <td>Aulia Putri Ramadhani</td>
-                        <td>Kab. Garut</td>
-                        <td>6 November 2006</td>
-                        <td>Aktif</td>
-                        <!-- <td>Jalan Ciwuruga No. 20</td>
-                        <td>Kab. Bandung Barat</td>
-                        <td>44151</td> -->
-                        <td>081234567890</td>
-                        <td>aulia@gmail.com</td>
-                        <td>
-                        </a>
-                                <class="custom-detail-icon">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>231511070</td>
-                        <td>Aulia Putri Ramadhani</td>
-                        <td>Kab. Garut</td>
-                        <td>6 November 2006</td>
-                        <td>Aktif</td>
-                        <!-- <td>Jalan Ciwuruga No. 20</td>
-                        <td>Kab. Bandung Barat</td>
-                        <td>44151</td> -->
-                        <td>081234567890</td>
-                        <td>aulia@gmail.com</td>
-                        <td>
-                        </a>
-                                <class="custom-detail-icon">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
-                        <td>231511070</td>
-                        <td>Aulia Putri Ramadhani</td>
-                        <td>Kab. Garut</td>
-                        <td>6 November 2006</td>
-                        <td>Aktif</td>
-                        <!-- <td>Jalan Ciwuruga No. 20</td>
-                        <td>Kab. Bandung Barat</td>
-                        <td>44151</td> -->
-                        <td>081234567890</td>
-                        <td>aulia@gmail.com</td>
-                        <td>
-                        </a>
-                                <class="custom-detail-icon">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>7</td>
-                        <td>231511070</td>
-                        <td>Aulia Putri Ramadhani</td>
-                        <td>Kab. Garut</td>
-                        <td>6 November 2006</td>
-                        <td>Aktif</td>
-                        <!-- <td>Jalan Ciwuruga No. 20</td>
-                        <td>Kab. Bandung Barat</td>
-                        <td>44151</td> -->
-                        <td>081234567890</td>
-                        <td>aulia@gmail.com</td>
-                        <td>
-                        </a>
-                                <class="custom-detail-icon">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>8</td>
-                        <td>231511070</td>
-                        <td>Aulia Putri Ramadhani</td>
-                        <td>Kab. Garut</td>
-                        <td>6 November 2006</td>
-                        <td>Aktif</td>
-                        <!-- <td>Jalan Ciwuruga No. 20</td>
-                        <td>Kab. Bandung Barat</td>
-                        <td>44151</td> -->
-                        <td>081234567890</td>
-                        <td>aulia@gmail.com</td>
-                        <td>
-                        </a>
-                                <class="custom-detail-icon">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>9</td>
-                        <td>231511070</td>
-                        <td>Aulia Putri Ramadhani</td>
-                        <td>Kab. Garut</td>
-                        <td>6 November 2006</td>
-                        <td>Aktif</td>
-                        <!-- <td>Jalan Ciwuruga No. 20</td>
-                        <td>Kab. Bandung Barat</td>
-                        <td>44151</td> -->
-                        <td>081234567890</td>
-                        <td>aulia@gmail.com</td>
-                        <td>
-                        </a>
-                                <class="custom-detail-icon">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>10</td>
-                        <td>231511070</td>
-                        <td>Aulia Putri Ramadhani</td>
-                        <td>Kab. Garut</td>
-                        <td>6 November 2006</td>
-                        <td>Aktif</td>
-                        <!-- <td>Jalan Ciwuruga No. 20</td>
-                        <td>Kab. Bandung Barat</td>
-                        <td>44151</td> -->
-                        <td>081234567890</td>
-                        <td>aulia@gmail.com</td>
-                        <td>
-                        </a>
-                                <class="custom-detail-icon">
-                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
-                        </td>
-                    </tr>
+                @endforelse
                 </tbody>
             </table>
         </div>
 
-        <!-- Pagination -->
-        <div class="d-flex justify-content-center align-items-center gap-3">
-            <button class="custom-pagination-button">
+        <div class="d-flex justify-content-center align-items-center gap-3 mt-4">
+            <button class="custom-pagination-button {{ $mahasiswa->onFirstPage() ? 'disabled' : '' }}"
+                    @if(!$mahasiswa->onFirstPage()) onclick="window.location='{{ $mahasiswa->previousPageUrl() }}'" @endif>
                 <i class="fas fa-chevron-left"></i>
             </button>
             <nav>
                 <ul class="pagination mb-0">
-                    <li class="page-item disabled"><span class="page-link">1</span></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><span class="page-link">...</span></li>
-                    <li class="page-item"><a class="page-link" href="#">8</a></li>
-                    <li class="page-item"><a class="page-link" href="#">9</a></li>
-                    <li class="page-item"><a class="page-link" href="#">10</a></li>
+                    @php
+                        $currentPage = $mahasiswa->currentPage();
+                        $lastPage = $mahasiswa->lastPage();
+                        $range = 2;
+                        $showEllipsis = $lastPage > 5;
+                    @endphp
+                    <li class="page-item {{ $currentPage == 1 ? 'active disabled' : '' }}">
+                        @if($currentPage == 1)
+                            <span class="page-link">1</span>
+                        @else
+                            <a class="page-link" href="{{ $mahasiswa->url(1) }}">1</a>
+                        @endif
+                    </li>
+                    @if($showEllipsis && $currentPage > ($range + 2))
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    @endif
+                    @for($i = max(2, $currentPage - $range); $i <= min($lastPage - 1, $currentPage + $range); $i++)
+                        <li class="page-item {{ $currentPage == $i ? 'active' : '' }}">
+                            @if($currentPage == $i)
+                                <span class="page-link">{{ $i }}</span>
+                            @else
+                                <a class="page-link" href="{{ $mahasiswa->url($i) }}">{{ $i }}</a>
+                            @endif
+                        </li>
+                    @endfor
+                    @if($showEllipsis && $currentPage < ($lastPage - $range - 1))
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    @endif
+                    @if($lastPage > 1)
+                        <li class="page-item {{ $currentPage == $lastPage ? 'active disabled' : '' }}">
+                            @if($currentPage == $lastPage)
+                                <span class="page-link">{{ $lastPage }}</span>
+                            @else
+                                <a class="page-link" href="{{ $mahasiswa->url($lastPage) }}">{{ $lastPage }}</a>
+                            @endif
+                        </li>
+                    @endif
                 </ul>
             </nav>
-            <button class="custom-pagination-button">
+            <button class="custom-pagination-button {{ $mahasiswa->hasMorePages() ? '' : 'disabled' }}"
+                    @if($mahasiswa->hasMorePages()) onclick="window.location='{{ $mahasiswa->nextPageUrl() }}'" @endif>
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>

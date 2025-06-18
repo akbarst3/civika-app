@@ -24,12 +24,10 @@
             vertical-align: middle !important;
         }
 
-        /* Font tabel diperkecil agar rapi */
         table {
             font-size: 14px;
         }
 
-        /* Style pagination: hilangkan border pada page-link */
         .pagination .page-link {
             border: none;
             color: #000;
@@ -38,21 +36,18 @@
             border-radius: 0;
         }
 
-        /* Hilangkan border pada pagination li */
         .pagination .page-item {
             border: none;
         }
 
-        /* Warna oranye pagination jadi lebih terang */
         .pagination .page-item.active .page-link {
-            background-color: #ffa500; /* oranye terang */
+            background-color: #ffa500;
             color: #fff;
             border-radius: 8px;
             font-weight: 600;
             border: none;
         }
 
-        /* Hover efek agar lebih halus */
         .pagination .page-link:hover {
             background-color: #ffd59a;
             color: #000;
@@ -65,7 +60,7 @@
         }
 
         .sidebar-nav .nav-link:hover {
-            background-color: rgba(255, 158, 0, 0.5); /* Warna oranye transparan */
+            background-color: rgba(255, 158, 0, 0.5);
         }
 
         .sidebar-nav .nav-link i {
@@ -127,55 +122,43 @@
     </style>
 
     <div class="container mt-5">
-        <!-- Header Section -->
         <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
             <h2 class="mb-0 custom-header">Detail Data Mahasiswa</h2>
             <div class="d-flex gap-3 flex-wrap">
-                <!-- Back Button -->
                 <a href="{{ url()->previous() }}" class="btn custom-back-button">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
             </div>
         </div>
 
-        <!-- Detail Mahasiswa Section -->
         <div class="card custom-card">
             <div class="card-body">
                 <!-- Personal Information -->
                 <h4 class="mb-3 custom-section-title">Informasi Pribadi</h4>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">No:</strong> <span class="custom-detail-value">1</span>
+                        <strong class="custom-detail-label">NIM:</strong> <span class="custom-detail-value">{{ $mahasiswa->nim }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">NIM:</strong> <span class="custom-detail-value">231511070</span>
+                        <strong class="custom-detail-label">Nama Mahasiswa:</strong> <span class="custom-detail-value">{{ $mahasiswa->nama_mhs }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Nama Mahasiswa:</strong> <span class="custom-detail-value">Aulia Putri Ramadhani</span>
+                        <strong class="custom-detail-label">Kota Lahir:</strong> <span class="custom-detail-value">{{ $mahasiswa->kota_lahir }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Kota Lahir:</strong> <span class="custom-detail-value">Kab. Garut</span>
+                        <strong class="custom-detail-label">Tanggal Lahir:</strong> <span class="custom-detail-value">{{ $mahasiswa->tgl_lahir ? $mahasiswa->tgl_lahir->format('d F Y') : '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Tanggal Lahir:</strong> <span class="custom-detail-value">6 November 2006</span>
+                        <strong class="custom-detail-label">Jenis Kelamin:</strong> <span class="custom-detail-value">{{ $mahasiswa->jenis_kelamin ? 'Perempuan' : 'Laki-laki' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Jenis Kelamin:</strong> <span class="custom-detail-value">Perempuan</span>
+                        <strong class="custom-detail-label">Agama:</strong> <span class="custom-detail-value">{{ $mahasiswa->agama }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Agama:</strong> <span class="custom-detail-value">Islam</span>
+                        <strong class="custom-detail-label">Golongan Darah:</strong> <span class="custom-detail-value">{{ $mahasiswa->gol_darah }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Golongan Darah:</strong> <span class="custom-detail-value">A</span>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">No. KTP:</strong> <span class="custom-detail-value">3275090611060001</span>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Anak Ke:</strong> <span class="custom-detail-value">2</span>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Jumlah Saudara:</strong> <span class="custom-detail-value">3</span>
+                        <strong class="custom-detail-label">No. KTP:</strong> <span class="custom-detail-value">{{ $mahasiswa->no_ktp ?? '-' }}</span>
                     </div>
                 </div>
 
@@ -183,19 +166,19 @@
                 <h4 class="mb-3 mt-4 custom-section-title">Informasi Kontak</h4>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Alamat Mahasiswa:</strong> <span class="custom-detail-value">Jalan Ciwuruga No. 20</span>
+                        <strong class="custom-detail-label">Alamat Mahasiswa:</strong> <span class="custom-detail-value">{{ $mahasiswa->dataTinggal->alamat_tinggal ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Nama Kabupaten:</strong> <span class="custom-detail-value">Kab. Bandung Barat</span>
+                        <strong class="custom-detail-label">Nama Kabupaten:</strong> <span class="custom-detail-value">{{ $mahasiswa->dataTinggal->kab_kota ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Kode Pos:</strong> <span class="custom-detail-value">44151</span>
+                        <strong class="custom-detail-label">Kode Pos:</strong> <span class="custom-detail-value">{{ $mahasiswa->dataTinggal->kode_pos ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Telepon:</strong> <span class="custom-detail-value">081234567890</span>
+                        <strong class="custom-detail-label">Telepon:</strong> <span class="custom-detail-value">{{ $mahasiswa->telepon ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Email:</strong> <span class="custom-detail-value">aulia@gmail.com</span>
+                        <strong class="custom-detail-label">Email:</strong> <span class="custom-detail-value">{{ $mahasiswa->email ?? '-' }}</span>
                     </div>
                 </div>
 
@@ -203,13 +186,13 @@
                 <h4 class="mb-3 mt-4 custom-section-title">Latar Belakang Pendidikan</h4>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Nama SLTA:</strong> <span class="custom-detail-value">SMA Negeri 1 Garut</span>
+                        <strong class="custom-detail-label">Nama SLTA:</strong> <span class="custom-detail-value">{{ $mahasiswa->nama_slta ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Nama Jalur Daftar:</strong> <span class="custom-detail-value">SNBP</span>
+                        <strong class="custom-detail-label">Nama Jalur Daftar:</strong> <span class="custom-detail-value">{{ $mahasiswa->jalur_daftar }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">NEM:</strong> <span class="custom-detail-value">0.000</span>
+                        <strong class="custom-detail-label">NEM:</strong> <span class="custom-detail-value">{{ $mahasiswa->nem ?? '0.00' }}</span>
                     </div>
                 </div>
 
@@ -217,34 +200,34 @@
                 <h4 class="mb-3 mt-4 custom-section-title">Informasi Ayah</h4>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Nama Ayah:</strong> <span class="custom-detail-value">Budi Santoso</span>
+                        <strong class="custom-detail-label">Nama Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->nama_ayah ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Alamat Ayah:</strong> <span class="custom-detail-value">Jalan Ciwuruga No. 20</span>
+                        <strong class="custom-detail-label">Alamat Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->alamat_ayah ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Kota Ayah:</strong> <span class="custom-detail-value">Kab. Bandung Barat</span>
+                        <strong class="custom-detail-label">Kota Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->kota_ayah ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Kode Pos Ayah:</strong> <span class="custom-detail-value">44151</span>
+                        <strong class="custom-detail-label">Kode Pos Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->kode_pos_ayah ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Telepon Ayah:</strong> <span class="custom-detail-value">081234567891</span>
+                        <strong class="custom-detail-label">Telepon Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->telepon_ayah ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Pendidikan Ayah:</strong> <span class="custom-detail-value">S1</span>
+                        <strong class="custom-detail-label">Pendidikan Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->pendidikan_ayah ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Pekerjaan Ayah:</strong> <span class="custom-detail-value">Pegawai Negeri Sipil</span>
+                        <strong class="custom-detail-label">Pekerjaan Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->pekerjaan_ayah ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Penghasilan Ayah:</strong> <span class="custom-detail-value">Rp 7.000.000</span>
+                        <strong class="custom-detail-label">Penghasilan Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->penghasilan_ayah ? 'Rp ' . number_format((float)$mahasiswa->ayah->penghasilan_ayah, 0, ',', '.') : '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Instansi Ayah:</strong> <span class="custom-detail-value">Dinas Pendidikan</span>
+                        <strong class="custom-detail-label">Instansi Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->instansi_ayah ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Telepon Instansi Ayah:</strong> <span class="custom-detail-value">0221234567</span>
+                        <strong class="custom-detail-label">Telepon Instansi Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->telepon_instansi_ayah ?? '-' }}</span>
                     </div>
                 </div>
 
@@ -252,34 +235,34 @@
                 <h4 class="mb-3 mt-4 custom-section-title">Informasi Ibu</h4>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Nama Ibu:</strong> <span class="custom-detail-value">Rina Wulandari</span>
+                        <strong class="custom-detail-label">Nama Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->nama_ibu ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Alamat Ibu:</strong> <span class="custom-detail-value">Jalan Ciwuruga No. 20</span>
+                        <strong class="custom-detail-label">Alamat Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->alamat_ibu ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Kota Ibu:</strong> <span class="custom-detail-value">Kab. Bandung Barat</span>
+                        <strong class="custom-detail-label">Kota Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->kota_ibu ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Kode Pos Ibu:</strong> <span class="custom-detail-value">44151</span>
+                        <strong class="custom-detail-label">Kode Pos Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->kode_pos_ibu ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Telepon Ibu:</strong> <span class="custom-detail-value">081234567892</span>
+                        <strong class="custom-detail-label">Telepon Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->telepon_ibu ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Pendidikan Ibu:</strong> <span class="custom-detail-value">SMA</span>
+                        <strong class="custom-detail-label">Pendidikan Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->pendidikan_ibu ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Pekerjaan Ibu:</strong> <span class="custom-detail-value">Ibu Rumah Tangga</span>
+                        <strong class="custom-detail-label">Pekerjaan Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->pekerjaan_ibu ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Penghasilan Ibu:</strong> <span class="custom-detail-value">-</span>
+                        <strong class="custom-detail-label">Penghasilan Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->penghasilan_ibu ? 'Rp ' . number_format((float)$mahasiswa->ibu->penghasilan_ibu, 0, ',', '.') : '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Instansi Ibu:</strong> <span class="custom-detail-value">-</span>
+                        <strong class="custom-detail-label">Instansi Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->instansi_ibu ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Telepon Instansi Ibu:</strong> <span class="custom-detail-value">-</span>
+                        <strong class="custom-detail-label">Telepon Instansi Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->telepon_instansi_ibu ?? '-' }}</span>
                     </div>
                 </div>
 

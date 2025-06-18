@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kelas;
+use App\Models\Mahasiswa;
+use App\Models\Prodi;
 use Illuminate\Http\Request;
 use App\Imports\DataMahasiswaImport;
 use Illuminate\Support\Facades\Log;
@@ -11,13 +13,51 @@ use Illuminate\Routing\Controller;
 
 class MahasiswaController extends Controller
 {
+    public function showListMahasiswa(Request $request)
+    {
+        // Fetch filter options
+        $angkatanList = Kelas::distinct()->pluck('angkatan')->sort()->values();
+        $kelasList = Kelas::distinct()->pluck('nama_kelas')->sort()->values();
+        $prodiList = Prodi::pluck('nama_prodi', 'kode_prodi');
+
+        // Fetch Mahasiswa data with related DataTinggal and Kelas
+        $mahasiswa = Mahasiswa::with(['dataTinggal', 'kelas.prodi'])
+            ->when($request->search, function ($query, $search) {
+                return $query->where('nim', 'like', "%{$search}%")
+                    ->orWhere('nama_mhs', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            })
+            ->when($request->angkatan, function ($query, $angkatan) {
+                return $query->whereHas('kelas', function ($q) use ($angkatan) {
+                    $q->where('angkatan', $angkatan);
+                });
+            })
+            ->when($request->kelas, function ($query, $kelas) {
+                return $query->whereHas('kelas', function ($q) use ($kelas) {
+                    $q->where('nama_kelas', $kelas);
+                });
+            })
+            ->when($request->prodi, function ($query, $prodi) {
+                return $query->whereHas('kelas.prodi', function ($q) use ($prodi) {
+                    $q->where('kode_prodi', $prodi);
+                });
+            })
+            ->paginate(10); // Paginate with 10 records per page
+
+        return view('mahasiswa-view.data-mahasiswa', compact('mahasiswa', 'angkatanList', 'kelasList', 'prodiList'));
+    }
+
+    public function showDetail($nim)
+    {
+        $mahasiswa = Mahasiswa::with(['dataTinggal', 'kelas.prodi'])->where('nim', $nim)->firstOrFail();
+        return view('mahasiswa-view.data-mahasiswa-detail', compact('mahasiswa'));
+    }
+
     public function showImportMahasiswa()
     {
-        // Fetch distinct angkatan values from Kelas model
         $angkatanList = Kelas::distinct()->pluck('angkatan')->sort()->values();
 
-        // Pass the angkatan list to the view
-        return view('mahasiswa-view.importdatamhs', compact('angkatanList'));
+        return view('mahasiswa-view.import-data-mahasiswa', compact('angkatanList'));
     }
 
     public function importMahasiswa(Request $request)

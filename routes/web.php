@@ -18,18 +18,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/datamahasiswa', function () {
-    return view('mahasiswa-view/datamhs');
-})->name('datamahasiswa');
+Route::get('/data-mahasiswa/import', [MahasiswaController::class, 'showImportMahasiswa'])->name('data-mahasiswa.import');
 
-Route::get('/datamahasiswa/import', [MahasiswaController::class, 'showImportMahasiswa'])->name('datamahasiswa.import');
+Route::post('/data-mahasiswa/import', [MahasiswaController::class, 'importMahasiswa'])->name('data-mahasiswa.import');
 
-Route::post('/datamahasiswa/import', [MahasiswaController::class, 'importMahasiswa'])->name('mahasiswa.import');
+Route::get('/data-mahasiswa', [MahasiswaController::class, 'showListMahasiswa'])->name('data-mahasiswa.list');
 
-Route::get('/data-mahasiswa',function () {
-    return view('mahasiswa-view.data-mahasiswa');
-});
-
-Route::get('/data-mahasiswa/123',function () {
-    return view('mahasiswa-view.detail-data-mahasiswa');
-});
+Route::get('/data-mahasiswa/{nim}', [MahasiswaController::class, 'showDetail'])->name('data-mahasiswa.show');

@@ -13,12 +13,12 @@
             <div class="collapse" id="dataMahasiswaCollapse">
                 <ul class="nav nav-pills flex-column ms-4">
                     <li class="nav-item">
-                        <a href="{{ route('datamahasiswa.import') }}" class="nav-link text-dark">
+                        <a href="{{ route('data-mahasiswa.import') }}" class="nav-link text-dark">
                             <i class="fas fa-file-excel me-2"></i> Import Excel
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ route('datamahasiswa') }}" class="nav-link text-dark">
+                        <a href="{{ route('data-mahasiswa.list') }}" class="nav-link text-dark">
                             <i class="fas fa-table me-2"></i> Lihat Data
                         </a>
                     </li>
