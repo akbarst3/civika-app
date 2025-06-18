@@ -19,14 +19,14 @@ class RegisteredUserController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([        
+        $request->validate([
             'nim' => ['nullable', 'string', 'max:9', 'exists:mahasiswa,nim'],
             'kode_dosen' => ['nullable', 'string', 'max:6', 'exists:dosen,kode_dosen'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([            
+        $user = User::create([
             'nim' => $request->nim,
             'kode_dosen' => $request->kode_dosen,
             'email' => $request->email,
@@ -37,6 +37,15 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('welcome');
+        // Redirect berdasarkan role
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        if ($user->hasRole('mahasiswa')) {
+            return redirect()->route('dashboard-pengaju');
+        } elseif ($user->hasRole('dosen')) {
+            return redirect()->route('dashboard-reviewer1');
+        } else {
+            return redirect()->route('dashboard-reviewer1');
+        }
     }
 }

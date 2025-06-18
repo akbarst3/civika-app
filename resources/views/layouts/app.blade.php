@@ -14,7 +14,11 @@
 <body>
     <x-navbar :navtitle="View::getSection('navbar-content') ?? 'Dashboard / Home'" />
     <div class="d-flex">
-        <x-sidebar />
+        @if(View::hasSection('sidebar'))
+            @yield('sidebar')
+        @else
+            <x-sidebar />
+        @endif
         <main class="flex-grow-1 p-3" style="margin-left: 15.625rem;">
             @yield('content')
         </main>

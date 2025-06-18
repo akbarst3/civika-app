@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('kode_dosen', 6)->primary();
             $table->string('nip', 16)->nullable();
             $table->string('nama_dosen', 255);
-            $table->string('jabatan_dosen', 20)->nullable(); // Enum: Kajur, Kaprodi
+            $table->string('jabatan_dosen', 20)->nullable(); 
             $table->string('ttd', 254)->nullable();
             $table->timestamps();
         });

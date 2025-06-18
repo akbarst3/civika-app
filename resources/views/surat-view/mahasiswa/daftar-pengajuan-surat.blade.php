@@ -2,53 +2,108 @@
 
 @section('title', 'Riwayat Pengajuan Surat Mahasiswa')
 
+@section('sidebar')
+    <x-sidebar-mahasiswa />
+@endsection
+
 @section('content')
-    <h3>Riwayat Pengajuan Surat Mahasiswa</h3>
-    <div class="mt-4">
-        <div class="table-responsive">
-            <table class="table table-bordered table-striped" style="font-size: 0.9em;">
-                <thead>
+    <div class="container mt-4">
+        <h3 class="mb-4 text-2xl font-bold">Riwayat Pengajuan Surat Mahasiswa</h3>
+
+        <!-- Filter Dropdown -->
+        <div class="mb-4">
+            <form action="{{ route('daftar-pengajuan-surat') }}" method="GET" class="d-flex align-items-center gap-3">
+                <label for="status" class="form-label font-semibold">Filter Status:</label>
+                <select name="status" id="status" class="form-select w-auto rounded-lg shadow-sm"
+                    onchange="this.form.submit()">
+                    <option value="all" {{ $status == 'all' ? 'selected' : '' }}>Semua</option>
+                    <option value="draft" {{ $status == 'draft' ? 'selected' : '' }}>Draft</option>
+                    <option value="disetujui" {{ $status == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
+                    <option value="ditolak" {{ $status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                    <option value="diproses" {{ $status == 'diproses' ? 'selected' : '' }}>Diproses</option>
+                </select>
+            </form>
+        </div>
+
+        <div class="table-responsive shadow-sm rounded-lg">
+            <table class="table table-bordered table-striped table-hover"
+                style="font-size: 0.9em; border-radius: 8px; overflow: hidden;">
+                <thead class="bg-light">
                     <tr class="text-center">
-                        <th>No</th>
-                        <th>Jenis Surat</th>
-                        <th>Ditujukan</th>
-                        <th>Keperluan Surat</th>
-                        <th>Status Verifikasi</th>
-                        <th>Tahap Verifikasi</th>
-                        <th>Tanggal Pengajuan</th>
-                        <th>Waktu Verifikasi</th>
-                        <th>Aksi</th>
+                        <th class="p-3">No</th>
+                        <th class="p-3">Kode Surat</th>
+                        <th class="p-3">Jenis Surat</th>
+                        <th class="p-3">Ditujukan</th>
+                        <th class="p-3">Keperluan</th>
+                        <th class="p-3">Status Verifikasi</th>
+                        <th class="p-3">Tahap Verifikasi</th>
+                        <th class="p-3">Tanggal Pengajuan</th>
+                        <th class="p-3">Waktu Verifikasi</th>
+                        <th class="p-3">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($surats as $index => $surat )
+                    @forelse ($surats as $index => $surat)
                         <tr>
-                            <td class="text-center">{{ $index + 1 }}</td>
-                            <td class="text-center">{{ $surat->jenis_surat }}</td>
-                            <td class="text-center">{{ $surat->ditujukan }}</td>
-                            <td class="text-center">{{ $surat->keperluan }}</td>
-                            <td class="text-center">{{ $surat->status_surat }}</td>
-                            <td class="text-center">{{ $surat->tahap_verifikasi }}</td>
-                            <td class="text-center">{{ $surat->created_at }}</td>
-                            <td class="text-center">{{ $surat->updated_at }}</td>
-                            <td class="text-center">
-                                <a href="#" class="btn btn-sm btn-outline-primary">⬇</a>
+                            <td class="text-center p-3">{{ $index + 1 + ($surats->currentPage() - 1) * $surats->perPage() }}
+                            </td>
+                            <td class="text-center p-3">{{ $surat->kode_surat ?? '-' }}</td>
+                            <td class="text-center p-3">{{ $surat->jenis_surat ?? '-' }}</td>
+                            <td class="text-center p-3">{{ $surat->ditujukan ?? '-' }}</td>
+                            <td class="text-center p-3">{{ $surat->keperluan ?? '-' }}</td>
+                            <td class="text-center p-3">
+                                <span
+                                    class="badge {{ $surat->status_surat == 'Disetujui' ? 'bg-success' : ($surat->status_surat == 'Ditolak' ? 'bg-danger' : ($surat->status_surat == 'Proses' ? 'bg-warning' : 'bg-secondary')) }}">
+                                    {{ $surat->status_surat ?? '-' }}
+                                </span>
+                            </td>
+                            <td class="text-center p-3">
+                                @if ($surat->tahap_verifikasi == 'tu')
+                                    Tata Usaha
+                                @else
+                                    {{ ucfirst($surat->tahap_verifikasi ?? '-') }}
+                                @endif
+                            </td>
+                            <td class="text-center p-3">{{ $surat->created_at->format('d-m-Y H:i') }}</td>
+                            <td class="text-center p-3">{{ $surat->updated_at->format('d-m-Y H:i') }}</td>
+                            <td class="text-center p-3">
+                                <a href="{{ route('detail-pengajuan-surat', $surat->kode_surat) }}"
+                                    class="btn btn-sm btn-outline-primary rounded-pill">
+                                    <i class="fas fa-solid fa-download"></i> Download
+                                </a>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="10" class="text-center p-3">Tidak ada data pengajuan surat.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
         <!-- Pagination -->
-        <nav aria-label="Page navigation" class="mt-3">
-            <ul class="pagination justify-content-center">
-                <li class="page-item"><a class="page-link" href="#">Prev</a></li>
-                @for ($i = 1; $i <= 10; $i++)
-                    <li class="page-item {{ $i == 1 ? 'active' : '' }}"><a class="page-link" href="#">{{ $i }}</a></li>
-                @endfor
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
-            </ul>
-        </nav>
+        <div class="mt-4">
+            {{ $surats->appends(['status' => $status])->links('pagination::bootstrap-5') }}
+        </div>
     </div>
+    <x-whatsapp-floating />
 @endsection
+
+@push('styles')
+    <style>
+        .table-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .badge {
+            font-size: 0.8em;
+            padding: 0.5em 1em;
+        }
+
+        .btn-outline-primary {
+            font-size: 0.8em;
+        }
+    </style>
+@endpush

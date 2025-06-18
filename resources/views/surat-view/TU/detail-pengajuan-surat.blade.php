@@ -195,9 +195,9 @@
                         <div class="space-y-5">
                             <select name="tahap_verifikasi" id="tahap_verifikasi" class="w-full p-2 mb-2 border rounded">
                                 <option value="">Pilih Penerima</option>
-                                <option value="kaprodi">kaprodi</option>
-                                <option value="kajur">kajur</option>
-                                <option value="wali dosen">wali dosen</option>
+                                <option value="Kaprodi">kaprodi</option>
+                                <option value="Kajur">kajur</option>
+                                <option value="Wali Dosen">wali dosen</option>
                             </select>
                             <div class="flex justify-between">
                                 <button type="submit" 
@@ -238,9 +238,9 @@
         function redirectToRoute() {
             const verifikator = document.getElementById('tahap_verifikasi').value;
             let route;
-            if (verifikator === 'kaprodi') {
+            if (verifikator === 'Kaprodi') {
                 route = "{{ route('daftar-verifikasi-surat') }}";
-            } else if (verifikator === 'kajur') {
+            } else if (verifikator === 'Kajur') {
                 route = "{{ route('daftar-verifikasi-surat') }}";
             } else if (verifikator === 'wali dosen') {
                 route = "{{ route('daftar-verifikasi-surat') }}";

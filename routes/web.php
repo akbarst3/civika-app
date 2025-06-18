@@ -6,7 +6,7 @@ use App\Http\Controllers\SuratController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 Route::get('/template', function () {
     return view('surat-view.template-surat-beasiswa');
