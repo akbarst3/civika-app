@@ -29,7 +29,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('mahasiswa.import') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('data-mahasiswa.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-3">
                         <label for="angkatan" class="form-label">Pilih Angkatan</label>
