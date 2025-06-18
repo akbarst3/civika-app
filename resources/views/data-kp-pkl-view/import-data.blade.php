@@ -5,7 +5,7 @@
 @section('navbar-content', 'Pencatatan Akademik / Import Data PKL')
 
 @section('content')
-<form action="{{ route('kp-pkl.import') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('data-kp-pkl.import-data') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <div class="container mt-5">
         <div class="card">
@@ -18,9 +18,9 @@
                     <label for="angkatan" class="form-label">Angkatan</label>
                     <select name="angkatan" id="angkatan" class="form-select" required>
                         <option value="" disabled selected>Pilih Angkatan</option>
-                        @for ($year = date('Y'); $year >= 2010; $year--)
-                            <option value="{{ $year }}">{{ $year }}</option>
-                        @endfor
+                        @foreach($angkatans as $angkatan)
+                            <option value="{{ $angkatan }}">{{ $angkatan }}</option>
+                        @endforeach
                     </select>
                     @error('angkatan')
                     <span class="text-danger">{{ $message }}</span>
@@ -31,9 +31,9 @@
                     <label for="prodi" class="form-label">Program Studi</label>
                     <select name="prodi" id="prodi" class="form-select" required>
                         <option value="" disabled selected>Pilih Program Studi</option>
-                        @foreach ($prodis as $prodi)
-                            <option value="{{ $prodi->kode_prodi }}">{{ $prodi->nama_prodi }}</option>
-                        @endforeach
+                        <option value="" disabled selected>Pilih Program Studi</option>
+                        <option value="1">D-3 Teknik Informatika</option>
+                        <option value="2">D-4 Teknik Informatika</option>
                     </select>
                     @error('prodi')
                     <span class="text-danger">{{ $message }}</span>

@@ -1,15 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
-    <h1 class="mt-4 mb-4">Generate Laporan Honor PKL</h1>
+<div class="container mt-5"> <!-- Ubah mt-4 menjadi mt-5 -->
+    <h1 class="mt-4 mb-4">Generate Laporan PDPT PKL</h1>
     <div class="row">
         <div class="col-md-6">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <form action="{{ route('generate.honor.pkl') }}" method="POST">
+                    <form id="reportForm" method="GET" action="">
                         @csrf
-                        <input type="hidden" name="jenis_laporan" value="honorKpPkl">
                         <div class="mb-3">
                             <label for="prodi" class="form-label">Program Studi</label>
                             <select class="form-select" id="prodi" name="prodi" required>
@@ -27,15 +26,14 @@
                                 @endforeach
                             </select>
                         </div>
-                        <button type="submit" class="btn custom-button" onclick="setFormAction('{{ route('generate.honor.kp-pkl.download') }}')">Generate</button>
-                        <button type="submit" class="btn btn-primary" onclick="setFormAction('{{ route('display.honor.kp-pkl') }}')">Lihat Laporan</button>
+                        <button type="submit" class="btn custom-button" onclick="setFormAction('{{ route('data-kp-pkl.generate-pdpt-download') }}')">Generate</button>
+                        <button type="submit" class="btn custom-button" onclick="">Lihat Laporan</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <script>
     function setFormAction(action) {
         console.log('Setting form action to:', action); // Debugging

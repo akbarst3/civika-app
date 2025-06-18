@@ -15,21 +15,37 @@ use Illuminate\Routing\Controller;
 
 class PKLController extends Controller
 {
-    public function handleDownload(Request $request)
-    {
-        $request->validate([
-            'prodi' => 'required',
-            'angkatan' => 'required',
-            'jenis_laporan' => 'required|in:pdpt,honor'
-        ]);
+//    public function handleDownloadPDPTKpPkl(Request $request)
+//    {
+//        $request->validate([
+//            'prodi' => 'required',
+//            'angkatan' => 'required'
+//        ]);
+//
+//        if ($request->jenis_laporan === 'pdpt') {
+//            return $this->generatePDPT($request);
+//        } else if ($request->jenis_laporan === 'honor') {
+//            return $this->generateHonorKpPkl($request);
+//        }
+//        abort(404);
+//    }
+//
+//    public function handleDownloadHonorKpPkl(Request $request)
+//    {
+//        $request->validate([
+//            'prodi' => 'required',
+//            'angkatan' => 'required'
+//        ]);
+//
+//        if ($request->jenis_laporan === 'pdpt') {
+//            return $this->generatePDPT($request);
+//        } else if ($request->jenis_laporan === 'honor') {
+//            return $this->generateHonorKpPkl($request);
+//        }
+//        abort(404);
+//    }
 
-        if ($request->jenis_laporan === 'pdpt') {
-            return $this->generatePDPT($request);
-        }
-        abort(404);
-    }
-
-    public function generatePDPT(Request $request)
+    public function generatePDPTKpPkl(Request $request)
     {
         $request->validate([
             'prodi' => 'required',
@@ -71,11 +87,11 @@ class PKLController extends Controller
         $currentDate = now()->format('d-m-Y');
         $filename = "laporan_pdpt_kp_pkl_{$namaProdi}_{$request->angkatan}_{$currentDate}.pdf";
 
-        $pdf = Pdf::loadView('pkl-view.laporan-pdpt-kp-pkl', compact('data', 'kaprodi'));
+        $pdf = Pdf::loadView('data-kp-pkl-view.laporan-pdpt-kp-pkl', compact('data', 'kaprodi'));
         return $pdf->download($filename);
     }
 
-    public function form()
+    public function formGeneratePDPTKpPkl()
     {
         $angkatans = DB::table('mahasiswa')
             ->select('angkatan')
@@ -83,7 +99,18 @@ class PKLController extends Controller
             ->orderBy('angkatan', 'asc')
             ->pluck('angkatan');
 
-        return view('pkl-view.generate-pdpt-pkl', compact('angkatans'));
+        return view('data-kp-pkl-view.generate-pdpt', compact('angkatans'));
+    }
+
+    public function formGenerateHonorKpPkl()
+    {
+        $angkatans = DB::table('mahasiswa')
+            ->select('angkatan')
+            ->distinct()
+            ->orderBy('angkatan', 'asc')
+            ->pluck('angkatan');
+
+        return view('data-kp-pkl-view.generate-honor', compact('angkatans'));
     }
     public function import(Request $request)
     {
@@ -102,13 +129,24 @@ class PKLController extends Controller
         }
     }
 
-    public function downloadHonorKpPkl(Request $request)
+    public function formImport()
     {
-        if ($request->jenis_laporan === 'honorKpPkl') {
-            return $this->generateHonorKpPkl($request);
-        }
-        abort(404, 'Jenis Laporan bukan Honor Kp Pkl');
+        $angkatans = DB::table('mahasiswa')
+            ->select('angkatan')
+            ->distinct()
+            ->orderBy('angkatan', 'asc')
+            ->pluck('angkatan');
+
+        return view('data-kp-pkl-view.import-data', compact('angkatans'));
     }
+
+//    public function downloadHonorKpPkl(Request $request)
+//    {
+//        if ($request->jenis_laporan === 'honorKpPkl') {
+//            return $this->generateHonorKpPkl($request);
+//        }
+//        abort(404, 'Jenis Laporan bukan Honor Kp Pkl');
+//    }
 
     public function generateHonorKpPkl(Request $request)
     {
@@ -194,7 +232,7 @@ class PKLController extends Controller
 
         $currentDate = now()->format('d-m-Y');
         $filename = "laporan_honor_kp-pkl_{$prodi->nama_prodi}_{$request->angkatan}_{$currentDate}.pdf";
-        $pdf = Pdf::loadView('pkl-view.laporan-honor-kp-pkl', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris', 'prodiType'));
+        $pdf = Pdf::loadView('data-kp-pkl-view.laporan-honor-kp-pkl', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris', 'prodiType'));
         return $pdf->download($filename);
     }
 
@@ -207,7 +245,7 @@ class PKLController extends Controller
         ]);
 
         $prodi = Prodi::where('kode_prodi', $request->input('prodi'))->first();
-        if (!$prodi) 
+        if (!$prodi)
         {
             return redirect()->back()->withErrors(['prodi' => 'Program Studi tidak valid.']);
         }
@@ -277,23 +315,11 @@ class PKLController extends Controller
                 ];
             })
             ->filter(function ($dosen) {
-                return $dosen->pembimbing_1_count > 0 || $dosen->pembimbing_2_count > 0 || 
+                return $dosen->pembimbing_1_count > 0 || $dosen->pembimbing_2_count > 0 ||
                     $dosen->penguji_1_count > 0 || $dosen->penguji_2_count > 0;
             })
             ->values();
 
-        return view('pkl-view.display-honor-pkl', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris'));
-    }
-
-    // untuk dropdown di tampilan
-    public function form()
-    {
-        $angkatans = DB::table('kelas')
-            ->select('angkatan')
-            ->distinct()
-            ->orderBy('angkatan', 'asc')
-            ->pluck('angkatan');
-
-        return view('pkl-view.generate-honor-pkl', compact('angkatans'));
+        return view('data-kp-pkl-view.display-honor', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris'));
     }
 }

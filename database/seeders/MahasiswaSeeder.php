@@ -15,18 +15,18 @@ class MahasiswaSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            ['nim' => '202300001', 'nama_mhs' => 'Aldrin Rayhan Putra'],
-            ['nim' => '202300002', 'nama_mhs' => 'Ananta Destawardhana'],
-            ['nim' => '202300003', 'nama_mhs' => 'M. Fatur Maulidan Azzahra'],
-            ['nim' => '202300004', 'nama_mhs' => 'Achmadya Ridwan Ilyawan'],
-            ['nim' => '202300005', 'nama_mhs' => 'Ari Maulana Hardan'],
-            ['nim' => '202300006', 'nama_mhs' => 'Wildan Setya Nugraha'],
-            ['nim' => '202300007', 'nama_mhs' => 'Arief Rahman Ahmadhusein'],
-            ['nim' => '202300008', 'nama_mhs' => 'Hilman Permana'],
-            ['nim' => '202300009', 'nama_mhs' => 'Lolla Mariah'],
-            ['nim' => '202300010', 'nama_mhs' => 'Lolla Mariah'],
-            ['nim' => '202300011', 'nama_mhs' => 'Lolla Mariah'],
-            ['nim' => '202300012', 'nama_mhs' => 'Lolla Mariah'],
+            ['nim' => '210000001', 'nama_mhs' => 'Aldrin Rayhan Putra'],
+            ['nim' => '210000002', 'nama_mhs' => 'Ananta Destawardhana'],
+            ['nim' => '210000003', 'nama_mhs' => 'M. Fatur Maulidan Azzahra'],
+            ['nim' => '210000004', 'nama_mhs' => 'Achmadya Ridwan Ilyawan'],
+            ['nim' => '210000005', 'nama_mhs' => 'Ari Maulana Hardan'],
+            ['nim' => '210000006', 'nama_mhs' => 'Wildan Setya Nugraha'],
+            ['nim' => '210000007', 'nama_mhs' => 'Arief Rahman Ahmadhusein'],
+            ['nim' => '210000008', 'nama_mhs' => 'Hilman Permana'],
+            ['nim' => '210000009', 'nama_mhs' => 'Lolla Mariah'],
+            ['nim' => '210000010', 'nama_mhs' => 'Lolla Mariah'],
+            ['nim' => '210000011', 'nama_mhs' => 'Lolla Mariah'],
+            ['nim' => '210000012', 'nama_mhs' => 'Lolla Mariah'],
         ];
 
         foreach ($data as $mhs) {
@@ -42,6 +42,7 @@ class MahasiswaSeeder extends Seeder
                 'agama' => 'Islam',
                 'gol_darah' => 'O',
                 'anak_ke' => 1,
+                'angkatan' => '2021',
                 'nama_slta' => 'SMAN 1 Bandung',
                 'jalur_daftar' => 'SNBT',
                 'kelas_id' => 5, // Pastikan kelas dengan ID 1 sudah ada di tabel `kelas`

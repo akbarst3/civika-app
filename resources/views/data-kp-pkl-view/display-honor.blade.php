@@ -24,7 +24,7 @@
                     @endif
 
                     <div class="mb-3">
-                        <a href="{{ route('generate.honor.kp-pkl.form') }}" class="btn btn-secondary">Back to Generate Form</a>
+                        <a href="{{ route('data-kp-pkl.generate-honor-form') }}" class="btn btn-secondary">Back to Generate Form</a>
                     </div>
 
                     @if($prodi && $tahunAkademik)
