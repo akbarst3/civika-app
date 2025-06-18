@@ -14,7 +14,7 @@ class Ibu extends Model
 
     protected $fillable = [
         'nim', 'nama_ibu', 'pekerjaan_ibu', 'alamat_ibu', 'telepon_ibu',
-        'kota_ibu', 'instansi_ibu', 'telepon_instansi_ibu', 'kode_pos_ibu', 'penghasilan_ibu'
+        'kota_ibu', 'pendidikan_ibu', 'instansi_ibu', 'telepon_instansi_ibu', 'kode_pos_ibu', 'penghasilan_ibu'
     ];
 
     public function mahasiswa()
