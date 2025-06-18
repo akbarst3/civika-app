@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\MahasiswaController;
-use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\TugasAkhirController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PKLController;
@@ -46,6 +45,7 @@ Route::get('/data-kp-pkl/generate-pdpt', [PKLController::class, 'formGeneratePDP
 Route::get('/data-kp-pkl/generate-honor', [PKLController::class, 'formGenerateHonorKpPkl'])->name('data-kp-pkl.generate-honor-form');
 
 Route::get('/data-kp-pkl/generate-pdpt/download', [PKLController::class, 'generatePDPTKpPkl'])->name('data-kp-pkl.generate-pdpt-download');
+
 // Generate Honor Tugas Akhir
 Route::get('data-ta/generate-honor-ta', [TugasAkhirController::class, 'formGenerateHonor'])->name('data-ta.honor.form');
 Route::post('data-ta/generate-honor-ta', [TugasAkhirController::class, 'handleDownloadHonor'])->name('data-ta.generate.honor');
