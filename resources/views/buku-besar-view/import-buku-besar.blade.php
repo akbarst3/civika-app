@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('navbar-content', 'Import Buku Besar')
+
 @section('content')
     <div class="container mt-5">
         <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
@@ -28,9 +30,9 @@
             <!-- Progress Bar -->
             <div id="progressContainer" class="progress-container mb-3 d-none">
                 <div class="progress" style="height: 25px;">
-                    <div id="importProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    <div id="importProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%; transition: width 0.5s ease-in-out;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                 </div>
-                <p id="progressText" class="mt-2">0 dari 0 file telah diimport</p>
+                <p id="progressText" class="mt-2">0 dari 0 sheet telah diimport</p>
             </div>
             <!-- Tombol Import di bawah upload -->
             <div class="import-button-container">
@@ -57,11 +59,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Pop-up Kecil untuk Status -->
-        <div id="statusPopup" class="status-popup d-none">
-            <p id="statusMessage"></p>
         </div>
     </div>
 
@@ -93,20 +90,30 @@
             progressText.textContent = `${processedSheets} dari ${totalSheets} sheet telah diimport`;
         }
 
-        function showStatusPopup(message, isSuccess) {
-            const statusPopup = document.getElementById('statusPopup');
-            const statusMessage = document.getElementById('statusMessage');
-            statusMessage.textContent = message;
-            statusPopup.classList.remove('d-none', 'status-success', 'status-fail');
-            statusPopup.classList.add(isSuccess ? 'status-success' : 'status-fail');
-            setTimeout(() => {
-                statusPopup.classList.add('d-none');
-            }, 3000);
+        // Fungsi untuk mensimulasikan pembaruan progress bar secara bertahap
+        async function simulateProgress(totalSheetsToProcess) {
+            const increment = 1; // Increment per step
+            const intervalTime = 500; // Waktu per step dalam milidetik (sesuaikan untuk kecepatan)
+
+            while (processedSheets < totalSheetsToProcess) {
+                await new Promise(resolve => setTimeout(resolve, intervalTime));
+                processedSheets = Math.min(processedSheets + increment, totalSheetsToProcess);
+                updateProgressBar();
+            }
         }
 
         async function handleImport() {
             if (!fileInput.files || fileInput.files.length === 0) {
-                showStatusPopup('Silakan upload file Excel sebelum mengimport.', false);
+                Swal.fire({
+                    title: 'Peringatan',
+                    text: 'Silakan upload file Excel sebelum mengimport.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                });
                 return;
             }
 
@@ -117,9 +124,7 @@
             successfulSheets = 0;
             failedSheets = 0;
 
-            // Calculate total sheets (client-side estimation)
-            // Ideally, this should be confirmed by the server, but for simplicity, assume sheets A, B, C
-            files.forEach(() => totalSheets += 3); // Assume max 3 sheets per file
+            // Set teks awal progress bar sebelum mendapatkan data dari server
             updateProgressBar();
 
             const formData = new FormData();
@@ -137,52 +142,112 @@
                 const data = await response.json();
 
                 if (data.success && Array.isArray(data.results)) {
-                    totalSheets = data.totalSheets; // Use server-provided totalSheets
+                    // Set totalSheets berdasarkan data dari server
+                    totalSheets = data.totalSheets;
+                    processedSheets = 0; // Reset untuk simulasi
+
+                    // Mulai simulasi progress bar setelah mendapatkan totalSheets
+                    const progressPromise = simulateProgress(totalSheets);
+
+                    let successDetails = [];
+                    let failureDetails = [];
+
                     data.results.forEach(fileResult => {
                         fileResult.sheets.forEach(sheet => {
-                            processedSheets++;
                             if (sheet.success) {
                                 successfulSheets++;
-                                showStatusPopup(`Sheet ${sheet.sheetName} di file ${fileResult.fileName} berhasil diimport.`, true);
+                                successDetails.push(`Sheet ${sheet.sheetName} di file ${fileResult.fileName} berhasil diimport.`);
                             } else {
                                 failedSheets++;
-                                showStatusPopup(`Sheet ${sheet.sheetName} di file ${fileResult.fileName} gagal diimport: ${sheet.message || 'Format tidak sesuai.'}`, false);
+                                failureDetails.push(`Sheet ${sheet.sheetName} di file ${fileResult.fileName} gagal diimport: ${sheet.message || 'Alasan tidak diketahui.'}`);
                             }
-                            updateProgressBar();
                         });
+                    });
+
+                    // Tunggu hingga simulasi progress selesai
+                    await progressPromise;
+
+                    // Pastikan processedSheets sesuai dengan totalSheets
+                    processedSheets = totalSheets;
+                    updateProgressBar();
+
+                    let htmlMessage = '';
+                    if (successfulSheets > 0) {
+                        htmlMessage += `<p><strong>Berhasil diimport (${successfulSheets} sheet):</strong></p><ul>${successDetails.map(detail => `<li>${detail}</li>`).join('')}</ul>`;
+                    }
+                    if (failedSheets > 0) {
+                        htmlMessage += `<p><strong>Gagal diimport (${failedSheets} sheet):</strong></p><ul>${failureDetails.map(detail => `<li>${detail}</li>`).join('')}</ul>`;
+                    }
+
+                    const icon = successfulSheets > 0 ? 'success' : (failedSheets > 0 ? 'warning' : 'info');
+                    Swal.fire({
+                        title: 'Import Selesai',
+                        html: htmlMessage || 'Tidak ada sheet yang diimpor.',
+                        icon: icon,
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fileInput.value = '';
+                            totalSheets = 0;
+                            processedSheets = 0;
+                            successfulSheets = 0;
+                            failedSheets = 0;
+                            updateProgressBar();
+                            fileCountDisplay.textContent = '0 file telah dipilih';
+                            progressContainer.classList.add('d-none');
+                        }
                     });
                 } else {
                     failedSheets += totalSheets;
-                    files.forEach(file => showStatusPopup(`File ${file.name} gagal diimport: Respons tidak valid.`, false));
-                    updateProgressBar();
+                    Swal.fire({
+                        title: 'Import Gagal',
+                        html: files.map(file => `<p>File ${file.name} gagal diimport: Respons tidak valid dari server.</p>`).join(''),
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        },
+                        buttonsStyling: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fileInput.value = '';
+                            totalSheets = 0;
+                            processedSheets = 0;
+                            successfulSheets = 0;
+                            failedSheets = 0;
+                            updateProgressBar();
+                            fileCountDisplay.textContent = '0 file telah dipilih';
+                            progressContainer.classList.add('d-none');
+                        }
+                    });
                 }
             } catch (error) {
-                failedSheets += totalSheets;
-                files.forEach(file => showStatusPopup(`File ${file.name} gagal diimport: Kesalahan server.`, false));
-                updateProgressBar();
+                Swal.fire({
+                    title: 'Import Gagal',
+                    html: files.map(file => `<p>File ${file.name} gagal diimport: Kesalahan server (${error.message}).</p>`).join(''),
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    },
+                    buttonsStyling: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fileInput.value = '';
+                        totalSheets = 0;
+                        processedSheets = 0;
+                        successfulSheets = 0;
+                        failedSheets = 0;
+                        updateProgressBar();
+                        fileCountDisplay.textContent = '0 file telah dipilih';
+                        progressContainer.classList.add('d-none');
+                    }
+                });
             }
-
-            Swal.fire({
-                title: 'Import Selesai',
-                html: `Berhasil mengimport ${successfulSheets} sheet.<br>Gagal mengimport ${failedSheets} sheet.`,
-                icon: 'success',
-                confirmButtonText: 'OK',
-                customClass: {
-                    confirmButton: 'btn btn-primary'
-                },
-                buttonsStyling: false
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fileInput.value = '';
-                    totalSheets = 0;
-                    processedSheets = 0;
-                    successfulSheets = 0;
-                    failedSheets = 0;
-                    updateProgressBar();
-                    fileCountDisplay.textContent = '0 file telah dipilih';
-                    progressContainer.classList.add('d-none');
-                }
-            });
         }
     </script>
 @endsection

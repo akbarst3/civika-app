@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('navbar-content', 'Import Buku Besar')
+
 @section('content')
     <div class="container mt-5">
         <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
@@ -60,9 +62,18 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="#" class="btn btn-link text-decoration-none">
-                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                                </a>
+                                @if ($item['status'] === 'imported')
+                                    <a href="{{ route('buku-besar', [
+                                        'tahun' => $item['angkatan'],
+                                        'semester' => $item['semester_aktif'],
+                                        'kelas_id' => $item['kelas_id'],
+                                        'program_studi' => $item['kode_prodi']
+                                    ]) }}" class="btn btn-link text-decoration-none">
+                                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    </a>
+                                @else
+                                    <i class="fa-solid fa-minus text-muted"></i>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
