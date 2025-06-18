@@ -9,6 +9,8 @@ up:
 	@echo "⏳ Menunggu container civika-app aktif..."
 	@sleep 5
 	$(APP) php artisan serve --host=0.0.0.0 --port=8000
+	npm install
+	npm run dev
 
 stop:
 	@echo "🛑 Menghentikan semua container..."
