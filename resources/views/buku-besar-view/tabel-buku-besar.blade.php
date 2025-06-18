@@ -5,7 +5,7 @@
 @section('navbar-content', 'Tabel Buku Besar')
 
 @section('content')
-    <div class="container mt-5">
+    <div class="mt-5">
         <h2>History Buku Besar</h2>
         <form id="filterForm" method="GET" action="{{ route('buku-besar') }}">
             <div class="row mb-3">
@@ -56,9 +56,9 @@
                         @endforeach
                     </select>
                 </div>
-            </div>  
-        </form>          
-    </div>            
+            </div>
+        </form>
+    </div>
 
         @if ($data->isEmpty())
             <div class="alert alert-info mt-4" role="alert">
@@ -365,6 +365,10 @@
 
             .table th {
                 text-align: center;
+            }
+            
+            .table-bordered th, .table-bordered td {
+            border: 1px solid #dee2e6;
             }
         </style>
 
