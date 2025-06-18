@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\PKLController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PKLController;
+use App\Models\Prodi;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,5 +19,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/datapkl', function () {
+    return view('pkl-view/datapkl');
+})->name('datapkl');
+
+Route::post('/datapkl/import', [PKLController::class, 'import'])->name('kp-pkl.import');
+
+Route::get('/datapkl/import', function () {
+    return view('pkl-view/importdatapkl', ['prodis' => Prodi::all()]);
+})->name('kp-pkl.import.form');
 Route::get('/generate-pdpt-pkl', [PKLController::class, 'form'])->name('generate.laporan.form');
 Route::get('/laporan/download', [PKLController::class, 'handleDownload'])->name('laporan.download');
