@@ -37,6 +37,8 @@ Route::middleware(['auth', 'role:tata_usaha,dosen'])->group(function () {
     Route::put('TU/detail-pengajuan-surat/{kode_surat}/update', [SuratController::class, 'updateDetailPengajuanSurat'])->name('detail-pengajuan-surat-update');
 });
 
+Route::get('/TU/pengajuan-surat-download/{kode_surat}', [SuratController::class, 'createSurat'])->name('pengajuan-surat-create');
+
 Route::get('/riwayat-pengajuan-surat-dosen', function () {
     return view('surat-view.dosen.riwayat-pengajuan-surat-dosen');
 });

@@ -67,10 +67,14 @@
                             <td class="text-center p-3">{{ $surat->created_at->format('d-m-Y H:i') }}</td>
                             <td class="text-center p-3">{{ $surat->updated_at->format('d-m-Y H:i') }}</td>
                             <td class="text-center p-3">
-                                <a href="{{ route('detail-pengajuan-surat', $surat->kode_surat) }}"
+                                @if ($surat->status_surat === 'disetujui')
+                                <a href="{{ route('pengajuan-surat-create', $surat->kode_surat) }}"
                                     class="btn btn-sm btn-outline-primary rounded-pill">
                                     <i class="fas fa-solid fa-download"></i> Download
                                 </a>
+                                @else
+                                    <p>Surat masih dalam proses review</p>
+                                @endif
                             </td>
                         </tr>
                     @empty

@@ -15,11 +15,11 @@
             <form action="{{ route('daftar-verifikasi-surat') }}" method="GET" class="d-flex align-items-center gap-3">
                 <label for="status" class="form-label font-semibold">Filter Status:</label>
                 <select name="status" id="status" class="form-select w-auto rounded-lg shadow-sm" onchange="this.form.submit()">
-                    <option value="all" {{ $status == 'all' ? 'selected' : '' }}>Semua</option>
-                    <option value="Draft" {{ $status == 'Draft' ? 'selected' : '' }}>Draft</option>
-                    <option value="Disetujui" {{ $status == 'Disetujui' ? 'selected' : '' }}>Disetujui</option>
-                    <option value="Ditolak" {{ $status == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
-                    <option value="Proses" {{ $status == 'Proses' ? 'selected' : '' }}>Proses</option>
+                    <option value="all" {{ $stadtus == 'all' ? 'selected' : '' }}>Semua</option>
+                    <option value="draft" {{ $status == 'draft' ? 'selected' : '' }}>Draft</option>
+                    <option value="disetujui" {{ $status == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
+                    <option value="ditolak" {{ $status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                    <option value="diproses" {{ $status == 'diproses' ? 'selected' : '' }}>Proses</option>
                 </select>
             </form>
         </div>
@@ -64,6 +64,11 @@
                                 <a href="{{ route('detail-pengajuan-surat', $surat->kode_surat) }}" class="btn btn-sm btn-outline-primary rounded-pill">
                                     <i class="fas fa-eye"></i> Detail
                                 </a>
+                                @if ($surat->status_surat === 'disetujui')
+                                <a href="{{ route('pengajuan-surat-create', $surat->kode_surat) }}" class="btn btn-sm btn-outline-primary rounded-pill">
+                                    <i class="fas fa-eye"></i> Download
+                                </a>
+                                @endif
                             </td>
                         </tr>
                     @empty

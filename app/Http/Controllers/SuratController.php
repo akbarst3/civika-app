@@ -303,4 +303,20 @@ class SuratController extends Controller
 
         return view('surat-view.TU.detail-pengajuan-surat', compact('user', 'surat', 'data', 'pdfData'));
     }
+    
+    public function createSurat($kode_surat)
+    {
+        $user = auth()->user();
+
+        $surat = Surat::where('kode_surat', $kode_surat)->first();
+        
+        $targetDir = public_path('laraview/' . $surat->nim . '/' . $kode_surat);
+        $pdfPath = $targetDir . '/' . $kode_surat . '-preview-surat.pdf';
+        // $fileName = $surat->nim . '/' . $kode_surat . '/' . $kode_surat . '-preview-surat.pdf';
+
+        // $pdf = Pdf::loadview('Pages.Mahasiswa.surat_perjanjian', compact('pengajuans'));
+        // return view('suratPerjanjian'); // Tampilkan PDF di browser
+        // return $pdf->stream();
+        return response()->download($pdfPath);    
+    }
 }
