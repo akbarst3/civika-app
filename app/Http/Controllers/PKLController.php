@@ -83,4 +83,38 @@ class PKLController extends Controller
             ]
         ], 200);
     }
+
+
+    public function showPembimbingPengujiView(Request $request)
+    {
+        $query = KpPkl::with([
+            'mahasiswa' => function ($query) {
+                $query->select('nim', 'nama_mhs', 'nama_kelas');
+            },
+            'dosen' => function ($query) {
+                $query->select('kode_dosen', 'nama_dosen');
+            }
+        ]);
+
+        if ($request->filled('angkatan')) {
+            $query->whereHas('mahasiswa', function ($q) use ($request) {
+                $q->where('nama_kelas', 'like', '%' . $request->angkatan . '%');
+            });
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_perusahaan', 'like', '%' . $search . '%')
+                ->orWhereHas('mahasiswa', function ($q) use ($search) {
+                    $q->where('nama_mhs', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        $kpPkl = $query->paginate(10);
+
+        return view('pkl-view.pembimbing_penguji', compact('kpPkl'));
+    }
+
 }
