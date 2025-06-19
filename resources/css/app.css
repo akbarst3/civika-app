@@ -1,70 +1,165 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 
-body,
-input,
-select,
-button,
-table {
-    font-family: "Poppins", sans-serif;
+/* Custom Styles for Statistik Page */
+.sidebar {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
 }
 
-thead th {
-    background-color: #f4f4f4e8 !important;
-    color: #000000cd !important;
-    font-weight: 700;
-    text-align: center;
-}
-
-td[rowspan] {
-    vertical-align: middle !important;
-}
-
-/* Font tabel diperkecil agar rapi */
-table {
-    font-size: 14px;
-}
-
-/* Style pagination: hilangkan border pada page-link */
-.pagination .page-link {
-    border: none;
-    color: #000;
-    background-color: transparent;
-    transition: background-color 0.3s ease;
-    border-radius: 0;
-}
-
-/* Hilangkan border pada pagination li */
-.pagination .page-item {
-    border: none;
-}
-
-/* Warna oranye pagination jadi lebih terang */
-.pagination .page-item.active .page-link {
-    background-color: #ffa500; /* oranye terang */
-    color: #fff;
+.nav-link {
     border-radius: 8px;
-    font-weight: 600;
-    border: none;
+    margin-bottom: 5px;
+    transition: all 0.3s ease;
+    font-weight: 500;
 }
 
-/* Hover efek agar lebih halus */
-.pagination .page-link:hover {
-    background-color: #ffd59a;
-    color: #000;
-    border-radius: 8px;
+.nav-link:hover {
+    background-color: rgba(255, 193, 7, 0.2);
+    transform: translateX(5px);
 }
 
-.sidebar-nav .nav-link {
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
+.nav-link.active {
+    background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+    color: #000 !important;
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
 }
 
-.sidebar-nav .nav-link:hover {
-    background-color: rgba(255, 158, 0, 0.5); /* Warna oranye transparan */
-}
-
-.sidebar-nav .nav-link i {
+.nav-link i {
     width: 20px;
     text-align: center;
+}
+
+/* Chart Container Styling */
+.chart-container {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 20px;
+}
+
+/* Program Title Styling */
+#programTitle {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Control Panel Styling */
+.form-select {
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    transition: border-color 0.3s ease;
+}
+
+.form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Summary Cards Styling */
+.card {
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Statistics Cards Colors */
+.border-primary {
+    border-color: #007bff !important;
+    border-width: 2px !important;
+}
+
+.border-success {
+    border-color: #28a745 !important;
+    border-width: 2px !important;
+}
+
+.border-warning {
+    border-color: #ffc107 !important;
+    border-width: 2px !important;
+}
+
+.border-info {
+    border-color: #17a2b8 !important;
+    border-width: 2px !important;
+}
+
+/* Chart Styling */
+#statistikChart {
+    border-radius: 10px;
+}
+
+/* Header Styling */
+.container-fluid {
+    padding: 0;
+}
+
+.bg-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;
+    }
+    
+    .col-md-2 {
+        margin-bottom: 20px;
+    }
+    
+    .row.mb-4 .col-md-6 {
+        margin-bottom: 15px;
+    }
+    
+    #programTitle {
+        font-size: 1.5rem;
+    }
+}
+
+/* Animation for page load */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card, .chart-container, #programTitle {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Custom scrollbar for sidebar */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

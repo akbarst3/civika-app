@@ -15,8 +15,8 @@ return new class extends Migration
             $table->string('nim', 9)->primary();
             $table->string('nama_ayah', 255);
             $table->string('pekerjaan_ayah', 255);
-            $table->string('alamat_ayah', 255); 
-            $table->string('telepon_ayah', 255); 
+            $table->string('alamat_ayah', 255);
+            $table->string('telepon_ayah', 255);
             $table->string('kota_ayah', 255);
             $table->string('instansi_ayah', 255);
             $table->string('telepon_instansi_ayah', 255);

@@ -1,6 +1,9 @@
 <div x-data="{ active: '' }" class="d-flex flex-column flex-shrink-0 bg-light p-3 sidebar-nav"
     style="width: 258px; height: 100%; position: fixed; left: 0; overflow-y: auto;">
+<<<<<<< HEAD
     
+=======
+>>>>>>> 1c6133ea7ad7f5b5082fe22aca372bcc73288ed8
     <!-- Logo & Judul -->
     <div class="d-flex align-items-center mb-4 mt-3">
         <img src="{{ asset('images/logo_polban.png') }}" alt="Logo" width="50" height="75" class="me-2" style="margin-top: 18px;">
@@ -78,12 +81,12 @@
             </button>
             <div x-show="active === 'akademik'" x-transition.duration.300ms class="ps-4 mt-1" x-cloak>
                 <a href="#" class="d-block nav-link text-dark py-1 ps-4">Import Buku Besar</a>
-                <a href="#" class="d-block nav-link text-dark py-1 ps-4">History Buku Besar</a>
+                <a href="#">History Buku Besar</a>
             </div>
         </div>
 
         <!-- Data Statistik -->
-        <a href="#" class="nav-link text-dark d-flex align-items-center gap-2">
+        <a href="{{ route('statistik.index') }}" class="nav-link text-dark d-flex align-items-center gap-2">
             <i class="fas fa-chart-line"></i>
             <span>Data Statistik</span>
         </a>
@@ -92,14 +95,20 @@
     <!-- Footer Sidebar -->
     <div class="mt-auto pt-3 border-top">
         <nav class="nav nav-pills flex-column gap-2 sidebar-nav">
+            <!-- Tombol Pengaturan -->
             <a href="#" class="nav-link text-dark d-flex align-items-center gap-2">
                 <i class="fas fa-cog"></i>
                 <span>Pengaturan</span>
             </a>
-            <a href="#" class="nav-link text-danger d-flex align-items-center gap-2">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
+
+            <!-- Tombol Logout langsung submit -->
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="nav-link text-danger d-flex align-items-center gap-2 btn btn-link text-start p-0 w-100">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </form>
         </nav>
     </div>
 </div>

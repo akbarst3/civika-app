@@ -15,10 +15,9 @@ return new class extends Migration
             $table->string('kode_dosen', 6);
             $table->string('kode_matkul', 8);
             $table->string('nim', 9);
-            $table->string('indeks_nilai', 1)->nullable();
+            $table->string('indeks_nilai', 2)->nullable();
             $table->integer('semester_ke')->nullable();
             $table->primary(['kode_dosen', 'kode_matkul', 'nim']);
-            $table->unique(['kode_dosen', 'kode_matkul', 'nim'], 'identifier_1_nilai');
             $table->foreign('nim')->references('nim')->on('mahasiswa')->restrictOnDelete()->restrictOnUpdate();
             $table->foreign('kode_dosen')->references('kode_dosen')->on('dosen')->restrictOnDelete()->restrictOnUpdate();
             $table->foreign('kode_matkul')->references('kode_matkul')->on('mata_kuliah')->restrictOnDelete()->restrictOnUpdate();
