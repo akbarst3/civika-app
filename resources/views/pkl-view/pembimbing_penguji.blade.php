@@ -1,4 +1,3 @@
-```html
 @extends('layouts.app')
 
 @section('content')
@@ -43,6 +42,7 @@
                     <th>No</th>
                     <th>NIM</th>
                     <th>Nama</th>
+                    <th>Kelas</th>
                     <th>Perusahaan</th>
                     <th>Pembimbing 1</th>
                     <th>NIDN</th>
@@ -89,7 +89,7 @@
         } catch (error) {
             console.error('Error fetching data:', error);
             document.getElementById('tableBody').innerHTML = `
-                <tr><td colspan="12" class="text-center">Error loading data</td></tr>
+                <tr><td colspan="13" class="text-center">Error loading data</td></tr>
             `;
         }
     }
@@ -99,50 +99,25 @@
         const tableBody = document.getElementById('tableBody');
         tableBody.innerHTML = '';
 
-        // Kelompokkan data berdasarkan nama_perusahaan untuk rowspan
-        const groupedData = groupBy(data, 'nama_perusahaan');
-        let rowNumber = 1;
-
-        for (const perusahaan in groupedData) {
-            const group = groupedData[perusahaan];
-            const rowSpan = group.length;
-
-            group.forEach((item, index) => {
-                const row = document.createElement('tr');
-                if (index === 0) {
-                    row.innerHTML = `
-                        <td>${rowNumber}</td>
-                        <td>${item.nim}</td>
-                        <td>${item.nama_mahasiswa}</td>
-                        <td rowspan="${rowSpan}">${item.nama_perusahaan}</td>
-                        <td rowspan="${rowSpan}">${item.pembimbing[0]?.nama_dosen || '-'}</td>
-                        <td rowspan="${rowSpan}">${item.pembimbing[0]?.kode_dosen || '-'}</td>
-                        <td rowspan="${rowSpan}">${item.pembimbing[1]?.nama_dosen || '-'}</td>
-                        <td rowspan="${rowSpan}">${item.pembimbing[1]?.kode_dosen || '-'}</td>
-                        <td rowspan="${rowSpan}">${item.penguji[0]?.nama_dosen || '-'}</td>
-                        <td rowspan="${rowSpan}">${item.penguji[0]?.kode_dosen || '-'}</td>
-                        <td rowspan="${rowSpan}">${item.penguji[1]?.nama_dosen || '-'}</td>
-                        <td rowspan="${rowSpan}">${item.penguji[1]?.kode_dosen || '-'}</td>
-                    `;
-                } else {
-                    row.innerHTML = `
-                        <td>${rowNumber}</td>
-                        <td>${item.nim}</td>
-                        <td>${item.nama_mahasiswa}</td>
-                    `;
-                }
-                tableBody.appendChild(row);
-                rowNumber++;
-            });
-        }
-    }
-
-    // Fungsi untuk mengelompokkan data
-    function groupBy(array, key) {
-        return array.reduce((result, item) => {
-            (result[item[key]] = result[item[key]] || []).push(item);
-            return result;
-        }, {});
+        data.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${item.nim || '-'}</td>
+                <td>${item.nama_mahasiswa || '-'}</td>
+                <td>${item.kelas || '-'}</td>
+                <td>${item.nama_perusahaan || '-'}</td>
+                <td>${item.pembimbing[0]?.nama_dosen || '-'}</td>
+                <td>${item.pembimbing[0]?.nip || '-'}</td>
+                <td>${item.pembimbing[1]?.nama_dosen || '-'}</td>
+                <td>${item.pembimbing[1]?.nip || '-'}</td>
+                <td>${item.penguji[0]?.nama_dosen || '-'}</td>
+                <td>${item.penguji[0]?.nip || '-'}</td>
+                <td>${item.penguji[1]?.nama_dosen || '-'}</td>
+                <td>${item.penguji[1]?.nip || '-'}</td>
+            `;
+            tableBody.appendChild(row);
+        });
     }
 
     // Fungsi untuk merender pagination
@@ -154,7 +129,7 @@
 
         data.links.forEach(link => {
             const li = document.createElement('li');
-            li.className = `page-item ${link.active ? 'active' : ''} ${link.url ? '' : 'disabled'}`;
+            li.className = page-item ${link.active ? 'active' : ''} ${link.url ? '' : 'disabled'};
             const span = document.createElement('span');
             span.className = 'page-link';
             span.innerHTML = link.label;

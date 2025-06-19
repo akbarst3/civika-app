@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\KpPkl;
+use App\Models\Mahasiswa;
+use App\Models\Membimbing;
+use App\Models\Memnguji;
+
+
 
 class PKLController extends Controller
 {
@@ -40,8 +45,9 @@ class PKLController extends Controller
         $kpPkl = $query->paginate(10);
 
         // Format data untuk response
-        $data = $kpPkl->map(function ($pkl) {
-            return [
+        $data = [];
+        foreach ($kpPkl as $pkl) {
+            $data[] = [
                 'id_perusahaan' => $pkl->id_perusahaan,
                 'tahun' => $pkl->tahun,
                 'nim' => $pkl->nim,
@@ -71,25 +77,25 @@ class PKLController extends Controller
                     ]
                 ]
             ];
-        });
+        }
 
         return response()->json([
             'status' => 'success',
             'data' => $data,
-            'links' => $kpPkl->links()->toArray(),
             'meta' => [
                 'current_page' => $kpPkl->currentPage(),
                 'last_page' => $kpPkl->lastPage(),
+                'total' => $kpPkl->total(),
+                'per_page' => $kpPkl->perPage(),
             ]
         ], 200);
     }
-
 
     public function showPembimbingPengujiView(Request $request)
     {
         $query = KpPkl::with([
             'mahasiswa' => function ($query) {
-                $query->select('nim', 'nama_mhs', 'nama_kelas');
+                $query->select('nim', 'nama_mhs');
             },
             'dosen' => function ($query) {
                 $query->select('kode_dosen', 'nama_dosen');
@@ -98,7 +104,6 @@ class PKLController extends Controller
 
         if ($request->filled('angkatan')) {
             $query->whereHas('mahasiswa', function ($q) use ($request) {
-                $q->where('nama_kelas', 'like', '%' . $request->angkatan . '%');
             });
         }
 
@@ -116,5 +121,4 @@ class PKLController extends Controller
 
         return view('pkl-view.pembimbing_penguji', compact('kpPkl'));
     }
-
 }
