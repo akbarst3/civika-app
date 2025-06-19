@@ -71,4 +71,42 @@ class TugasAkhirController extends Controller
         'data' => $data
     ], 200);
 }
+
+    public function showPembimbingPengujiView(Request $request)
+    {
+        $query = TugasAkhir::with([
+            'mahasiswa' => function ($query) {
+                $query->select('nim', 'nama_mhs', 'nama_kelas');
+            },
+            'membimbing.dosen' => function ($query) {
+                $query->select('kode_dosen', 'nama_dosen');
+            },
+            'menguji.dosen' => function ($query) {
+                $query->select('kode_dosen', 'nama_dosen');
+            }
+        ]);
+
+        // Filter berdasarkan angkatan
+        if ($request->filled('angkatan')) {
+            $query->whereHas('mahasiswa', function ($q) use ($request) {
+                $q->where('nama_kelas', 'like', '%' . $request->angkatan . '%');
+            });
+        }
+
+        // Pencarian berdasarkan nama mahasiswa atau topik
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('topik', 'like', '%' . $search . '%')
+                ->orWhereHas('mahasiswa', function ($q) use ($search) {
+                    $q->where('nama_mhs', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        $tugasAkhir = $query->get();
+
+        return view('tugas-akhir-view.pembimbing_penguji', compact('tugasAkhir'));
+    }
+
 }
