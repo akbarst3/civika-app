@@ -1,9 +1,5 @@
 <div x-data="{ active: '' }" class="d-flex flex-column flex-shrink-0 bg-light p-3 sidebar-nav"
     style="width: 258px; height: 100%; position: fixed; left: 0; overflow-y: auto;">
-<<<<<<< HEAD
-    
-=======
->>>>>>> 1c6133ea7ad7f5b5082fe22aca372bcc73288ed8
     <!-- Logo & Judul -->
     <div class="d-flex align-items-center mb-4 mt-3">
         <img src="{{ asset('images/logo_polban.png') }}" alt="Logo" width="50" height="75" class="me-2" style="margin-top: 18px;">

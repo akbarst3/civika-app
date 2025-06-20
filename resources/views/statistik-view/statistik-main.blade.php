@@ -7,18 +7,6 @@
     <div class="row">
         <!-- Main Content -->
         <div class="col-md-10 p-4">
-            <!-- Header -->
-            {{-- <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="text-muted">Visualisasi Data Dengan Line Chart</h5>
-                <div class="d-flex align-items-center">
-                    <div class="bg-secondary rounded-pill px-3 py-1 me-3">
-                        <small class="text-white">Search...</small>
-                    </div>
-                    <i class="fas fa-bell text-muted me-3"></i>
-                    <div class="bg-danger rounded-circle" style="width: 40px; height: 40px;"></div>
-                </div>
-            </div> --}}
-
             <!-- Program Title (Dynamic) -->
             <div class="container-fluid" style="padding-top: 80px;">
                 <div class="text-center mb-4">
@@ -26,9 +14,7 @@
                         Program Studi : D3 - Teknik Komputer dan Informatika
                     </h3>
                 </div>
-                <!-- Konten lainnya -->
             </div>
-
 
             <!-- Enhanced Control Panel -->
             @php
@@ -61,79 +47,80 @@
                 </div>
             </div>
 
-            <div class="col-md-5 mb-4">
-            <div class="row align-items-center">
-                <div class="col-md-4">
-                    <label class="form-label fw-bold">Rentang Angkatan :</label>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Rentang Angkatan :</label>
+                        </div>
+                        @php
+                            $startYear = $data->isNotEmpty() ? (int) $data->first()['angkatan'] : 2023;
+                            $endYear = $data->isNotEmpty() ? (int) $data->last()['angkatan'] : 2023;
+                        @endphp
+                        <div class="col-md-4">
+                            <select class="form-select" id="startYear">
+                                @for ($year = $startYear; $year <= $endYear; $year++)
+                                    <option value="{{ $year }}">{{ $year }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="endYear">
+                                @for ($year = $startYear; $year <= $endYear; $year++)
+                                    <option value="{{ $year }}" {{ $year == $endYear ? 'selected' : '' }}>
+                                        {{ $year }}
+                                    </option>
+                                @endfor
+                            </select>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-
-                {{-- @php
-                    $filtered = $data->filter(function ($item) {
-                        return $item['prodi'] === 'D3'; // ganti 'D3' ke prodi yang dipilih
-                    })->sortBy('angkatan')->values();
-
-                    $startYear = $filtered->first()['angkatan'] ?? 2023;
-                    $endYear = $filtered->last()['angkatan'] ?? 2023;
-                @endphp
-
-                <div class="col-md-4">
-                    <label>Start Year</label>
-                    <select class="form-select" id="startYear">
-                        @for ($year = $startYear; $year <= $endYear; $year++)
-                            <option value="{{ $year }}">{{ $year }}</option>
-                        @endfor
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label>End Year</label>
-                    <select class="form-select" id="endYear">
-                        @for ($year = $startYear; $year <= $endYear; $year++)
-                            <option value="{{ $year }}" {{ $year == $endYear ? 'selected' : '' }}>{{ $year }}</option>
-                        @endfor
-                    </select>
-                </div> --}}
-
-                {{-- <div class="col-md-4">
-                    <select class="form-select" id="startYear"></select>
-                </div>
-                <div class="col-md-4">
-                    <select class="form-select" id="endYear"></select>
-                </div> --}}
-
-                @php
-                    $startYear = $data->isNotEmpty() ? (int) $data->first()['angkatan'] : 2023;
-                    $endYear = $data->isNotEmpty() ? (int) $data->last()['angkatan'] : 2023;
-                @endphp
-                <div class="col-md-4">
-                    <select class="form-select" id="startYear">
-                        @for ($year = $startYear; $year <= $endYear; $year++)
-                            <option value="{{ $year }}">{{ $year }}</option>
-                        @endfor
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <select class="form-select" id="endYear">
-                        @for ($year = $startYear; $year <= $endYear; $year++)
-                            <option value="{{ $year }}" {{ $year == $endYear ? 'selected' : '' }}>
-                                {{ $year }}
-                            </option>
-                        @endfor
-                    </select>
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Minimum Standar :</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="number" class="form-control" id="minimumStandard" 
+                            value="3.0" min="0" max="4" step="0.1" 
+                            placeholder="0.0 - 4.0">
+                    </div>
                 </div>
             </div>
         </div>
 
             <!-- Chart Container -->
-            <div class="card shadow-sm">
+            <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <canvas id="statistikChart" width="400" height="200"></canvas>
                 </div>
             </div>
 
-            <!-- Data Summary Cards (Different for D3 and D4) -->
-            <div class="row mt-4" id="dataSummary">
-                <!-- Cards will be populated by JavaScript -->
+            <!-- Detail Statistik Table -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white text-center py-4">
+                    <h2 class="mb-0 text-primary fw-bold" style="font-size: 2.5rem;">Detail Statistik</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr class="text-center">
+                                    <th class="custom-header">Angkatan</th>
+                                    <th class="custom-header">IPK Tertinggi</th>
+                                    <th class="custom-header">IPK Terendah</th>
+                                    <th class="custom-header">Rata-Rata IPK</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailStatistikTable">
+                                <!-- Table content will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -216,6 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const programSelect = document.getElementById('programSelect');
     const startYearSelect = document.getElementById('startYear');
     const endYearSelect = document.getElementById('endYear');
+    const minimumStandardInput = document.getElementById('minimumStandard');
 
     function updateYearOptions(prodi) {
         const years = angkatanData[prodi] || [];
@@ -243,7 +231,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateYearOptions(this.value);
     });
 
-
     // Data for different program studies
     const data = @json($data);
     const dataIPKD3 = [];
@@ -251,25 +238,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const dataIPKD4 = [];
     const dataAngkatanD4 = [];
 
+    // Raw data untuk statistik detail (simulasi data dengan IPK tertinggi dan terendah)
+    const detailDataD3 = [];
+    const detailDataD4 = [];
+
     Object.values(data).forEach(item => {
         if (item.prodi === 'D3') {
             dataIPKD3.push(item.rata_rata_ips);
             dataAngkatanD3.push(item.angkatan);
+            // Simulasi data detail dengan variasi IPK
+            detailDataD3.push({
+                angkatan: item.angkatan,
+                ipk_tertinggi: Math.min(4.0, item.rata_rata_ips + (Math.random() * 0.5)),
+                ipk_terendah: Math.max(0.0, item.rata_rata_ips - (Math.random() * 0.5)),
+                rata_rata_ipk: item.rata_rata_ips
+            });
         } else if (item.prodi === 'D4') {
             dataIPKD4.push(item.rata_rata_ips);
             dataAngkatanD4.push(item.angkatan);
+            // Simulasi data detail dengan variasi IPK
+            detailDataD4.push({
+                angkatan: item.angkatan,
+                ipk_tertinggi: Math.min(4.0, item.rata_rata_ips + (Math.random() * 0.5)),
+                ipk_terendah: Math.max(0.0, item.rata_rata_ips - (Math.random() * 0.5)),
+                rata_rata_ipk: item.rata_rata_ips
+            });
         }
     });
-    console.log(dataIPKD4);
-    console.log(dataAngkatanD4);
+
     const chartData = {
         D3: {
-            title: 'Program Studi : D3 - Teknik Komputer dan Informatika',
+            title: 'D3 - Teknik Komputer dan Informatika',
             data: {
                 labels: dataAngkatanD3,
                 datasets: [{
                     label: 'IPK',
-                    data : dataIPKD3,
+                    data: dataIPKD3,
                     borderColor: '#ff6b35',
                     backgroundColor: 'rgba(255, 107, 53, 0.1)',
                     tension: 0.4,
@@ -278,34 +282,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     pointRadius: 6
                 }]
             },
-            summary: [
-                { title: 'Total Mahasiswa', value: '1,250', icon: 'fa-users', color: 'primary' },
-                { title: 'Mahasiswa Aktif', value: '980', icon: 'fa-user-check', color: 'success' },
-                { title: 'Rata-rata IPK', value: '3.28', icon: 'fa-chart-line', color: 'warning' },
-                { title: 'Tingkat Kelulusan', value: '92%', icon: 'fa-graduation-cap', color: 'info' }
-            ]
+            detailData: detailDataD3
         },
         D4: {
-            title: 'Program Studi : D4 - Teknik Komputer dan Informatika',
-            data: {     
+            title: 'D4 - Teknik Komputer dan Informatika',
+            data: {
                 labels: dataAngkatanD4,
                 datasets: [{
                     label: 'IPK',
                     data: dataIPKD4,
-                    borderColor: '#4285f4',
-                    backgroundColor: 'rgba(66, 133, 244, 0.1)',
+                    borderColor: '#ff6b35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
                     tension: 0.4,
-                    pointBackgroundColor: '#4285f4',
-                    pointBorderColor: '#4285f4',
+                    pointBackgroundColor: '#ff6b35',
+                    pointBorderColor: '#ff6b35',
                     pointRadius: 6
                 }]
             },
-            summary: [
-                { title: 'Total Mahasiswa', value: '850', icon: 'fa-users', color: 'primary' },
-                { title: 'Mahasiswa Aktif', value: '720', icon: 'fa-user-check', color: 'success' },
-                { title: 'Rata-rata IPK', value: '3.40', icon: 'fa-chart-line', color: 'warning' },
-                { title: 'Tingkat Kelulusan', value: '95%', icon: 'fa-graduation-cap', color: 'info' }
-            ]
+            detailData: detailDataD4
         }
     };
 
@@ -313,6 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function initChart(programType) {
         const startYear = parseInt(document.getElementById('startYear').value);
         const endYear = parseInt(document.getElementById('endYear').value);
+        const minimumStandard = parseFloat(document.getElementById('minimumStandard').value);
         
         if (startYear > endYear) {
             showNotification('Tahun mulai tidak boleh lebih besar dari tahun akhir', 'warning');
@@ -330,12 +325,29 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        const filteredLabels = data.data.labels.slice(startIndex, endIndex + 1);
+        const filteredIPKData = data.data.datasets[0].data.slice(startIndex, endIndex + 1);
+        const minimumStandardData = new Array(filteredLabels.length).fill(minimumStandard);
+
         const filteredData = {
-            labels: data.data.labels.slice(startIndex, endIndex + 1),
-            datasets: [{
-                ...data.data.datasets[0],
-                data: data.data.datasets[0].data.slice(startIndex, endIndex + 1)
-            }]
+            labels: filteredLabels,
+            datasets: [
+                {
+                    ...data.data.datasets[0],
+                    data: filteredIPKData
+                },
+                {
+                    label: 'Minimum Standar',
+                    data: minimumStandardData,
+                    borderColor: '#007bff',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    borderDash: [5, 5],
+                    tension: 0,
+                    pointBackgroundColor: '#007bff',
+                    pointBorderColor: '#007bff',
+                    pointRadius: 4
+                }
+            ]
         };
         
         if (chart) {
@@ -350,13 +362,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        display: false
+                        display: true,
+                        position: 'top'
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: false,
-                        min: 2.5,
+                        min: 0,
                         max: 4.0,
                         ticks: {
                             stepSize: 0.5,
@@ -385,30 +398,62 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update title
         document.getElementById('programTitle').textContent = data.title;
         
-        // Update summary cards
-        // updateSummaryCards(data.summary);
+        // Update detail statistics table
+        updateDetailStatistikTable(programType, startYear, endYear);
     }
 
-    // Update summary cards
-    // function updateSummaryCards(summary) {
-    //     const summaryContainer = document.getElementById('dataSummary');
-    //     summaryContainer.innerHTML = '';
+    // Update detail statistik table
+    function updateDetailStatistikTable(programType, startYear, endYear) {
+        const tableBody = document.getElementById('detailStatistikTable');
+        const detailData = chartData[programType].detailData;
+        
+        // Filter data berdasarkan rentang tahun
+        const filteredData = detailData.filter(item => {
+            const tahun = parseInt(item.angkatan);
+            return tahun >= startYear && tahun <= endYear;
+        });
 
-    //     summary.forEach(item => {
-    //         const cardHtml = `
-    //             <div class="col-md-3 mb-3">
-    //                 <div class="card border-${item.color} h-100">
-    //                     <div class="card-body text-center">
-    //                         <i class="fas ${item.icon} fa-2x text-${item.color} mb-2"></i>
-    //                         <h4 class="text-${item.color} fw-bold">${item.value}</h4>
-    //                         <p class="text-muted mb-0">${item.title}</p>
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //         `;
-    //         summaryContainer.innerHTML += cardHtml;
-    //     });
-    // }
+        let tableHTML = '';
+        filteredData.forEach(item => {
+            tableHTML += `
+                <tr class="text-center custom-row">
+                    <td class="custom-cell">${item.angkatan}</td>
+                    <td class="custom-cell">${item.ipk_tertinggi.toFixed(2)}</td>
+                    <td class="custom-cell">${item.ipk_terendah.toFixed(2)}</td>
+                    <td class="custom-cell">${item.rata_rata_ipk.toFixed(2)}</td>
+                </tr>
+            `;
+        });
+
+        tableBody.innerHTML = tableHTML;
+    }
+
+    // Event listener untuk minimum standard input
+    minimumStandardInput.addEventListener('input', function() {
+        const value = parseFloat(this.value);
+        if (value > 4) {
+            this.value = 4;
+            showNotification('Maksimal nilai yang dapat diinputkan adalah 4.0', 'warning');
+        } else if (value < 0) {
+            this.value = 0;
+            showNotification('Minimal nilai yang dapat diinputkan adalah 0.0', 'warning');
+        }
+    });
+
+    minimumStandardInput.addEventListener('change', function() {
+        const selectedProgram = document.getElementById('programSelect').value;
+        showLoading();
+        setTimeout(() => {
+            try {
+                initChart(selectedProgram);
+                showNotification('Minimum standar diperbarui', 'success');
+            } catch (error) {
+                showNotification(`Gagal memperbarui minimum standar: ${error.message}`, 'danger');
+            } finally {
+                hideLoading();
+            }
+        }, 500);
+    });
 
     // Event listener for program selection
     document.getElementById('programSelect').addEventListener('change', function() {
@@ -457,150 +502,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     });
 
-    // Export functions
-    function exportChart(format) {
-        showLoading();
-        
-        try {
-            if (format === 'png') {
-                const canvas = document.getElementById('statistikChart');
-                const url = canvas.toDataURL('image/png');
-                const link = document.createElement('a');
-                link.download = `statistik-chart-${new Date().getTime()}.png`;
-                link.href = url;
-                link.click();
-                showNotification('Chart berhasil diekspor sebagai PNG', 'success');
-            }
-        } catch (error) {
-            showNotification(`Gagal mengekspor chart: ${error.message}`, 'danger');
-        } finally {
-            hideLoading();
-        }
-    }
-
-    // function exportData(format) {
-    //     showLoading();
-        
-    //     try {
-    //         if (format === 'excel') {
-    //             // Simulate Excel export
-    //             setTimeout(() => {
-    //                 showNotification('Data berhasil diekspor ke Excel', 'success');
-    //                 hideLoading();
-    //             }, 1000);
-    //         } else if (format === 'pdf') {
-    //             // Simulate PDF export
-    //             setTimeout(() => {
-    //                 showNotification('Data berhasil diekspor ke PDF', 'success');
-    //                 hideLoading();
-    //             }, 1000);
-    //         }
-    //     } catch (error) {
-    //         showNotification(`Gagal mengekspor data: ${error.message}`, 'danger');
-    //     } finally {
-    //         hideLoading();
-    //     }
-    // }
-
-    function applyFilters() {
-        applyAdvancedFilters();
-    }
-
-    function handleSearch(event) {
-        if (event.key === 'Enter') {
-            performSearch();
-        }
-    }
-
-    // function performSearch() {
-    //     const query = document.getElementById('searchInput').value.trim();
-    //     if (query) {
-    //         searchStatistik(query);
-    //     } else {
-    //         showNotification('Masukkan kata kunci pencarian', 'warning');
-    //     }
-    // }
-
-    // function showComparison() {
-    //     // Scroll to comparison table
-    //     const comparisonTable = document.getElementById('comparisonTable');
-    //     if (comparisonTable) {
-    //         comparisonTable.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            
-    //         // Highlight the table briefly
-    //         comparisonTable.classList.add('table-bordered', 'border-primary');
-    //         setTimeout(() => {
-    //             comparisonTable.classList.remove('border-primary');
-    //         }, 2000);
-            
-    //         showNotification('Tabel perbandingan ditampilkan di bawah', 'info');
-    //     }
-    // }
-
-    function refreshData() {
-        showLoading();
-        
-        try {
-            setTimeout(() => {
-                const currentProgram = document.getElementById('programSelect').value;
-                
-                // Simulate data refresh
-                initChart(currentProgram);
-                
-                // Update all components
-                statistikHelper.updateDetailStats(currentProgram);
-                statistikHelper.updateComparisonTable();
-                
-                showNotification('Data berhasil diperbarui', 'success');
-                hideLoading();
-            }, 1500);
-        } catch (error) {
-            showNotification(`Gagal memperbarui data: ${error.message}`, 'danger');
-            hideLoading();
-        }
-    }
-
-    // Additional utility functions
-    // function toggleFullscreen() {
-    //     const chartContainer = document.querySelector('.card-body');
-    //     if (chartContainer) {
-    //         if (!document.fullscreenElement) {
-    //             chartContainer.requestFullscreen().catch(err => {
-    //                 showNotification(`Gagal masuk mode fullscreen: ${err.message}`, 'danger');
-    //             });
-    //         } else {
-    //             document.exitFullscreen();
-    //         }
-    //     }
-    // }
-
-    // function copyChartToClipboard() {
-    //     const canvas = document.getElementById('statistikChart');
-    //     canvas.toBlob(function(blob) {
-    //         const item = new ClipboardItem({ 'image/png': blob });
-    //         navigator.clipboard.write([item]).then(function() {
-    //             showNotification('Chart berhasil disalin ke clipboard', 'success');
-    //         }).catch(function(error) {
-    //             showNotification(`Gagal menyalin chart ke clipboard: ${error.message}`, 'danger');
-    //         });
-    //     });
-    // }
-
     // Initialize with D3 program
     initChart('D3');
 });
-
-// Placeholder for statistikHelper (to avoid undefined errors)
-const statistikHelper = {
-    updateDetailStats: function(program) {
-        // Simulate updating detailed stats
-        console.log(`Updating detailed stats for ${program}`);
-    },
-    updateComparisonTable: function() {
-        // Simulate updating comparison table
-        console.log('Updating comparison table');
-    }
-};
 </script>
 
 <style>
@@ -642,13 +546,13 @@ const statistikHelper = {
     box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
-.form-select {
+.form-select, .form-control {
     border-radius: 8px;
     border: 2px solid #e9ecef;
     transition: all 0.3s ease;
 }
 
-.form-select:focus {
+.form-select:focus, .form-control:focus {
     border-color: #007bff;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
@@ -692,20 +596,42 @@ const statistikHelper = {
     animation: fadeInUp 0.6s ease-out;
 }
 
-/* Badge animations */
-.badge {
-    transition: all 0.3s ease;
+/* Custom Table Styling untuk Detail Statistik */
+.custom-header {
+    background-color: #fff !important;
+    color: #007bff !important;
+    font-size: 1.5rem !important;
+    font-weight: bold !important;
+    padding: 20px 15px !important;
+    border: none !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
 }
 
-.badge:hover {
-    transform: scale(1.1);
+.custom-row {
+    border-bottom: 1px solid #e9ecef;
 }
 
-/* Table styling */
-.table-hover tbody tr:hover {
-    background-color: rgba(0, 123, 255, 0.1);
+.custom-cell {
+    background-color: #fff !important;
+    color: #007bff !important;
+    font-size: 1.3rem !important;
+    font-weight: bold !important;
+    padding: 15px !important;
+    vertical-align: middle !important;
+    border: none !important;
+}
+
+.custom-row:hover .custom-cell {
+    background-color: #f8f9fa !important;
     transform: scale(1.01);
     transition: all 0.3s ease;
+}
+
+/* Card header styling untuk Detail Statistik */
+.card-header.bg-white {
+    background-color: #fff !important;
+    border-bottom: 1px solid #e9ecef !important;
 }
 
 /* Responsive design */
@@ -726,6 +652,20 @@ const statistikHelper = {
     #statistikChart {
         height: 300px !important;
     }
+    
+    .custom-header {
+        font-size: 1.2rem !important;
+        padding: 15px 10px !important;
+    }
+    
+    .custom-cell {
+        font-size: 1.1rem !important;
+        padding: 12px 8px !important;
+    }
+    
+    .card-header h2 {
+        font-size: 2rem !important;
+    }
 }
 
 @media (max-width: 576px) {
@@ -740,6 +680,20 @@ const statistikHelper = {
     
     .table-responsive {
         font-size: 0.875rem;
+    }
+    
+    .custom-header {
+        font-size: 1rem !important;
+        padding: 12px 8px !important;
+    }
+    
+    .custom-cell {
+        font-size: 1rem !important;
+        padding: 10px 6px !important;
+    }
+    
+    .card-header h2 {
+        font-size: 1.5rem !important;
     }
 }
 
@@ -784,9 +738,24 @@ const statistikHelper = {
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-/* Spacing buat rentang angkatan sama chart */
-.col-md-5 {
-    margin-bottom: 2rem; /* Jarak rentang Angkatan dropdown */
+/* Input number styling */
+input[type="number"] {
+    text-align: center;
+}
+
+/* Detail Statistik Card Header Enhancement */
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+/* Table styling removal of default Bootstrap classes */
+.table-borderless th,
+.table-borderless td {
+    border: none;
+}
+
+.table-borderless {
+    border: none;
 }
 </style>
 @endsection
