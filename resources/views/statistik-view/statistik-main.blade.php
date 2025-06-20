@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Main Content -->
-        <div class="col-md-10 p-4">
+        <div class="col-md-10 m-auto">
             <!-- Program Title (Dynamic) -->
             <div class="container-fluid" style="padding-top: 80px;">
                 <div class="text-center mb-4">
@@ -110,9 +110,9 @@
                             <thead>
                                 <tr class="text-center">
                                     <th class="custom-header">Angkatan</th>
+                                    <th class="custom-header">Rata-Rata IPK</th>
                                     <th class="custom-header">IPK Tertinggi</th>
                                     <th class="custom-header">IPK Terendah</th>
-                                    <th class="custom-header">Rata-Rata IPK</th>
                                 </tr>
                             </thead>
                             <tbody id="detailStatistikTable">
@@ -249,8 +249,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Simulasi data detail dengan variasi IPK
             detailDataD3.push({
                 angkatan: item.angkatan,
-                ipk_tertinggi: Math.min(4.0, item.rata_rata_ips + (Math.random() * 0.5)),
-                ipk_terendah: Math.max(0.0, item.rata_rata_ips - (Math.random() * 0.5)),
+                ipk_tertinggi: item.ipk_tertinggi,
+                ipk_terendah: item.ipk_terendah,
                 rata_rata_ipk: item.rata_rata_ips
             });
         } else if (item.prodi === 'D4') {
@@ -259,8 +259,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Simulasi data detail dengan variasi IPK
             detailDataD4.push({
                 angkatan: item.angkatan,
-                ipk_tertinggi: Math.min(4.0, item.rata_rata_ips + (Math.random() * 0.5)),
-                ipk_terendah: Math.max(0.0, item.rata_rata_ips - (Math.random() * 0.5)),
+                ipk_tertinggi: item.ipk_tertinggi,
+                ipk_terendah: item.ipk_terendah,
                 rata_rata_ipk: item.rata_rata_ips
             });
         }
@@ -418,9 +418,9 @@ document.addEventListener('DOMContentLoaded', function() {
             tableHTML += `
                 <tr class="text-center custom-row">
                     <td class="custom-cell">${item.angkatan}</td>
+                    <td class="custom-cell">${item.rata_rata_ipk.toFixed(2)}</td>
                     <td class="custom-cell">${item.ipk_tertinggi.toFixed(2)}</td>
                     <td class="custom-cell">${item.ipk_terendah.toFixed(2)}</td>
-                    <td class="custom-cell">${item.rata_rata_ipk.toFixed(2)}</td>
                 </tr>
             `;
         });

@@ -201,6 +201,44 @@ class MahasiswaSeeder extends Seeder
                 'nama_mhs' => 'FAUZAN RIZKY RAMADHAN',
                 'kelas_id' => '2'
             ],
+            ['nim' => '231511078', 'nama_mhs' => 'Farhan Aditya Ramadhan', 'kelas_id' => 3],
+            ['nim' => '231511079', 'nama_mhs' => 'Nadya Rizkiana Putri',     'kelas_id' => 3],
+            
+            ['nim' => '231511080', 'nama_mhs' => 'Hafiz Albarqi Maulana',    'kelas_id' => 4],
+            ['nim' => '231511081', 'nama_mhs' => 'Salsabila Anindya Dewi',   'kelas_id' => 4],
+            
+            ['nim' => '231511082', 'nama_mhs' => 'Dimas Fajar Saputra',      'kelas_id' => 5],
+            ['nim' => '201511083', 'nama_mhs' => 'Zahra Nabila Rahmah',      'kelas_id' => 5],
+            
+            ['nim' => '231511084', 'nama_mhs' => 'Ilham Ramzi Firmansyah',   'kelas_id' => 6],
+            ['nim' => '231511085', 'nama_mhs' => 'Aulia Nurfadillah',        'kelas_id' => 6],
+            
+            ['nim' => '231511086', 'nama_mhs' => 'Fauzan Hilmi Wicaksono',   'kelas_id' => 7],
+            ['nim' => '231511087', 'nama_mhs' => 'Indira Sekar Ayu',         'kelas_id' => 7],
+            
+            ['nim' => '231511088', 'nama_mhs' => 'Yusuf Alfarizi Pratama',   'kelas_id' => 8],
+            ['nim' => '231511089', 'nama_mhs' => 'Putri Larasati Anjani',    'kelas_id' => 8],
+            
+            ['nim' => '231511090', 'nama_mhs' => 'Arsyad Maulana Yusuf',     'kelas_id' => 9],
+            ['nim' => '231511091', 'nama_mhs' => 'Keysha Afifah Salsabila',  'kelas_id' => 9],
+            
+            ['nim' => '231511092', 'nama_mhs' => 'Bima Aditya Ramadhan',     'kelas_id' => 10],
+            ['nim' => '231511093', 'nama_mhs' => 'Syifa Nur Halimah',        'kelas_id' => 10],
+            
+            ['nim' => '231511094', 'nama_mhs' => 'Reza Alamsyah Ridwan',     'kelas_id' => 11],
+            ['nim' => '231511095', 'nama_mhs' => 'Maura Felisha Ayuni',      'kelas_id' => 11],
+            
+            ['nim' => '231511096', 'nama_mhs' => 'Iqbal Fauzi Ramadhan',     'kelas_id' => 12],
+            ['nim' => '231511097', 'nama_mhs' => 'Tiara Lestari Anggraini',  'kelas_id' => 12],
+            
+            ['nim' => '231511098', 'nama_mhs' => 'Rafi Haidar Nugraha',      'kelas_id' => 13],
+            ['nim' => '231511099', 'nama_mhs' => 'Vania Dwi Aprillia',       'kelas_id' => 13],
+            
+            ['nim' => '231511100', 'nama_mhs' => 'Fathan Al Ghazali',        'kelas_id' => 14],
+            ['nim' => '231511101', 'nama_mhs' => 'Mutiara Khairunnisa',      'kelas_id' => 14],
+            
+            ['nim' => '231511102', 'nama_mhs' => 'Galang Prasetya Adi',      'kelas_id' => 15],
+            ['nim' => '231511103', 'nama_mhs' => 'Dinda Safira Zahra',       'kelas_id' => 15],
         ];
 
         Mahasiswa::insert($mahasiswas);

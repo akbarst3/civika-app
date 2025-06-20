@@ -44,6 +44,7 @@ class StatistikController extends Controller
     private function calculateAverageIpsPerGroup($grouped)
     {
         return $grouped->map(function ($group, $key) {
+            $avgIpsList = collect();
             $totalIps = 0;
             $totalMahasiswa = 0;
 
@@ -52,17 +53,23 @@ class StatistikController extends Controller
                 $avgIpsMhs = $ipsValues->avg();
 
                 if (!is_null($avgIpsMhs)) {
+                    $avgIpsList->push($avgIpsMhs);
                     $totalIps += $avgIpsMhs;
                     $totalMahasiswa++;
                 }
             }
+            $ipkTertinggi = $avgIpsList->max();
+            $ipkTerendah = $avgIpsList->min();
+            $rataRataIpk  = $avgIpsList->avg();
 
             [$angkatan, $prodi] = explode('_', $key);
 
             return [
                 'angkatan' => $angkatan,
                 'prodi' => $prodi,
-                'rata_rata_ips' => $totalMahasiswa > 0 ? round($totalIps / $totalMahasiswa, 2) : null,
+                'rata_rata_ips' => $rataRataIpk,
+                'ipk_tertinggi' => $ipkTertinggi,
+                'ipk_terendah' => $ipkTerendah
             ];
         })->sortBy(function ($item) {
             return (int) $item['angkatan'];

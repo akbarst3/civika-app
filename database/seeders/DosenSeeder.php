@@ -19,19 +19,23 @@ class DosenSeeder extends Seeder
         $dosens = [
             [
                 'kode_dosen' => 'KO001N',
-                'nama_dosen' => 'Ade Chandra Nugraha, S.Si.,MT'
+                'nama_dosen' => 'Ade Chandra Nugraha, S.Si.,MT',
+                'jabatan_dosen' => null
             ],
             [
                 'kode_dosen' => 'KO009N',
-                'nama_dosen' => 'Santi Sundari, S.Si., MT'
+                'nama_dosen' => 'Santi Sundari, S.Si., MT',
+                'jabatan_dosen' => null
             ],
             [
                 'kode_dosen' => 'KO013N',
-                'nama_dosen' => 'Yudi Widhiyasana, S.Si., MT'
+                'nama_dosen' => 'Yudi Widhiyasana, S.Si., MT',
+                'jabatan_dosen' => null
             ],
             [
                 'kode_dosen' => 'KO061N',
-                'nama_dosen' => 'Zulkifli Arsyad, S.Kom., M.T'
+                'nama_dosen' => 'Zulkifli Arsyad, S.Kom., M.T',
+                'jabatan_dosen' => null
             ],
             [
                 'kode_dosen' => 'KO071N',
@@ -45,7 +49,8 @@ class DosenSeeder extends Seeder
             ],
             [
                 'kode_dosen' => 'KO074N',
-                'nama_dosen' => 'Muhammad Rizqi Sholahuddin, S.Si., M.T'
+                'nama_dosen' => 'Muhammad Rizqi Sholahuddin, S.Si., M.T',
+                'jabatan_dosen' => null
             ],
         ];
 
