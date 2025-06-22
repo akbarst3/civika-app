@@ -1,5 +1,7 @@
 @echo off
 cd /d "%~dp0"
+echo Menyalakan container Laravel dan service...
+docker compose -f ../compose.dev.yaml up -d
 echo 🚀 Menyalakan container Laravel dan service...
 docker compose -f compose.dev.yaml up -d
 timeout /t 5 >nul

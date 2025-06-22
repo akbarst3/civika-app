@@ -95,6 +95,7 @@ class StatistikControllerTest extends TestCase
                 'rata_rata_ips' => 3.50
             ]
         ], $result->toArray());
+
     }
 
     public function test_AngkatanPerProdi()
@@ -117,6 +118,35 @@ class StatistikControllerTest extends TestCase
             'Informatika' => ['2020', '2021'],
             'Sistem Informasi' => ['2020']
         ], $result->toArray());
+    }
+    # ini bakal gagal sekarang karena belum ada aturan redirect nya
+    public function test_harus_login()
+    {
+        $response = $this->get('/statistik');
+
+        $response->assertRedirect('/login');
+    }
+
+    #yang memiliki akses adalah KaProdi dan Staff Tata Usaha
+    # ini bakal gagal sekarang karena belum ada middleware yang mengatur dan belum di merge juga
+    public function test_user_memiliki_akses()
+    {
+        $user = \App\Models\User::factory()->create(['role' => 'KaProdi']);
+
+        $response = $this->actingAs($user)->get('/statistik');
+
+        $response->assertStatus(200);// akses sukses
+
+    }
+
+    # ini bakal gagal sekarang karena belum ada middleware yang mengatur dan belum di merge juga
+    public function test_user_tidak_memiliki_akses()
+    {
+        $user = \App\Models\User::factory()->create(['role' => 'Mahasiswa']);
+
+        $response = $this->actingAs($user)->get('/statistik');
+
+        $response->assertStatus(403);//Forbiden
     }
 
     protected function tearDown(): void
