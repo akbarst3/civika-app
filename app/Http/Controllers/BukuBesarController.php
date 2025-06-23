@@ -440,57 +440,68 @@ class BukuBesarController extends Controller
 
     public function bukuBesarWaliMahasiswa(Request $request)
     {
-        $tahun = $request->input('tahun', '2025');
-        $semester = $request->input('semester', 3);
-        $kelas = $request->input('kelas_id');
-        $program_studi = $request->input('program_studi', 1);
+        $kodeDosen = 'KO001N';
 
-        $tahun_akademik = $tahun . '/' . ($tahun + 1);
+        // Ambil kelas dan prodi yang diwalikan oleh dosen
+        $kelas = Kelas::where('kode_dosen', $kodeDosen)->with('prodi')->firstOrFail();
 
-        $prodis = Prodi::all();
-        $kelasList = Kelas::all();
+        // Ambil semester
+        $semester = (int) $request->input('semester', 1);
+
+        // Mata kuliah yang muncul di semester ini
         $mataKuliahs = MataKuliah::whereIn('kode_matkul', function ($query) use ($semester) {
             $query->select('kode_matkul')->from('nilai')->where('semester_ke', $semester);
         })->get();
 
-        Log::info('MataKuliahs:', ['count' => $mataKuliahs->count(), 'data' => $mataKuliahs->pluck('kode_matkul')->toArray()]);
+        // Ambil semua prodi (kemungkinan untuk ditampilkan di tampilan akhir)
+        $prodis = Prodi::all();
 
-        $mahasiswas = Mahasiswa::with([
-            'kelas.prodi',
-            'nilai' => function ($query) {
-                $query->with(['mataKuliah', 'dosen']);
-            },
-            'absensi' => function ($query) use ($semester) {
-                $query->where('semester', $semester);
-            },
-            'indeksPrestasiSemester' => function ($query) use ($semester) {
-                $query->whereIn('semester', [$semester, $semester - 1]);
-            },
-        ])->get();
+        // Ambil semua mahasiswa di kelas wali ini, beserta data terkait
+        $mahasiswas = Mahasiswa::where('kelas_id', $kelas->id)
+            ->with([
+                'kelas.prodi',
+                'nilai' => fn($query) => $query->with(['mataKuliah', 'dosen']),
+                'absensi' => fn($query) => $query->where('semester', $semester),
+                'indeksPrestasiSemester' => fn($query) => $query->whereIn('semester', [$semester, $semester - 1]),
+            ])
+            ->get();
 
-        $totalSemesters = IndeksPrestasiSemester::select('semester')->distinct()->count();
+        // Tentukan jumlah semester berdasarkan jenjang prodi
+        $kodeProdi = $kelas->kode_prodi;
+        $totalSemesters = match ($kodeProdi) {
+            1 => 6, // D3
+            2 => 8, // D4
+            default => 8,
+        };
 
-        $data = $mahasiswas->map(function ($mhs, $index) use ($semester) {
+        // Olah data mahasiswa
+        $data = $mahasiswas->map(function ($mhs, $index) use ($semester, $totalSemesters) {
             $nilaiSemester = $mhs->nilai->where('semester_ke', $semester);
 
-            $totalSks = $nilaiSemester->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0);
-            $jumlah_d = $mhs->indeksPrestasiSemester->firstWhere('semester', $semester)->jumlah_d ?? 0;
-            $totalSksD = $mhs->indeksPrestasiSemester->sum('jumlah_d');
-            $ipSekarang = optional($mhs->indeksPrestasiSemester->firstWhere('semester', $semester))->indeks_prestasi ?? 0;
-            $ipLalu = optional($mhs->indeksPrestasiSemester->firstWhere('semester', $semester - 1))->indeks_prestasi ?? 0;
-            $nilai_bobot = optional($mhs->indeksPrestasiSemester->firstWhere('semester', $semester))->nilai_bobot ?? 0;
+            // Data indeks prestasi semester sekarang & sebelumnya
+            $ipSekarangData = $mhs->indeksPrestasiSemester->firstWhere('semester', $semester);
+            $ipLaluData = $mhs->indeksPrestasiSemester->firstWhere('semester', $semester - 1);
 
-            $totalBobot = $mhs->indeksPrestasiSemester->sum('nilai_bobot');
+            // Data absensi semester ini
+            $absensi = $mhs->absensi->first();
+            $jml_sakit = $absensi->jml_sakit ?? 0;
+            $jml_izin = $absensi->jml_izin ?? 0;
+            $jml_alfa = $absensi->jml_alfa ?? 0;
+            $nilai_penghayatan = $absensi->nilai_penghayatan ?? '-';
+            $jml = $jml_sakit + $jml_izin + $jml_alfa;
+
+            // Perhitungan nilai & IP
+            $totalSks = $nilaiSemester->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0);
             $totalSksAll = $mhs->nilai->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0);
+            $totalBobot = $mhs->indeksPrestasiSemester->sum('nilai_bobot');
             $ipk = $totalSksAll > 0 ? round($totalBobot / $totalSksAll, 2) : 0;
 
-            $absensi = $mhs->absensi->first();
-            $jml = $absensi ? $absensi->jml_sakit + $absensi->jml_izin + $absensi->jml_alfa : 0;
-
-            $semesterSks = collect(range(1, 8))->mapWithKeys(fn($s) => [
+            // Rekap SKS per semester
+            $semesterSks = collect(range(1, $totalSemesters))->mapWithKeys(fn($s) => [
                 $s => $mhs->nilai->where('semester_ke', $s)->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0)
             ]);
 
+            // Detail nilai per mata kuliah semester ini
             $nilaiDetail = $nilaiSemester->map(fn($n) => [
                 'kode_matkul' => $n->kode_matkul,
                 'nama_matkul' => $n->mataKuliah->nama_matkul ?? '-',
@@ -506,23 +517,31 @@ class BukuBesarController extends Controller
                 'nama_mhs' => $mhs->nama_mhs,
                 'nilai_per_matkul' => $nilaiDetail,
                 'total_sks' => $totalSks,
-                'jumlah_d' => $jumlah_d,
-                'sks_d' => $totalSksD,
+                'jumlah_d' => $ipSekarangData->jumlah_d ?? 0,
+                'sks_d' => $mhs->indeksPrestasiSemester->sum('jumlah_d'),
                 'semester_sks' => $semesterSks->toArray(),
-                'nilai_bobot' => $nilai_bobot,
-                'ip_semester' => ['lalu' => $ipLalu, 'sekarang' => $ipSekarang],
+                'nilai_bobot' => $ipSekarangData->nilai_bobot ?? 0,
+                'ip_semester' => [
+                    'lalu' => $ipLaluData->indeks_prestasi ?? 0,
+                    'sekarang' => $ipSekarangData->indeks_prestasi ?? 0,
+                ],
                 'ipk' => $ipk,
-                'jml_sakit' => $absensi->jml_sakit ?? 0,
-                'jml_izin' => $absensi->jml_izin ?? 0,
-                'jml_alfa' => $absensi->jml_alfa ?? 0,
+                'jml_sakit' => $jml_sakit,
+                'jml_izin' => $jml_izin,
+                'jml_alfa' => $jml_alfa,
                 'jml' => $jml,
-                'nilai_penghayatan' => $absensi->nilai_penghayatan ?? '-',
-                'status' => optional($mhs->indeksPrestasiSemester->firstWhere('semester', $semester))->status ?? 'N/A',
-                'keterangan' => optional($mhs->indeksPrestasiSemester->firstWhere('semester', $semester))->keterangan ?? '-',
+                'nilai_penghayatan' => $nilai_penghayatan,
+                'status' => $ipSekarangData->status ?? 'N/A',
+                'keterangan' => $ipSekarangData->keterangan ?? '-',
             ];
         });
 
-        return view('buku-besar-view.tabel-buku-besar-wali-mahasiswa', compact('data', 'totalSemesters', 'tahun_akademik', 'semester', 'mataKuliahs', 'prodis', 'kelas', 'tahun', 'program_studi'));
+        return view('buku-besar-view.tabel-buku-besar-wali-mahasiswa', compact(
+            'data', 'totalSemesters', 'semester', 'mataKuliahs', 'prodis', 'kelas'
+        ));
+
     }
+
+
 
 }

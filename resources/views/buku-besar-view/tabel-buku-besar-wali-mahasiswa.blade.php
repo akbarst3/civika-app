@@ -6,54 +6,29 @@
 
 @section('content')
     <div class="container mt-5">
-        <h2>History Buku Besar</h2>
-        <div class="row mb-3">
-            <div class="col-12 col-sm-6 col-md-2 mb-2">
-                <label for="semester" class="form-label">Semester</label>
-                <select class="form-select custom-dropdown w-100" id="semester">
-                    @for ($i = 1; $i <= $totalSemesters; $i++)
-                        <option value="{{ $i }}" {{ $i == $semester ? 'selected' : '' }}>{{ $i }}</option>
-                    @endfor
-                </select>
+        <h2>History Buku Besar - Kelas {{ $kelas->nama_kelas }} {{ $kelas->angkatan }}</h2>
+        <form method="GET" action="{{ route('buku-besar-wali-mahasiswa') }}">
+            <div class="row mb-3">  
+                <div class="col-12 col-sm-6 col-md-2 mb-2">
+                    <label for="semester" class="form-label">Semester</label>
+                    <select class="form-select custom-dropdown w-100" id="semester" name="semester" onchange="this.form.submit()">
+                        @for ($i = 1; $i <= $totalSemesters; $i++)
+                            <option value="{{ $i }}" {{ $i == request('semester', $semester) ? 'selected' : '' }}>
+                                {{ $i }}
+                            </option>
+                        @endfor
+                    </select>
+                </div>
             </div>
-            <div class="col-12 col-sm-6 col-md-2 mb-2">
-                <label for="search" class="form-label">&nbsp;</label>
-                <input type="text" class="form-control custom-search w-100" id="search" placeholder="Search">
-            </div>
-            {{-- <div class="col-12 col-sm-6 col-md-2 mb-2">
-                <label for="kelas" class="form-label">Kelas</label>
-                <select class="form-select custom-dropdown w-100" id="kelas">
-                    <option value="2C" selected>2C</option>
-                    <option value="2B">2B</option>
-                    <option value="2A">2A</option>
-                </select>
-            </div> --}}
+        </form>
+    </div>
+
+    @if ($mataKuliahs->isEmpty())
+        <div class="alert alert-info mt-4" role="alert">
+            Tidak ada data buku besar yang ditemukan untuk filter yang dipilih.
+            Silakan minta tolong kepada Staff Tata Usaha untuk terlebih dahulu mengunggah buku besar semester yang dipilih.
         </div>
-
-        <div class="row mb-3">
-            {{-- <div class="col-12 col-sm-6 col-md-2 mb-2">
-                <label for="tahun" class="form-label">Tahun</label>
-                <select class="form-select custom-dropdown w-100" id="tahun">
-                    @for ($i = 2020; $i <= date('Y'); $i++)
-                    <option value="{{ $i }}" {{ $i == $tahun ? 'selected' : '' }}>{{ $i }}</option>
-                    @endfor
-                </select>
-            </div> --}}
-            <div class="col-12 col-sm-6 col-md-2 mb-2 d-none">
-                <label for="program_studi" class="form-label">Program Studi</label>
-                <select class="form-select custom-dropdown w-100" id="program_studi">
-                    <option value="" hidden>Silakan Pilih Program Studi</option>
-                    @foreach ($prodis as $prodi)
-                    <option value="{{ $prodi->id }}" {{ $prodi->id == $program_studi ? 'selected' : '' }}>
-                        {{ $prodi->nama_prodi }}
-                    </option>
-                    @endforeach
-                </select>
-            </div>
-
-        </div>
-
-
+    @else
 
         <div class="table-responsive mt-4">
             <table class="table table-bordered text-center align-middle small">
@@ -346,6 +321,8 @@
             </table>
         </div>
 
+    @endif
+
         <style>
             .table-container {
                 max-height: 600px;
@@ -477,7 +454,7 @@
                 });
             }
 
-            document.getElementById('program_studi').dispatchEvent(new Event('change'));
+            // document.getElementById('program_studi').dispatchEvent(new Event('change'));
             document.getElementById('semester').dispatchEvent(new Event('change'));
         </script>
     @endsection

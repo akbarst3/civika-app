@@ -18,16 +18,19 @@ class KelasSeeder extends Seeder
                 'nama_kelas' => 'A',
                 'angkatan' => '2023',
                 'kode_prodi' => 1,
+                'kode_dosen' => 'KO001N',
             ],
             [
                 'nama_kelas' => 'C',
                 'angkatan' => '2023',
                 'kode_prodi' => 1,
+                'kode_dosen' => NULL,
             ],
             [
                 'nama_kelas' => 'A',
                 'angkatan' => '2023',
                 'kode_prodi' => 2,
+                'kode_dosen' => NULL,
             ],
         ];
 
