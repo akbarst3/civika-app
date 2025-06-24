@@ -17,34 +17,28 @@
                 </ul>
             </div>
         </div>
-        <div class="row mb-3">
-            <div class="col-12 col-sm-6 col-md-2 mb-2">
-                <label for="semester" class="form-label">Semester</label>
-                <select class="form-select custom-dropdown w-100" id="semester">
-                    @for ($i = 1; $i <= $totalSemesters; $i++)
-                        <option value="{{ $i }}" {{ $i == $semester ? 'selected' : '' }}>{{ $i }}</option>
-                    @endfor
-                </select>
+        <form method="GET" action="{{ route('buku-besar-wali-mahasiswa') }}">
+            <div class="row mb-3">  
+                <div class="col-12 col-sm-6 col-md-2 mb-2">
+                    <label for="semester" class="form-label">Semester</label>
+                    <select class="form-select custom-dropdown w-100" id="semester" name="semester" onchange="this.form.submit()">
+                        @for ($i = 1; $i <= $totalSemesters; $i++)
+                            <option value="{{ $i }}" {{ $i == request('semester', $semester) ? 'selected' : '' }}>
+                                {{ $i }}
+                            </option>
+                        @endfor
+                    </select>
+                </div>
             </div>
-            <div class="col-12 col-sm-6 col-md-2 mb-2">
-                <label for="search" class="form-label"> </label>
-                <input type="text" class="form-control custom-search w-100" id="search" placeholder="Search">
-            </div>
-        </div>
+        </form>
+    </div>
 
-        <div class="row mb-3">
-            <div class="col-12 col-sm-6 col-md-2 mb-2 d-none">
-                <label for="program_studi" class="form-label">Program Studi</label>
-                <select class="form-select custom-dropdown w-100" id="program_studi">
-                    <option value="" hidden>Silakan Pilih Program Studi</option>
-                    @foreach ($prodis as $prodi)
-                    <option value="{{ $prodi->id }}" {{ $prodi->id == $program_studi ? 'selected' : '' }}>
-                        {{ $prodi->nama_prodi }}
-                    </option>
-                    @endforeach
-                </select>
-            </div>
+    @if ($mataKuliahs->isEmpty())
+        <div class="alert alert-info mt-4" role="alert">
+            Tidak ada data buku besar yang ditemukan untuk filter yang dipilih.
+            Silakan minta tolong kepada Staff Tata Usaha untuk terlebih dahulu mengunggah buku besar semester yang dipilih.
         </div>
+    @else
 
         <div class="table-responsive mt-4">
             <table class="table table-bordered text-center align-middle small">
@@ -390,6 +384,8 @@
                 </div>
             </div>
         </div>
+
+    @endif
 
     <style>
         .table thead th {

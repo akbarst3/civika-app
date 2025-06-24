@@ -16,8 +16,11 @@ return new class extends Migration
             $table->string('nama_kelas', 1);
             $table->string('angkatan', 4);
             $table->unsignedBigInteger('kode_prodi');
+            $table->string('kode_dosen', 6)->nullable();
+            
             $table->unique(['nama_kelas', 'angkatan', 'kode_prodi']);
             $table->foreign('kode_prodi')->references('kode_prodi')->on('prodi')->restrictOnDelete()->restrictOnUpdate();
+            $table->foreign('kode_dosen')->references('kode_dosen')->on('dosen')->nullOnDelete()->restrictOnUpdate();
             $table->index(['kode_prodi'], 'termasuk_fk');
             $table->timestamps();
         });

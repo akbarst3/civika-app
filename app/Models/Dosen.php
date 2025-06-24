@@ -47,4 +47,9 @@ class Dosen extends Model
     {
         return $this->hasOne(User::class, 'kode_dosen', 'kode_dosen');
     }
+
+    public function kelasWali()
+    {
+        return $this->hasOne(Kelas::class, 'kode_dosen', 'kode_dosen');
+    }
 }

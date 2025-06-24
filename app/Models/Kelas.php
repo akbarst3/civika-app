@@ -22,4 +22,9 @@ class Kelas extends Model
     {
         return $this->hasMany(Mahasiswa::class, 'kelas_id', 'id');
     }
+
+    public function wali()
+    {
+        return $this->belongsTo(Dosen::class, 'kode_dosen', 'kode_dosen');
+    }
 }
