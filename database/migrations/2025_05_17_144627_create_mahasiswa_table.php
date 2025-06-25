@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('nama_slta', 255)->nullable();
             $table->enum('jalur_daftar', ['SNBT', 'SNBP', 'SMBM-TES', 'ADIK','Lainnya'])->nullable();
             $table->decimal('nem', 5, 2)->nullable();
+            $table->string('status_mhs')->default('Aktif');
             $table->unsignedBigInteger('kelas_id')->nullable();
             $table->foreign('kelas_id')
                 ->references('id')
