@@ -89,10 +89,10 @@ class PKLController extends Controller
             $filename = "laporan_pdpt_kp_pkl_{$namaProdi}_{$request->angkatan}_{$currentDate}.pdf";
 
             $pdf = Pdf::loadView('data-kp-pkl-view.laporan-pdpt-kp-pkl', compact('data', 'kaprodi'));
-            return $pdf->download($filename)->with('success', true)->with('message', 'Laporan PDPT KP/PKL berhasil dibuat.');
+            return $pdf->download($filename);
         } catch (\Exception $e) {
             Log::error('Error generating PDPT KP/PKL report: ' . $e->getMessage());
-            return redirect()->back()->with('success', false)->with('message', 'Gagal membuat laporan PDPT KP/PKL: ' . $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
@@ -106,13 +106,11 @@ class PKLController extends Controller
                 ->pluck('angkatan');
 
             return view('data-kp-pkl-view.generate-pdpt', compact('angkatans'))
-                ->with('success', true)
-                ->with('message', 'Formulir PDPT KP/PKL berhasil dimuat.');
+                ->with('success', 'Formulir PDPT KP/PKL berhasil dimuat.');
         } catch (\Exception $e) {
             Log::error('Error loading PDPT KP/PKL form: ' . $e->getMessage());
             return view('data-kp-pkl-view.generate-pdpt')
-                ->with('success', false)
-                ->with('message', 'Gagal memuat formulir PDPT KP/PKL: ' . $e->getMessage());
+                ->with('error', 'Gagal memuat formulir PDPT KP/PKL: ' . $e->getMessage());
         }
     }
 
@@ -126,13 +124,11 @@ class PKLController extends Controller
                 ->pluck('angkatan');
 
             return view('data-kp-pkl-view.generate-honor', compact('angkatans'))
-                ->with('success', true)
-                ->with('message', 'Formulir Honor KP/PKL berhasil dimuat.');
+                ->with('success', 'Formulir Honor KP/PKL berhasil dimuat.');
         } catch (\Exception $e) {
             Log::error('Error loading Honor KP/PKL form: ' . $e->getMessage());
             return view('data-kp-pkl-view.generate-honor')
-                ->with('success', false)
-                ->with('message', 'Gagal memuat formulir Honor KP/PKL: ' . $e->getMessage());
+                ->with('error', 'Gagal memuat formulir Honor KP/PKL: ' . $e->getMessage());
         }
     }
 
@@ -147,13 +143,11 @@ class PKLController extends Controller
         try {
             Excel::import(new KpPklImport($request->angkatan, $request->prodi), $request->file('file'));
             return redirect()->back()
-                ->with('success', true)
-                ->with('message', 'Data KP/PKL berhasil diimpor.');
+                ->with('success', 'Data KP/PKL berhasil diimpor.');
         } catch (\Exception $e) {
             Log::error('Error importing KP/PKL data: ' . $e->getMessage());
             return redirect()->back()
-                ->with('success', false)
-                ->with('message', 'Gagal mengimpor data KP/PKL: ' . $e->getMessage());
+                ->with('error', 'Gagal mengimpor data KP/PKL: ' . $e->getMessage());
         }
     }
 
@@ -167,23 +161,13 @@ class PKLController extends Controller
                 ->pluck('angkatan');
 
             return view('data-kp-pkl-view.import-data', compact('angkatans'))
-                ->with('success', true)
-                ->with('message', 'Formulir impor berhasil dimuat.');
+                ->with('success', 'Formulir impor berhasil dimuat.');
         } catch (\Exception $e) {
             Log::error('Error loading import form: ' . $e->getMessage());
             return view('data-kp-pkl-view.import-data')
-                ->with('success', false)
-                ->with('message', 'Gagal memuat formulir impor: ' . $e->getMessage());
+                ->with('error', 'Gagal memuat formulir impor: ' . $e->getMessage());
         }
     }
-
-// public function downloadHonorKpPkl(Request $request)
-// {
-//     if ($request->jenis_laporan === 'honorKpPkl') {
-//         return $this->generateHonorKpPkl($request);
-//     }
-//     abort(404, 'Jenis Laporan bukan Honor Kp Pkl');
-// }
 
     public function generateHonorKpPkl(Request $request)
     {
@@ -194,8 +178,7 @@ class PKLController extends Controller
 
             if (!$prodi) {
                 return redirect()->back()
-                    ->with('success', false)
-                    ->with('message', 'Program studi tidak ditemukan');
+                    ->with('success', 'Program studi tidak ditemukan');
             }
 
             $angkatan = $request->angkatan;
@@ -273,10 +256,10 @@ class PKLController extends Controller
             $currentDate = now()->format('d-m-Y');
             $filename = "laporan_honor_kp-pkl_{$prodi->nama_prodi}_{$request->angkatan}_{$currentDate}.pdf";
             $pdf = Pdf::loadView('data-kp-pkl-view.laporan-honor-kp-pkl', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris', 'prodiType'));
-            return $pdf->download($filename)->with('success', true)->with('message', 'Laporan Honor KP/PKL berhasil dibuat.');
+            return $pdf->download($filename);
         } catch (\Exception $e) {
             Log::error('Error generating Honor KP/PKL report: ' . $e->getMessage());
-            return redirect()->back()->with('success', false)->with('message', 'Gagal membuat laporan Honor KP/PKL: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Gagal membuat laporan Honor KP/PKL: ' . $e->getMessage());
         }
     }
 
@@ -291,8 +274,7 @@ class PKLController extends Controller
             $prodi = Prodi::where('kode_prodi', $request->input('prodi'))->first();
             if (!$prodi) {
                 return redirect()->back()
-                    ->with('success', false)
-                    ->with('message', 'Program Studi tidak valid.');
+                    ->with('error', 'Program Studi tidak valid.');
             }
 
             $kaprodi = Dosen::where('jabatan_dosen', 'Kaprodi')->first();
@@ -366,13 +348,11 @@ class PKLController extends Controller
                 ->values();
 
             return view('data-kp-pkl-view.display-honor', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris'))
-                ->with('success', true)
-                ->with('message', 'Data Honor KP/PKL berhasil ditampilkan.');
+                ->with('success', 'Data Honor KP/PKL berhasil ditampilkan.');
         } catch (\Exception $e) {
             Log::error('Error displaying Honor KP/PKL data: ' . $e->getMessage());
             return redirect()->back()
-                ->with('success', false)
-                ->with('message', 'Gagal menampilkan data Honor KP/PKL: ' . $e->getMessage());
+                ->with('error', 'Gagal menampilkan data Honor KP/PKL: ' . $e->getMessage());
         }
     }
 }
