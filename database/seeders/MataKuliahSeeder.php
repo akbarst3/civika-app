@@ -49,6 +49,36 @@ class MataKuliahSeeder extends Seeder
                 'nama_matkul' => 'Aljabar Linear',
                 'jumlah_sks' => '2'
             ],
+            [
+                'kode_matkul' => '21IF2021',
+                'nama_matkul' => 'Stuktur Data dan Algoritma',
+                'jumlah_sks' => '4'
+            ],
+            [
+                'kode_matkul' => '21IF2022',
+                'nama_matkul' => 'Matematika Distkrit 1',
+                'jumlah_sks' => '3'
+            ],
+            [
+                'kode_matkul' => '21IF2023',
+                'nama_matkul' => 'Komunikasi Data dan Jaringan',
+                'jumlah_sks' => '3'
+            ],
+            [
+                'kode_matkul' => '21IF2024',
+                'nama_matkul' => 'Pendidikan Kewarganegaraan',
+                'jumlah_sks' => '2'
+            ],
+            [
+                'kode_matkul' => '21IF2025',
+                'nama_matkul' => 'Bahasa Inggris 2',
+                'jumlah_sks' => '2'
+            ],
+            [
+                'kode_matkul' => '21IF2026',
+                'nama_matkul' => 'Komputasi Kognitif',
+                'jumlah_sks' => '2'
+            ],
         ];
 
         MataKuliah::insert($mata_kuliahs);
