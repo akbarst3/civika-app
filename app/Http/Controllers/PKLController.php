@@ -99,7 +99,7 @@ class PKLController extends Controller
     public function formGeneratePDPTKpPkl()
     {
         try {
-            $angkatans = DB::table('mahasiswa')
+            $angkatans = DB::table('kelas')
                 ->select('angkatan')
                 ->distinct()
                 ->orderBy('angkatan', 'asc')
@@ -117,7 +117,7 @@ class PKLController extends Controller
     public function formGenerateHonorKpPkl()
     {
         try {
-            $angkatans = DB::table('mahasiswa')
+            $angkatans = DB::table('kelas')
                 ->select('angkatan')
                 ->distinct()
                 ->orderBy('angkatan', 'asc')
@@ -154,7 +154,7 @@ class PKLController extends Controller
     public function formImport()
     {
         try {
-            $angkatans = DB::table('mahasiswa')
+            $angkatans = DB::table('kelas')
                 ->select('angkatan')
                 ->distinct()
                 ->orderBy('angkatan', 'asc')
