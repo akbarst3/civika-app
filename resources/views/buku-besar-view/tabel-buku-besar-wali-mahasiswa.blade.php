@@ -7,20 +7,21 @@
 @section('content')
     <div class="container mt-5">
         <h2>History Buku Besar - Kelas {{ $kelas->nama_kelas }} {{ $kelas->angkatan }}</h2>
-        <form method="GET" action="{{ route('buku-besar-wali-mahasiswa') }}">
-            <div class="row mb-3">  
-                <div class="col-12 col-sm-6 col-md-2 mb-2">
+       <form id="filterForm" method="GET" action="{{ route('buku-besar-wali-mahasiswa') }}">
+            <div class="row mb-3">
+                <div class="col-md-2">
                     <label for="semester" class="form-label">Semester</label>
-                    <select class="form-select custom-dropdown w-100" id="semester" name="semester" onchange="this.form.submit()">
+                    <select class="form-select custom-dropdown" id="semester" name="semester" onchange="this.form.submit()">
                         @for ($i = 1; $i <= $totalSemesters; $i++)
                             <option value="{{ $i }}" {{ $i == request('semester', $semester) ? 'selected' : '' }}>
                                 {{ $i }}
                             </option>
                         @endfor
                     </select>
-                </div>
+                <!-- Hapus elemen search dan program_studi -->
             </div>
         </form>
+
     </div>
 
     @if ($mataKuliahs->isEmpty())
@@ -403,58 +404,43 @@
         </style>
 
         <script>
-            document.getElementById('program_studi').addEventListener('change', function () {
-                const programStudi = this.value;
-                const semesterDropdown = document.getElementById('semester');
-
-                semesterDropdown.innerHTML = '';
-
-                const maxSemester = programStudi === '1' ? 8 : 6;
-
-                for (let i = 1; i <= maxSemester; i++) {
-                    const option = document.createElement('option');
-                    option.value = i;
-                    option.text = i;
-                    if (i === 1) option.selected = true;
-                    semesterDropdown.appendChild(option);
-                }
-
-                semesterDropdown.dispatchEvent(new Event('change'));
-            });
-
+            // Update tampilan kolom semester saat dropdown semester berubah
             document.getElementById('semester').addEventListener('change', function () {
                 const selectedSemester = parseInt(this.value) || 1;
                 updateSemesterColumns(selectedSemester);
             });
 
             function updateSemesterColumns(selectedSemester) {
+                // Sembunyikan semua kolom semester
                 for (let i = 1; i <= 8; i++) {
                     const cells = document.querySelectorAll(`.semester-${i}`);
                     cells.forEach(cell => cell.classList.remove('semester-active'));
                 }
 
+                // Perbarui colspan header
                 const sksDHeader = document.getElementById('sks-d-header');
                 sksDHeader.setAttribute('colspan', selectedSemester || 1);
 
+                // Tampilkan kolom untuk semester yang aktif
                 for (let i = 1; i <= selectedSemester && i <= 8; i++) {
                     const cells = document.querySelectorAll(`.semester-${i}`);
                     cells.forEach(cell => cell.classList.add('semester-active'));
                 }
 
+                // Perbarui nilai SKS D
                 const rows = document.querySelectorAll('tbody tr');
-
                 rows.forEach(row => {
                     const sksDCell = row.querySelector('td:nth-child(17)');
                     if (selectedSemester === 0) {
-                        sksDCell.textContent = '0';
+                        sksDCell.textContent = '';
                     } else {
                         const selectedSemesterCell = row.querySelector(`.semester-${selectedSemester}`);
-                        sksDCell.textContent = selectedSemesterCell ? selectedSemesterCell.textContent : '0';
+                        sksDCell.textContent = selectedSemesterCell ? selectedSemesterCell.textContent : '';
                     }
                 });
             }
 
-            // document.getElementById('program_studi').dispatchEvent(new Event('change'));
-            document.getElementById('semester').dispatchEvent(new Event('change'));
+            // Inisialisasi tampilan tabel dengan semester default saat halaman dimuat
+            updateSemesterColumns({{ $semester }});
         </script>
     @endsection

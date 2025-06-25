@@ -438,7 +438,7 @@ class BukuBesarController extends Controller
         return view('buku-besar-view.tabel-buku-besar-dosen', compact('data', 'semester', 'mataKuliahs'));
     }
 
-    public function bukuBesarWaliMahasiswa(Request $request)
+        public function bukuBesarWaliMahasiswa(Request $request)
     {
         $kodeDosen = 'KO001N';
 
@@ -453,8 +453,14 @@ class BukuBesarController extends Controller
             $query->select('kode_matkul')->from('nilai')->where('semester_ke', $semester);
         })->get();
 
-        // Ambil semua prodi (kemungkinan untuk ditampilkan di tampilan akhir)
+        // Ambil semua prodi
         $prodis = Prodi::all();
+
+        // Ambil semua kelas untuk dropdown
+        $kelasList = Kelas::with('prodi')->get();
+
+        // Tentukan program studi default berdasarkan kelas
+        $program_studi = $kelas->kode_prodi;
 
         // Ambil semua mahasiswa di kelas wali ini, beserta data terkait
         $mahasiswas = Mahasiswa::where('kelas_id', $kelas->id)
@@ -539,9 +545,5 @@ class BukuBesarController extends Controller
         return view('buku-besar-view.tabel-buku-besar-wali-mahasiswa', compact(
             'data', 'totalSemesters', 'semester', 'mataKuliahs', 'prodis', 'kelas'
         ));
-
     }
-
-
-
 }

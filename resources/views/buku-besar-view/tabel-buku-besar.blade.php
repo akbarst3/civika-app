@@ -5,7 +5,7 @@
 @section('navbar-content', 'Tabel Buku Besar')
 
 @section('content')
-    <div class="mt-5">
+    <div class="container mt-5">
         <h2>History Buku Besar</h2>
         <form id="filterForm" method="GET" action="{{ route('buku-besar') }}">
             <div class="row mb-3">
@@ -15,36 +15,25 @@
                         <option value="" hidden>Silakan Pilih Kelas</option>
                     </select>
                 </div>
-
                 <div class="col-md-2">
                     <label for="semester" class="form-label">Semester</label>
                     <select class="form-select custom-dropdown" id="semester" name="semester">
                         <option value="" hidden>Silakan Pilih Semester</option>
                     </select>
                 </div>
-
-                <div class="col-md-2">
-                    <label for="search" class="form-label">Pencarian</label>
-                    <input type="text" class="form-control custom-search" id="search" name="search" placeholder="Cari mahasiswa..." value="{{ request('search') }}">
-                </div>
             </div>
-
             <div class="row mb-3">
                 <div class="col-md-2">
                     <label for="tahun" class="form-label">Tahun (Angkatan)</label>
-                    @php
-                        $angkatanList = $kelasList->pluck('angkatan')->unique()->sortDesc();
-                    @endphp
                     <select class="form-select custom-dropdown" id="tahun" name="tahun">
                         <option value="" hidden>Silakan Pilih Angkatan</option>
-                        @foreach ($angkatanList as $angkatan)
+                        @foreach ($kelasList->pluck('angkatan')->unique()->sortDesc() as $angkatan)
                             <option value="{{ $angkatan }}" {{ $angkatan == request('tahun', $tahun) ? 'selected' : '' }}>
                                 {{ $angkatan }}
                             </option>
                         @endforeach
                     </select>
                 </div>
-
                 <div class="col-md-2">
                     <label for="program_studi" class="form-label">Program Studi</label>
                     <select class="form-select custom-dropdown" id="program_studi" name="program_studi">
@@ -58,7 +47,7 @@
                 </div>
             </div>
         </form>
-    </div>
+    
 
         @if ($data->isEmpty())
             <div class="alert alert-info mt-4" role="alert">
@@ -72,7 +61,7 @@
                             <th rowspan="4">NO</th>
                             <th rowspan="4">NIM</th>
                             <th rowspan="4">NAMA</th>
-                            <th colspan="{{ count($mataKuliahs) }}">MATA KULIAH</th>
+                            <th colspan="{{ $mataKuliahs->count() }}">MATA KULIAH</th>
                             <th id="sks-d-header" colspan="8" rowspan="2">JUMLAH SKS NILAI D SEMESTER</th>
                             <th colspan="2" rowspan="3">KUMULATIF</th>
                             <th colspan="2" rowspan="3">IP SEMESTER</th>
@@ -87,7 +76,8 @@
                         </tr>
                         <tr class="highlight">
                             @foreach ($mataKuliahs as $mk)
-                                <th>{{ $mk->kode_dosen ?? '-' }}</th>
+                                <th>{{ $mk->nama_matkul }}</th>
+                                {{-- <th>{{ $mk->kode_dosen ?? '-' }}</th> --}}
                             @endforeach
                         </tr>
                         <tr class="highlight">
@@ -366,7 +356,7 @@
             .table th {
                 text-align: center;
             }
-            
+
             .table-bordered th, .table-bordered td {
             border: 1px solid #dee2e6;
             }
@@ -393,19 +383,19 @@
                     kelasDropdown.innerHTML = '<option value="" hidden>Silakan Pilih Kelas</option>';
                     const filteredKelas = allKelasData.filter(kls => {
                         return (selectedProgramStudi === '' || kls.kode_prodi == selectedProgramStudi) &&
-                               (selectedTahun === '' || kls.angkatan == selectedTahun);
+                            (selectedTahun === '' || kls.angkatan == selectedTahun);
                     });
 
                     // Add unique class names (A, B, C, etc.) to the dropdown
                     const uniqueKelasNames = [...new Set(filteredKelas.map(kls => kls.nama_kelas))].sort();
 
                     uniqueKelasNames.forEach(nama_kelas => {
-                        // Find the first matching class to get its ID, as multiple classes might have the same name but different prodi/angkatan
+                        // Find the first matching class to get its ID
                         const kls = filteredKelas.find(k => k.nama_kelas === nama_kelas);
                         if (kls) {
                             const option = document.createElement('option');
-                            option.value = kls.id; // Use the actual class ID
-                            option.text = `${nama_kelas}`; // Just show A, B, C
+                            option.value = kls.id;
+                            option.text = `${nama_kelas}`;
                             if (kls.id == initialKelas) {
                                 option.selected = true;
                             }
@@ -416,10 +406,9 @@
 
                 function populateSemesterDropdown(selectedProgramStudi) {
                     semesterDropdown.innerHTML = '<option value="" hidden>Silakan Pilih Semester</option>';
-                    let maxSemester = 8; // Default for D4 (assuming kode_prodi '1' is D4 based on typical setups, adjust if needed)
+                    let maxSemester = 8; // Default for D4
 
-                    // You need to map program_studi kode to its name or directly to max semesters
-                    // Assuming 'D3' has a specific kode_prodi, let's say '2' for example
+                    // Map kode_prodi to max semesters
                     const selectedProdi = @json($prodis).find(prodi => prodi.kode_prodi == selectedProgramStudi);
                     if (selectedProdi && selectedProdi.nama_prodi.toLowerCase().includes('D3')) {
                         maxSemester = 6;
@@ -443,7 +432,6 @@
                     }
 
                     const sksDHeader = document.getElementById('sks-d-header');
-                    // Adjust colspan based on the selected semester
                     sksDHeader.setAttribute('colspan', selectedSemester > 0 ? selectedSemester : 1);
 
                     for (let i = 1; i <= selectedSemester && i <= 8; i++) {
@@ -473,13 +461,6 @@
                     filterForm.submit();
                 });
 
-                document.getElementById('search').addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault(); // Prevent default form submission
-                        filterForm.submit();
-                    }
-                });
-
                 // Initial population and update on page load
                 populateKelasDropdown(initialProgramStudi, initialTahun);
                 populateSemesterDropdown(initialProgramStudi);
@@ -490,7 +471,6 @@
                 tahunDropdown.value = initialTahun;
                 kelasDropdown.value = initialKelas;
                 semesterDropdown.value = initialSemester;
-
             });
         </script>
     @endsection
