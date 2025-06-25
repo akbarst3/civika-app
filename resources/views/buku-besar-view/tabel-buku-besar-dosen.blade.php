@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        {{-- Tambahan: Dropdown untuk Tahun Akademik dan Mata Kuliah --}}
+        {{-- Dropdown untuk Tahun Akademik dan Mata Kuliah --}}
         <div class="row mt-4">
             <div class="col-md-4">
                 <div class="mb-3">
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        {{-- Akhir Tambahan --}}
+        {{-- Akhir Dropdown --}}
 
         <div class="table-responsive mt-4">
             <table class="table table-bordered text-center align-middle small">
@@ -55,19 +55,26 @@
                         <th rowspan="4">No</th>
                         <th rowspan="4">NIM</th>
                         <th rowspan="4">Nama</th>
+                        {{-- MENAMBAH KOLOM KELAS DAN PROGRAM STUDI --}}
+                        <th rowspan="4">Kelas</th>
+                        <th rowspan="4">Program Studi</th>
+                        {{-- AKHIR PENAMBAHAN --}}
                         <th colspan="{{ $mataKuliahs->count() }}">MATA KULIAH</th>
                     </tr>
                     <tr>
+                        {{-- Ini adalah baris untuk kode mata kuliah, tidak perlu diubah di sini --}}
                         @foreach ($mataKuliahs as $mk)
                             <th>{{ $mk->kode_matkul }}</th>
                         @endforeach
                     </tr>
                     <tr>
+                        {{-- Ini adalah baris untuk nama mata kuliah, tidak perlu diubah di sini --}}
                         @foreach ($mataKuliahs as $mk)
                             <th>{{ $mk->nama_matkul }}</th>
                         @endforeach
                     </tr>
                     <tr>
+                        {{-- Ini adalah baris untuk jumlah SKS mata kuliah, tidak perlu diubah di sini --}}
                         @foreach ($mataKuliahs as $mk)
                             <th>{{ $mk->jumlah_sks }}</th>
                         @endforeach
@@ -79,12 +86,17 @@
                             <td>{{ $mhs['no'] }}</td>
                             <td>{{ $mhs['nim'] }}</td>
                             <td>{{ $mhs['nama_mhs'] }}</td>
+                            {{-- MENAMBAH DATA KELAS DAN PROGRAM STUDI --}}
+                            <td>{{ $mhs['kelas'] ?? '-' }}</td> {{-- Asumsi ada key 'kelas' di array $mhs --}}
+                            <td>{{ $mhs['program_studi'] ?? '-' }}</td> {{-- Asumsi ada key 'program_studi' di array $mhs --}}
+                            {{-- AKHIR PENAMBAHAN --}}
                             @foreach ($mataKuliahs as $mk)
                                 <td>
                                     @php
                                         $nilai = collect($mhs['nilai_per_matkul'])->firstWhere('kode_matkul', $mk->kode_matkul);
                                     @endphp
                                     {{ $nilai['indeks_nilai'] ?? '-' }}
+
                                 </td>
                             @endforeach
                         </tr>
@@ -98,6 +110,7 @@
             </div>
         @endif
 
+        <!-- Modal for Student Selection -->
         <div class="modal fade" id="studentSelectionModal" tabindex="-1" aria-labelledby="studentSelectionModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-custom-bg" style="border-radius: 10px; border-width: 2px; border-color: #dee2e6;">
@@ -124,6 +137,7 @@
             </div>
         </div>
 
+        <!-- Modal for File Type Selection -->
         <div class="modal fade" id="fileTypeModal" tabindex="-1" aria-labelledby="fileTypeModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-custom-bg" style="border-radius: 10px; border-width: 2px; border-color: #dee2e6;">
@@ -155,6 +169,7 @@
             </div>
         </div>
 
+        <!-- Modal for Report Options -->
         <div class="modal fade" id="reportOptionsModal" tabindex="-1" aria-labelledby="reportOptionsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-custom-bg" style="border-radius: 10px; border-width: 2px; border-color: #dee2e6;">
