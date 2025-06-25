@@ -7,6 +7,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 use Faker\Factory as Faker;
 
 class MahasiswaSeeder extends Seeder
@@ -27,6 +28,10 @@ class MahasiswaSeeder extends Seeder
             ['nim' => '211511015', 'nama_mhs' => 'Hilman Permana'],
             ['nim' => '211511018', 'nama_mhs' => 'Lolla Mariah'],
         ];
+        $jalurList = ['SNMPTN', 'SBMPTN', 'Mandiri', 'Lainnya'];
+        $agamaList = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'];
+        $golDarah = ['A', 'B', 'AB', 'O'];
+        $kelasId = DB::table('kelas')->pluck('id')->first(); // ambil 1 id dari tabel kelas
 
         foreach ($data as $mhs) {
             DB::table('mahasiswa')->insert([
