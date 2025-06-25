@@ -25,13 +25,11 @@ class TugasAkhirController extends Controller
             $prodis = Prodi::pluck('nama_prodi', 'kode_prodi');
 
             return view('tugas-akhir-view.generate-pdpt-ta', compact('angkatans', 'prodis'))
-                ->with('success', true)
-                ->with('message', 'Formulir PDPT berhasil dimuat.');
+                ->with('success', 'Formulir PDPT berhasil dimuat.');
         } catch (\Exception $e) {
             Log::error('Error loading PDPT form: ' . $e->getMessage());
             return view('tugas-akhir-view.generate-pdpt-ta')
-                ->with('success', false)
-                ->with('message', 'Gagal memuat formulir PDPT: ' . $e->getMessage());
+                ->with('error', 'Gagal memuat formulir PDPT: ' . $e->getMessage());
         }
     }
 
@@ -51,13 +49,11 @@ class TugasAkhirController extends Controller
         }
 
             return redirect()->back()
-                ->with('success', false)
-                ->with('message', 'Jenis laporan tidak valid.');
+                ->with('success', 'Jenis laporan tidak valid.');
         } catch (\Exception $e) {
             Log::error('Error handling PDPT download: ' . $e->getMessage());
             return redirect()->route('data-ta.generate.pdpt.form')
-                ->with('success', false)
-                ->with('message', 'Gagal menangani pengunduhan PDPT: ' . $e->getMessage());
+                ->with('success', 'Gagal menangani pengunduhan PDPT: ' . $e->getMessage());
         }
     }
 
@@ -115,22 +111,18 @@ class TugasAkhirController extends Controller
 
             if ($data->isEmpty()) {
                 return redirect()->route('data-ta.generate.pdpt.form')
-                    ->with('success', false)
-                    ->with('message', 'Tidak ada data untuk program studi dan angkatan yang dipilih. Periksa log untuk detail.');
+                    ->with('error', 'Tidak ada data untuk program studi dan angkatan yang dipilih. Periksa log untuk detail.');
             }
 
             $currentDate = now()->format('d-m-Y');
             $filename = "laporan_pdpt_tugas_akhir_{$namaProdi}_{$request->angkatan}_{$currentDate}.pdf";
 
             $pdf = Pdf::loadView('tugas-akhir-view.laporan-pdpt-ta', compact('data', 'kaprodi', 'prodi'));
-            return $pdf->download($filename)
-                ->with('success', true)
-                ->with('message', 'Laporan PDPT Tugas Akhir berhasil dibuat.');
+            return $pdf->download($filename);
         } catch (\Exception $e) {
             Log::error('Error generating PDPT: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return redirect()->route('data-ta.generate.pdpt.form')
-                ->with('success', false)
-                ->with('message', 'Gagal menghasilkan laporan: ' . $e->getMessage());
+                ->with('error', 'Gagal menghasilkan laporan: ' . $e->getMessage());
         }
     }
     public function handleDownloadHonor(Request $request)
@@ -147,13 +139,11 @@ class TugasAkhirController extends Controller
             }
 
             return redirect()->back()
-                ->with('success', false)
-                ->with('message', 'Jenis laporan tidak valid.');
+                ->with('error', 'Jenis laporan tidak valid.');
         } catch (\Exception $e) {
             Log::error('Error handling Honor download: ' . $e->getMessage());
             return redirect()->route('data-ta.generate.honor.form')
-                ->with('success', false)
-                ->with('message', 'Gagal menangani unduhan Honor: ' . $e->getMessage());
+                ->with('error', 'Gagal menangani unduhan Honor: ' . $e->getMessage());
         }
     }
 
@@ -232,13 +222,11 @@ class TugasAkhirController extends Controller
 
             $pdf = Pdf::loadView('tugas-akhir-view.laporan-honor-ta', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris'));
             return $pdf->download($filename)
-                ->with('success', true)
-                ->with('message', 'Laporan Honor Tugas Akhir berhasil dibuat.');
+                ->with('success', 'Laporan Honor Tugas Akhir berhasil dibuat.');
         } catch (\Exception $e) {
             Log::error('Error generating Honor TA: ' . $e->getMessage());
             return redirect()->route('data-ta.generate.honor.form')
-                ->with('success', false)
-                ->with('message', 'Gagal membuat laporan Honor TA: ' . $e->getMessage());
+                ->with('error', 'Gagal membuat laporan Honor TA: ' . $e->getMessage());
         }
     }
 
@@ -323,13 +311,11 @@ class TugasAkhirController extends Controller
                 ->values();
 
             return view('tugas-akhir-view.display-honor-ta', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris'))
-                ->with('success', true)
-                ->with('message', 'Data Honor Tugas Akhir berhasil ditampilkan.');
+                ->with('success', 'Data Honor Tugas Akhir berhasil ditampilkan.');
         } catch (\Exception $e) {
             Log::error('Error displaying Honor TA: ' . $e->getMessage());
             return redirect()->route('data-ta.generate.honor.form')
-                ->with('success', false)
-                ->with('message', 'Gagal menampilkan data Honor TA: ' . $e->getMessage());
+                ->with('error', 'Gagal menampilkan data Honor TA: ' . $e->getMessage());
         }
     }
 
@@ -344,13 +330,11 @@ class TugasAkhirController extends Controller
             $prodis = Prodi::all();
 
             return view('tugas-akhir-view.generate-honor-ta', compact('angkatans', 'prodis'))
-                ->with('success', true)
-                ->with('message', 'Formulir Honor berhasil dimuat.');
+                ->with('success', 'Formulir Honor berhasil dimuat.');
         } catch (\Exception $e) {
             Log::error('Error loading Honor form: ' . $e->getMessage());
             return view('tugas-akhir-view.generate-honor-ta')
-                ->with('success', false)
-                ->with('message', 'Gagal memuat formulir Honor: ' . $e->getMessage());
+                ->with('error', 'Gagal memuat formulir Honor: ' . $e->getMessage());
         }
     }
 
@@ -365,13 +349,11 @@ class TugasAkhirController extends Controller
         try {
             Excel::import(new DataTAImport($request->angkatan, $request->prodi), $request->file('file')->getRealPath(), null, \Maatwebsite\Excel\Excel::XLSX, ['sheet' => 'pembimbing_pdpt']);
             return redirect()->back()
-                ->with('success', true)
-                ->with('message', 'Data Tugas Akhir berhasil diimpor.');
+                ->with('success', 'Data Tugas Akhir berhasil diimpor.');
         } catch (\Exception $e) {
             Log::error('Error importing Tugas Akhir data: ' . $e->getMessage(), ['exception' => $e->getTraceAsString(), 'request' => $request->all()]);
             return redirect()->back()
-                ->with('success', false)
-                ->with('message', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan saat mengimpor data: ' . $e->getMessage());
         }
     }
 
@@ -385,13 +367,11 @@ class TugasAkhirController extends Controller
                 ->pluck('angkatan');
 
             return view('tugas-akhir-view.import-excel-ta', compact('angkatans'))
-                ->with('success', true)
-                ->with('message', 'Formulir impor berhasil dimuat.');
+                ->with('success', 'Formulir impor berhasil dimuat.');
         } catch (\Exception $e) {
             Log::error('Error loading import form: ' . $e->getMessage());
             return view('tugas-akhir-view.import-excel-ta')
-                ->with('success', false)
-                ->with('message', 'Gagal memuat formulir impor: ' . $e->getMessage());
+                ->with('error', 'Gagal memuat formulir impor: ' . $e->getMessage());
         }
     }
 }
