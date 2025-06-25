@@ -18,6 +18,36 @@
                 </ul>
             </div>
         </div>
+
+        {{-- Tambahan: Dropdown untuk Tahun Akademik dan Mata Kuliah --}}
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="tahunAkademikDropdown" class="form-label">Tahun Akademik</label>
+                    <select class="form-select" id="tahunAkademikDropdown">
+                        <option value="" selected disabled>Pilih Tahun Akademik</option>
+                        {{-- Placeholder untuk data tahun akademik. Isi ini secara dinamis dari controller Anda. --}}
+                        <option value="2024/2025">2024/2025</option>
+                        <option value="2023/2024">2023/2024</option>
+                        <option value="2022/2023">2022/2023</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3">
+                    <label for="mataKuliahFilterDropdown" class="form-label">Mata Kuliah</label>
+                    <select class="form-select" id="mataKuliahFilterDropdown">
+                        <option value="" selected disabled>Pilih Mata Kuliah</option>
+                        {{-- Data mata kuliah sudah diambil dari $mataKuliahs yang ada --}}
+                        @foreach ($mataKuliahs as $mk)
+                            <option value="{{ $mk->kode_matkul }}">{{ $mk->nama_matkul }} ({{ $mk->jumlah_sks }} SKS)</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+        {{-- Akhir Tambahan --}}
+
         <div class="table-responsive mt-4">
             <table class="table table-bordered text-center align-middle small">
                 <thead>
@@ -68,7 +98,6 @@
             </div>
         @endif
 
-        <!-- Modal for Student Selection -->
         <div class="modal fade" id="studentSelectionModal" tabindex="-1" aria-labelledby="studentSelectionModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-custom-bg" style="border-radius: 10px; border-width: 2px; border-color: #dee2e6;">
@@ -95,7 +124,6 @@
             </div>
         </div>
 
-        <!-- Modal for File Type Selection -->
         <div class="modal fade" id="fileTypeModal" tabindex="-1" aria-labelledby="fileTypeModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-custom-bg" style="border-radius: 10px; border-width: 2px; border-color: #dee2e6;">
@@ -127,7 +155,6 @@
             </div>
         </div>
 
-        <!-- Modal for Report Options -->
         <div class="modal fade" id="reportOptionsModal" tabindex="-1" aria-labelledby="reportOptionsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content modal-custom-bg" style="border-radius: 10px; border-width: 2px; border-color: #dee2e6;">
@@ -287,10 +314,9 @@
             if (backButton) {
                 backButton.addEventListener('click', function(e) {
                     e.preventDefault();
-                    $('#reportOptionsModal').modal('hide').then(() => {
-                        resetAndShowModal('#fileTypeModal');
-                        resetReportOptions(); // Reset checkbox saat kembali ke File Type
-                    });
+                    $('#reportOptionsModal').modal('hide');
+                    resetAndShowModal('#fileTypeModal');
+                    resetReportOptions(); // Reset checkbox saat kembali ke File Type
                     console.log('Tombol Back diklik, mencoba menampilkan #fileTypeModal');
                 });
             } else {
