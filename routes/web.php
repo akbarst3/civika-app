@@ -24,41 +24,30 @@ Route::get('/', function () {
 
 // Route Data Mahasiswa
 Route::get('/data-mahasiswa/import', [MahasiswaController::class, 'showImportMahasiswa'])->name('data-mahasiswa.import');
-
 Route::post('/data-mahasiswa/import', [MahasiswaController::class, 'importMahasiswa'])->name('data-mahasiswa.import');
-
 Route::get('/data-mahasiswa', [MahasiswaController::class, 'showListMahasiswa'])->name('data-mahasiswa.list');
-
 Route::get('/data-mahasiswa/{nim}', [MahasiswaController::class, 'showDetail'])->name('data-mahasiswa.show');
-
 Route::get('/data-kp-pkl', function () {
     return view('data-kp-pkl-view/data-kp-pkl');
 })->name('data-kp-pkl');
 
 // Route Data PKL
 Route::post('/data-kp-pkl/import-data', [PKLController::class, 'import'])->name('data-kp-pkl.import-data');
-
 Route::get('/data-kp-pkl/import', [PKLController::class, 'formImport'])->name('data-kp-pkl.import-form');
-
 Route::get('/data-kp-pkl/generate-pdpt', [PKLController::class, 'formGeneratePDPTKpPkl'])->name('data-kp-pkl.generate-pdpt-form');
-
 Route::get('/data-kp-pkl/generate-honor', [PKLController::class, 'formGenerateHonorKpPkl'])->name('data-kp-pkl.generate-honor-form');
-
 Route::get('/data-kp-pkl/generate-pdpt/download', [PKLController::class, 'generatePDPTKpPkl'])->name('data-kp-pkl.generate-pdpt-download');
 
 // Generate Honor Tugas Akhir
 Route::get('data-ta/generate-honor-ta', [TugasAkhirController::class, 'formGenerateHonor'])->name('data-ta.honor.form');
-Route::post('data-ta/generate-honor-ta', [TugasAkhirController::class, 'handleDownloadHonor'])->name('data-ta.generate.honor');
+Route::post('data-ta/generate-honor-ta', [TugasAkhirController::class, 'handleDownload'])->name('data-ta.generate.honor');
 Route::get('data-ta/display-honor-ta', [TugasAkhirController::class, 'displayHonorTA'])->name('data-ta.display.honor.ta');
 Route::get('data-ta/ta/form', [TugasAkhirController::class, 'form'])->name('ta.form');
 Route::get('data-ta/ta/download', [TugasAkhirController::class, 'handleDownload'])->name('data-ta.honor.download');
 
 // Generate PDPT Tugas Akhir
 Route::get('data-ta/generate-pdpt-ta', [TugasAkhirController::class, 'pdptForm'])->name('data-ta.generate.pdpt.form');
-Route::post('data-ta/generate-pdpt-ta', [TugasAkhirController::class, 'handleDownloadPDPT'])->name('data-ta.generate.pdpt');
-Route::post('data-ta/generate-pdpt-success', function () {
-    return redirect()->route('data-ta.generate.pdpt.form')->with('success', 'Laporan PDPT TA generated successfully!');
-})->name('data-ta.generate.pdpt.success');
+Route::post('data-ta/generate-pdpt-ta', [TugasAkhirController::class, 'handleDownload'])->name('data-ta.generate.pdpt');
 
 // Import Tugas Akhir
 Route::post('data-ta/import-data-ta', [TugasAkhirController::class, 'import'])->name('data-ta.import.form');

@@ -30,9 +30,7 @@ class DataMahasiswaImport implements ToModel, WithHeadingRow, WithMultipleSheets
             if ($this->namaKelas && $this->namaProdi) {
                 $prodi = Prodi::where('nama_prodi', $this->namaProdi)->first();
                 if (!$prodi) {
-                    Log::warning("Nama prodi '{$this->namaProdi}' tidak ditemukan di tabel prodi untuk sheet: {$sheetName}");
-                    $this->kelasId = null;
-                    return;
+                    throw new \Exception("Prodi {$this->namaProdi} tidak ditemukan untuk sheet {$sheetName}.");
                 }
 
                 $kelas = Kelas::where([
@@ -42,22 +40,19 @@ class DataMahasiswaImport implements ToModel, WithHeadingRow, WithMultipleSheets
                 ])->first();
 
                 if (!$kelas) {
-                    Log::warning("Kelas dengan nama_kelas: {$this->namaKelas}, angkatan: {$this->angkatan}, kode_prodi: {$prodi->kode_prodi} tidak ditemukan untuk sheet: {$sheetName}");
-                    $this->kelasId = null;
-                    return;
+                    throw new \Exception("Kelas {$this->namaKelas} angkatan {$this->angkatan} prodi {$prodi->kode_prodi} tidak ditemukan untuk sheet {$sheetName}.");
                 }
 
                 $this->kelasId = $kelas->id;
-                Log::info("Processed sheet name: {$sheetName}, extracted class: {$this->namaKelas}, nama_prodi: {$this->namaProdi}, kode_prodi: {$prodi->kode_prodi}, kelas_id: {$this->kelasId}");
             } else {
                 $this->kelasId = null;
-                Log::warning("Invalid sheet name format: {$sheetName}, kelas_id set to null");
+                throw new \Exception("Format nama sheet {$sheetName} tidak sesuai.");
             }
         } else {
             $this->namaKelas = null;
             $this->namaProdi = null;
             $this->kelasId = null;
-            Log::warning('No sheet name provided, kelas_id set to null');
+            throw new \Exception('Format nama sheet salah.');
         }
     }
 
@@ -68,16 +63,12 @@ class DataMahasiswaImport implements ToModel, WithHeadingRow, WithMultipleSheets
 
     public function model(array $row)
     {
-        Log::info('Import row', array_merge($row, ['kelas_id' => $this->kelasId]));
-
         if (Mahasiswa::where('nim', $row['nim'])->exists()) {
-            Log::warning("Duplicate NIM: {$row['nim']}, skipping row");
-            return null;
+            throw new \Exception("NIM {$row['nim']} sudah ada, data dilewati.");
         }
 
         if (!$this->kelasId) {
-            Log::warning("No kelas_id available for row with NIM: {$row['nim']}, skipping row");
-            return null;
+            throw new \Exception("Kelas belum dipilih untuk NIM {$row['nim']}, data dilewati.");
         }
 
         $mahasiswa = Mahasiswa::create([
@@ -154,8 +145,7 @@ class DataMahasiswaImport implements ToModel, WithHeadingRow, WithMultipleSheets
         try {
             return \Carbon\Carbon::createFromFormat('d F Y', $date)->format('Y-m-d');
         } catch (\Exception $e) {
-            Log::warning("Invalid date format for tgl_lahir: {$date}, setting to null");
-            return null;
+            throw new \Exception("Format tanggal lahir {$date} tidak sesuai, isi dengan format: 01 Januari 2000.");
         }
     }
 }

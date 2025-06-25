@@ -140,10 +140,10 @@
                         <strong class="custom-detail-label">NIM:</strong> <span class="custom-detail-value">{{ $mahasiswa->nim }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Nama Mahasiswa:</strong> <span class="custom-detail-value">{{ $mahasiswa->nama_mhs }}</span>
+                        <strong class="custom-detail-label">Nama Mahasiswa:</strong> <span class="custom-detail-value">{{ $mahasiswa->nama_mhs ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Kota Lahir:</strong> <span class="custom-detail-value">{{ $mahasiswa->kota_lahir }}</span>
+                        <strong class="custom-detail-label">Kota Lahir:</strong> <span class="custom-detail-value">{{ $mahasiswa->kota_lahir ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong class="custom-detail-label">Tanggal Lahir:</strong> <span class="custom-detail-value">{{ $mahasiswa->tgl_lahir ? $mahasiswa->tgl_lahir->format('d F Y') : '-' }}</span>
@@ -152,10 +152,10 @@
                         <strong class="custom-detail-label">Jenis Kelamin:</strong> <span class="custom-detail-value">{{ $mahasiswa->jenis_kelamin ? 'Perempuan' : 'Laki-laki' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Agama:</strong> <span class="custom-detail-value">{{ $mahasiswa->agama }}</span>
+                        <strong class="custom-detail-label">Agama:</strong> <span class="custom-detail-value">{{ $mahasiswa->agama ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Golongan Darah:</strong> <span class="custom-detail-value">{{ $mahasiswa->gol_darah }}</span>
+                        <strong class="custom-detail-label">Golongan Darah:</strong> <span class="custom-detail-value">{{ $mahasiswa->gol_darah ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong class="custom-detail-label">No. KTP:</strong> <span class="custom-detail-value">{{ $mahasiswa->no_ktp ?? '-' }}</span>
@@ -221,7 +221,7 @@
                         <strong class="custom-detail-label">Pekerjaan Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->pekerjaan_ayah ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Penghasilan Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->penghasilan_ayah ? 'Rp ' . number_format((float)$mahasiswa->ayah->penghasilan_ayah, 0, ',', '.') : '-' }}</span>
+                        <strong class="custom-detail-label">Penghasilan Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->penghasilan_ayah ?? '-'}}</span>
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong class="custom-detail-label">Instansi Ayah:</strong> <span class="custom-detail-value">{{ $mahasiswa->ayah->instansi_ayah ?? '-' }}</span>
@@ -256,7 +256,7 @@
                         <strong class="custom-detail-label">Pekerjaan Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->pekerjaan_ibu ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <strong class="custom-detail-label">Penghasilan Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->penghasilan_ibu ? 'Rp ' . number_format((float)$mahasiswa->ibu->penghasilan_ibu, 0, ',', '.') : '-' }}</span>
+                        <strong class="custom-detail-label">Penghasilan Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->penghasilan_ibu ?? '-' }}</span>
                     </div>
                     <div class="col-md-6 mb-3">
                         <strong class="custom-detail-label">Instansi Ibu:</strong> <span class="custom-detail-value">{{ $mahasiswa->ibu->instansi_ibu ?? '-' }}</span>

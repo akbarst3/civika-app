@@ -26,7 +26,7 @@ class TugasAkhirController extends Controller
         return view('tugas-akhir-view.generate-pdpt-ta', compact('angkatans', 'prodis'));
     }
 
-    public function handleDownloadPDPT(Request $request)
+    public function handleDownload(Request $request)
     {
         $request->validate([
             'program_studi' => 'required|exists:prodi,kode_prodi',
@@ -36,6 +36,8 @@ class TugasAkhirController extends Controller
 
         if ($request->jenis_laporan === 'pdpt') {
             return $this->generatePDPT($request);
+        } elseif ($request->jenis_laporan === 'honor') {
+            return $this->generateHonorTA($request);
         }
 
         abort(404);
@@ -91,7 +93,6 @@ class TugasAkhirController extends Controller
                     ];
                 });
 
-            // Debugging: Cek data yang dihasilkan
             Log::info('Generated PDPT data: ', $data->toArray());
 
             if ($data->isEmpty()) {
@@ -108,20 +109,6 @@ class TugasAkhirController extends Controller
             Log::error('Error generating PDPT: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return redirect()->route('data-ta.generate.pdpt.form')->with('error', 'Gagal menghasilkan laporan: ' . $e->getMessage());
         }
-    }
-    public function handleDownloadHonor(Request $request)
-    {
-        $request->validate([
-            'prodi' => 'required|exists:prodi,kode_prodi',
-            'angkatan' => 'required|digits:4|integer',
-            'jenis_laporan' => 'required|in:honor,pdpt',
-        ]);
-
-        if ($request->jenis_laporan === 'honor') {
-            return $this->generateHonorTA($request);
-        }
-
-        abort(404);
     }
 
     public function generateHonorTA(Request $request)
@@ -296,7 +283,6 @@ class TugasAkhirController extends Controller
 
     public function import(Request $request)
     {
-        // Validating the uploaded file
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv',
             'angkatan' => 'required|digits:4',
@@ -304,7 +290,6 @@ class TugasAkhirController extends Controller
         ]);
 
         try {
-            // Importing the file with specific sheet "pembimbing_pdpt"
             Excel::import(new DataTAImport($request->angkatan, $request->prodi), $request->file('file')->getRealPath(), null, \Maatwebsite\Excel\Excel::XLSX, ['sheet' => 'pembimbing_pdpt']);
 
             return redirect()->back()->with('success', 'Data Tugas Akhir berhasil diimpor.');

@@ -10,6 +10,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
+    <x-sweet-alert />
     <x-navbar :navtitle="View::getSection('navbar-content') ?? 'Dashboard / Home'" />
     <div class="d-flex">
         <x-sidebar />
@@ -18,5 +19,4 @@
         </main>
     </div>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </html>

@@ -20,7 +20,6 @@ class MahasiswaController extends Controller
         $kelasList = Kelas::distinct()->pluck('nama_kelas')->sort()->values();
         $prodiList = Prodi::pluck('nama_prodi', 'kode_prodi');
 
-        // Fetch Mahasiswa data with related DataTinggal and Kelas
         $mahasiswa = Mahasiswa::with(['dataTinggal', 'kelas.prodi'])
             ->when($request->search, function ($query, $search) {
                 return $query->where('nim', 'like', "%{$search}%")
@@ -42,7 +41,7 @@ class MahasiswaController extends Controller
                     $q->where('kode_prodi', $prodi);
                 });
             })
-            ->paginate(10); // Paginate with 10 records per page
+            ->paginate(10);
 
         return view('mahasiswa-view.data-mahasiswa', compact('mahasiswa', 'angkatanList', 'kelasList', 'prodiList'));
     }
@@ -69,10 +68,10 @@ class MahasiswaController extends Controller
 
         try {
             Excel::import(new DataMahasiswaImport($request->angkatan), $request->file('file'));
-            return redirect()->back()->with('success', 'Data imported successfully.');
+            return redirect()->back()->with('success', 'Data Mahasiswa berhasil diimpor!');
         } catch (\Exception $e) {
             Log::error('Error importing data: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Failed to import data: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Data Mahasiswa gagal diimpor: ' . $e->getMessage());
         }
     }
 }
