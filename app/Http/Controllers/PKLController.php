@@ -99,7 +99,7 @@ class PKLController extends Controller
     public function formGeneratePDPTKpPkl()
     {
         try {
-            $angkatans = DB::table('mahasiswa')
+            $angkatans = DB::table('kelas')
                 ->select('angkatan')
                 ->distinct()
                 ->orderBy('angkatan', 'asc')
@@ -119,7 +119,7 @@ class PKLController extends Controller
     public function formGenerateHonorKpPkl()
     {
         try {
-            $angkatans = DB::table('mahasiswa')
+            $angkatans = DB::table('kelas')
                 ->select('angkatan')
                 ->distinct()
                 ->orderBy('angkatan', 'asc')
@@ -160,7 +160,7 @@ class PKLController extends Controller
     public function formImport()
     {
         try {
-            $angkatans = DB::table('mahasiswa')
+            $angkatans = DB::table('kelas')
                 ->select('angkatan')
                 ->distinct()
                 ->orderBy('angkatan', 'asc')
@@ -273,6 +273,8 @@ class PKLController extends Controller
             $currentDate = now()->format('d-m-Y');
             $filename = "laporan_honor_kp-pkl_{$prodi->nama_prodi}_{$request->angkatan}_{$currentDate}.pdf";
             $pdf = Pdf::loadView('data-kp-pkl-view.laporan-honor-kp-pkl', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris', 'prodiType'));
+//            session()->flash('success', true);
+//            session()->flash('message', 'Laporan Honor KP/PKL berhasil dibuat.');
             return $pdf->download($filename)->with('success', true)->with('message', 'Laporan Honor KP/PKL berhasil dibuat.');
         } catch (\Exception $e) {
             Log::error('Error generating Honor KP/PKL report: ' . $e->getMessage());

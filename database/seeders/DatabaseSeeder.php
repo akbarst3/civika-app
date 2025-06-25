@@ -24,13 +24,14 @@ class DatabaseSeeder extends Seeder
             KelasSeeder::class,
             DosenSeeder::class,
             MahasiswaSeeder::class,
-            TugasAkhirSeeder::class,
+//            TugasAkhirSeeder::class,
 //            TugasAkhirSeeder::class,
 //            MembimbingTASeeder::class,
 //            MengujiTASeeder::class,
-            KpPklSeeder::class,
-            MembimbingKpPklSeeder::class,
-            MengujiKpPklSeeder::class,
+//            KpPklSeeder::class,
+//            MembimbingKpPklSeeder::class,
+//            MengujiKpPklSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }
