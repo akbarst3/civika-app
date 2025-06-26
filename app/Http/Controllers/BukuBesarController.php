@@ -198,6 +198,7 @@ class BukuBesarController extends Controller
         $mataKuliahs = MataKuliah::whereIn('kode_matkul', function ($query) use ($semester) {
             $query->select('kode_matkul')->from('nilai')->where('semester_ke', $semester);
         })
+        ->with('nilai.dosen')
         ->get();
         // dd($mataKuliahs);
 
@@ -206,7 +207,7 @@ class BukuBesarController extends Controller
             'kelas.prodi',
             'nilai' => fn($query) => $query->with(['mataKuliah', 'dosen']),
             'absensi' => fn($query) => $query->where('semester', $semester),
-            'indeksPrestasiSemester' => fn($query) => $query->whereIn('semester', [$semester, $semester - 1]),
+            'indeksPrestasiSemester' => fn($query) => $query->whereBetween('semester', [1, $semester]),
         ]);
 
         // Filter berdasarkan kelas atau prodi dan tahun
@@ -244,8 +245,11 @@ class BukuBesarController extends Controller
             $totalSks = $nilaiSemester->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0);
             $totalSksAll = $mhs->nilai->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0);
             $totalBobot = $mhs->indeksPrestasiSemester->sum('nilai_bobot');
-            $jumlahD = $ipSmtNow->jumlah_d ?? 0;
-            $sksD = $mhs->indeksPrestasiSemester->sum('jumlah_d');
+            $jumlahDPerSemester = collect(range(1, $semester))->mapWithKeys(fn($s) => [
+                $s => $mhs->indeksPrestasiSemester->firstWhere('semester', $s)->jumlah_d ?? 0
+            ]);
+
+            $totalD = $jumlahDPerSemester->sum();
             $ipNow = $ipSmtNow->indeks_prestasi ?? 0;
             $ipPrev = $ipSmtBefore->indeks_prestasi ?? 0;
             $nilaiBobot = $ipSmtNow->nilai_bobot ?? 0;
@@ -276,8 +280,8 @@ class BukuBesarController extends Controller
                 'nama_mhs' => $mhs->nama_mhs,
                 'nilai_per_matkul' => $nilaiDetail,
                 'total_sks' => $totalSks,
-                'jumlah_d' => $jumlahD,
-                'sks_d' => $sksD,
+                'jumlah_d_per_semester' => $jumlahDPerSemester->toArray(),
+                'total_d' => $totalD,
                 'semester_sks' => $semesterSks->toArray(),
                 'nilai_bobot' => $nilaiBobot,
                 'ip_semester' => [
