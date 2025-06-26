@@ -189,26 +189,30 @@ class TugasAkhirController extends Controller
                         ->where('angkatan', $request->angkatan);
                 })
                 ->get()
-                ->map(function ($item) {
-                    $pembimbing1 = $item->membimbing->where('pembimbing_ke', 1)->first();
-                    $pembimbing2 = $item->membimbing->where('pembimbing_ke', 2)->first();
-                    $penguji1 = $item->menguji->where('penguji_ke', 1)->first();
-                    $penguji2 = $item->menguji->where('penguji_ke', 2)->first();
+                ->flatMap(function ($item) {
+                    // Ambil semua mahasiswa terkait dengan tugas akhir ini
+                    return $item->mahasiswa->map(function ($mahasiswa) use ($item) {
+                        $pembimbing1 = $item->membimbing->where('pembimbing_ke', 1)->first();
+                        $pembimbing2 = $item->membimbing->where('pembimbing_ke', 2)->first();
+                        $penguji1 = $item->menguji->where('penguji_ke', 1)->first();
+                        $penguji2 = $item->menguji->where('penguji_ke', 2)->first();
 
-                    return [
-                        'nim' => $item->mahasiswa->first()->nim ?? '-',
-                        'nama_mhs' => $item->mahasiswa->first()->nama_mhs ?? '-',
-                        'kota' => $item->kota,
-                        'pembimbing_1' => $pembimbing1 ? $pembimbing1->dosen->nama_dosen : '-',
-                        'nidn_pembimbing_1' => $pembimbing1 ? $pembimbing1->dosen->nidn : '-',
-                        'pembimbing_2' => $pembimbing2 ? $pembimbing2->dosen->nama_dosen : '-',
-                        'nidn_pembimbing_2' => $pembimbing2 ? $pembimbing2->dosen->nidn : '-',
-                        'penguji_1' => $penguji1 ? $penguji1->dosen->nama_dosen : '-',
-                        'nidn_penguji_1' => $penguji1 ? $penguji1->dosen->nidn : '-',
-                        'penguji_2' => $penguji2 ? $penguji2->dosen->nama_dosen : '-',
-                        'nidn_penguji_2' => $penguji2 ? $penguji2->dosen->nidn : '-',
-                    ];
-                });
+                        return [
+                            'kota' => $item->kota, // Kota dulu
+                            'nim' => $mahasiswa->nim ?? '-', // Lalu NIM
+                            'nama_mhs' => $mahasiswa->nama_mhs ?? '-', // Lalu Nama Mahasiswa
+                            'topik' => $item->topik ?? '-', // Topik
+                            'pembimbing_1' => $pembimbing1 ? $pembimbing1->dosen->nama_dosen : '-',
+                            'nidn_pembimbing_1' => $pembimbing1 ? $pembimbing1->dosen->nidn : '-',
+                            'pembimbing_2' => $pembimbing2 ? $pembimbing2->dosen->nama_dosen : '-',
+                            'nidn_pembimbing_2' => $pembimbing2 ? $pembimbing2->dosen->nidn : '-',
+                            'penguji_1' => $penguji1 ? $penguji1->dosen->nama_dosen : '-',
+                            'nidn_penguji_1' => $penguji1 ? $penguji1->dosen->nidn : '-',
+                            'penguji_2' => $penguji2 ? $penguji2->dosen->nama_dosen : '-',
+                            'nidn_penguji_2' => $penguji2 ? $penguji2->dosen->nidn : '-', // Perbaikan typo
+                        ];
+                    });
+                })->values();
 
             Log::info('Generated PDPT data: ', $data->toArray());
 
@@ -225,9 +229,10 @@ class TugasAkhirController extends Controller
         } catch (\Exception $e) {
             Log::error('Error generating PDPT: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return redirect()->route('data-ta.generate.pdpt.form')
-                ->with('error', 'Gagal menghasilkan laporan: ' . $e->getMessage());
+                ->with('error', 'Gagal menghasilkan laporan: ' . $e->getMessage);
         }
     }
+
     public function handleDownloadHonor(Request $request)
     {
         try {
@@ -245,7 +250,7 @@ class TugasAkhirController extends Controller
                 ->with('error', 'Jenis laporan tidak valid.');
         } catch (\Exception $e) {
             Log::error('Error handling Honor download: ' . $e->getMessage());
-            return redirect()->route('data-ta.generate.honor.form')
+            return redirect()->back()
                 ->with('error', 'Gagal menangani unduhan Honor: ' . $e->getMessage());
         }
     }
@@ -324,11 +329,10 @@ class TugasAkhirController extends Controller
             $filename = "laporan_honor_ta_{$prodi->nama_prodi}_{$request->angkatan}_{$currentDate}.pdf";
 
             $pdf = Pdf::loadView('tugas-akhir-view.laporan-honor-ta', compact('data', 'prodi', 'kaprodi', 'tahunAkademik', 'sekretaris'));
-            return $pdf->download($filename)
-                ->with('success', 'Laporan Honor Tugas Akhir berhasil dibuat.');
+            return $pdf->download($filename);
         } catch (\Exception $e) {
             Log::error('Error generating Honor TA: ' . $e->getMessage());
-            return redirect()->route('data-ta.generate.honor.form')
+            return redirect()->back()
                 ->with('error', 'Gagal membuat laporan Honor TA: ' . $e->getMessage());
         }
     }
@@ -417,7 +421,7 @@ class TugasAkhirController extends Controller
                 ->with('success', 'Data Honor Tugas Akhir berhasil ditampilkan.');
         } catch (\Exception $e) {
             Log::error('Error displaying Honor TA: ' . $e->getMessage());
-            return redirect()->route('data-ta.generate.honor.form')
+            return redirect()->back()
                 ->with('error', 'Gagal menampilkan data Honor TA: ' . $e->getMessage());
         }
     }

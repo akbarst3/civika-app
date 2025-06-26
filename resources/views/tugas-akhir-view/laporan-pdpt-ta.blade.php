@@ -88,9 +88,10 @@
     <thead>
     <tr>
         <th>No</th>
-        <th>NIM</th>
-        <th>Nama Mahasiswa</th>
         <th>Kota</th>
+        <th>NIM</th>
+        <th>Anggota KoTA</th>
+        <th>Topik Sesuai FTA Sidang</th>
         <th>Pembimbing 1</th>
         <th>NIDN</th>
         <th>Pembimbing 2</th>
@@ -105,9 +106,10 @@
     @foreach($data as $i => $item)
         <tr>
             <td>{{ $i + 1 }}</td>
+            <td>{{ $item['kota'] }}</td>
             <td>{{ $item['nim'] }}</td>
             <td>{{ $item['nama_mhs'] }}</td>
-            <td>{{ $item['kota'] }}</td>
+            <td>{{ $item['topik'] }}</td>
             <td>{{ $item['pembimbing_1'] ?? '-' }}</td>
             <td>{{ $item['nidn_pembimbing_1'] ?? '-' }}</td>
             <td>{{ $item['pembimbing_2'] ?? '-' }}</td>
