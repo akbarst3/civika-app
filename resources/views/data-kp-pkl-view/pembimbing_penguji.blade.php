@@ -3,7 +3,7 @@
 @section('content')
 <div class="container mt-5">
     <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
-        <h2 class="mb-0" style="font-weight:bold">Data Praktek Kerja Lapangan</h2>
+        <h2 class="mb-0" style="font-weight:bold">Daftar Pembimbing dan Penguji Kerja Praktik</h2>
 
         <div class="d-flex gap-3 flex-wrap mt-3">
             <!-- Search Box -->
@@ -41,90 +41,21 @@
                 <tr>
                     <th>No</th>
                     <th>NIM</th>
-                    <th>Nama Mahasiswa</th>
-                    <th>Kota Lahir</th>
-                    <th>Tanggal Lahir</th>
-                    <th>Statur Mahasiswa</th>
-                    <th>Alamat Mahasiswa</th>
-                    <th>Nama Kabupaten</th>
-                    <th>Kode Pos</th>
-                    <th>Telpon</th>
-                    <th>Email</th>
-                    <th>Detail</th>
+                    <th>Nama</th>
+                    <th>Kelas</th>
+                    <th>Perusahaan</th>
+                    <th>Pembimbing 1</th>
+                    <th>NIDN</th>
+                    <th>Pembimbing 2</th>
+                    <th>NIDN</th>
+                    <th>Penguji 1</th>
+                    <th>NIDN</th>
+                    <th>Penguji 2</th>
+                    <th>NIDN</th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- Data Mahasiswa -->
-                <tr>
-                    <td>1</td>
-                    <td>231511070</td>
-                    <td>Aulia Putri Ramadhani</td>
-                    <td>Kab. Garut</td>
-                    <td>6 November 2006</td>
-                    <td>Aktif</td>
-                    <td>Jalan Ciwaruga No. 20</td>
-                    <td>Kab. Garut</td>
-                    <td>44151</td>
-                    <td>081234567890</td>
-                    <td>aulia@gmail.com</td>
-                    <td>-></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>231511070</td>
-                    <td>Aulia Putri Ramadhani</td>
-                    <td>Kab. Garut</td>
-                    <td>6 November 2006</td>
-                    <td>Aktif</td>
-                    <td>Jalan Ciwaruga No. 20</td>
-                    <td>Kab. Garut</td>
-                    <td>44151</td>
-                    <td>081234567890</td>
-                    <td>aulia@gmail.com</td>
-                    <td>-></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>231511070</td>
-                    <td>Aulia Putri Ramadhani</td>
-                    <td>Kab. Garut</td>
-                    <td>6 November 2006</td>
-                    <td>Aktif</td>
-                    <td>Jalan Ciwaruga No. 20</td>
-                    <td>Kab. Garut</td>
-                    <td>44151</td>
-                    <td>081234567890</td>
-                    <td>aulia@gmail.com</td>
-                    <td>-></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>231511070</td>
-                    <td>Aulia Putri Ramadhani</td>
-                    <td>Kab. Garut</td>
-                    <td>6 November 2006</td>
-                    <td>Aktif</td>
-                    <td>Jalan Ciwaruga No. 20</td>
-                    <td>Kab. Garut</td>
-                    <td>44151</td>
-                    <td>081234567890</td>
-                    <td>aulia@gmail.com</td>
-                    <td>-></td>
-                </tr>
-                <tr>
-                    <td>5</td>
-                    <td>231511070</td>
-                    <td>Aulia Putri Ramadhani</td>
-                    <td>Kab. Garut</td>
-                    <td>6 November 2006</td>
-                    <td>Aktif</td>
-                    <td>Jalan Ciwaruga No. 20</td>
-                    <td>Kab. Garut</td>
-                    <td>44151</td>
-                    <td>081234567890</td>
-                    <td>aulia@gmail.com</td>
-                    <td>-></td>
-                </tr>
+            <tbody id="tableBody">
+                <!-- Data akan diisi oleh JavaScript -->
             </tbody>
         </table>
     </div>

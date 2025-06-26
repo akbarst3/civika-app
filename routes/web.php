@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\MahasiswaController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PKLController;
 use App\Models\Prodi;
 use App\Http\Controllers\TugasAkhirController;
+use App\Http\Controllers\PKLController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -95,9 +96,13 @@ Route::middleware(['auth', 'role:tata_usaha'])->group(function () {
     });
     
     Route::get('dataKP/pembimbing_penguji',function () {
-        return view('pkl-view.pembimbing_penguji');
+        return view('data-kp-pkl-view.pembimbing_penguji');
     });
     
     
     Route::get('dataTA/pembimbing_penguji', [TugasAkhirController::class, 'showPembimbingPengujiView']);
+    
+    Route::get('/pkl', [PKLController::class, 'getDataPkl'])->name('api.pkl.data');
+    
+    Route::get('dataKP/pembimbing-penguji', [PKLController::class, 'showPembimbingPengujiView'])->name('pembimbing-penguji.view');
 });
