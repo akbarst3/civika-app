@@ -216,6 +216,16 @@
                         aria-label="Search"
                         value="{{ request('search') }}"
                     />
+                    <!-- Pertahankan filter lain -->
+                    @if(request('angkatan'))
+                        <input type="hidden" name="angkatan" value="{{ request('angkatan') }}">
+                    @endif
+                    @if(request('kelas'))
+                        <input type="hidden" name="kelas" value="{{ request('kelas') }}">
+                    @endif
+                    @if(request('prodi'))
+                        <input type="hidden" name="prodi" value="{{ request('prodi') }}">
+                    @endif
                 </form>
                 <form class="custom-filter-container" method="GET" action="{{ route('data-mahasiswa.list') }}">
                     <i class="fas fa-users custom-filter-icon"></i>
@@ -227,6 +237,15 @@
                             </option>
                         @endforeach
                     </select>
+                    @if(request('search'))
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
+                    @if(request('kelas'))
+                        <input type="hidden" name="kelas" value="{{ request('kelas') }}">
+                    @endif
+                    @if(request('prodi'))
+                        <input type="hidden" name="prodi" value="{{ request('prodi') }}">
+                    @endif
                 </form>
                 <form class="custom-filter-container" method="GET" action="{{ route('data-mahasiswa.list') }}">
                     <i class="fas fa-graduation-cap custom-filter-icon"></i>
@@ -238,6 +257,15 @@
                             </option>
                         @endforeach
                     </select>
+                    @if(request('search'))
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
+                    @if(request('angkatan'))
+                        <input type="hidden" name="angkatan" value="{{ request('angkatan') }}">
+                    @endif
+                    @if(request('kelas'))
+                        <input type="hidden" name="kelas" value="{{ request('kelas') }}">
+                    @endif
                 </form>
                 <form class="custom-filter-container" method="GET" action="{{ route('data-mahasiswa.list') }}">
                     <i class="fas fa-chalkboard custom-filter-icon"></i>
@@ -249,6 +277,15 @@
                             </option>
                         @endforeach
                     </select>
+                    @if(request('search'))
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
+                    @if(request('angkatan'))
+                        <input type="hidden" name="angkatan" value="{{ request('angkatan') }}">
+                    @endif
+                    @if(request('prodi'))
+                        <input type="hidden" name="prodi" value="{{ request('prodi') }}">
+                    @endif
                 </form>
             </div>
         </div>

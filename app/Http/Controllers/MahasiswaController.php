@@ -42,7 +42,8 @@ class MahasiswaController extends Controller
                         $q->where('kode_prodi', $prodi);
                     });
                 })
-                ->paginate(10);
+                ->paginate(10)
+                ->withQueryString(); // Menyertakan semua parameter query dalam pagination links
 
             return view('mahasiswa-view.data-mahasiswa', compact('mahasiswa', 'angkatanList', 'kelasList', 'prodiList'))
                 ->with('success', 'Data mahasiswa berhasil diambil.');
@@ -90,11 +91,10 @@ class MahasiswaController extends Controller
             $import = new DataMahasiswaImport($request->angkatan);
             Excel::import($import, $request->file('file'));
 
-            return redirect()->back()
-                ->with('success', 'Data berhasil diimpor.');
+            return redirect()->back()->with('success', 'Data berhasil diimpor.');
         } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', $e->getMessage());
+            Log::error("Import failed: {$e->getMessage()}");
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 }
