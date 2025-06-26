@@ -24,24 +24,31 @@
             <div class="col-md-4">
                 <div class="mb-3">
                     <label for="tahunAkademikDropdown" class="form-label">Tahun Akademik</label>
-                    <select class="form-select" id="tahunAkademikDropdown">
-                        <option value="" selected disabled>Pilih Tahun Akademik</option>
-                        {{-- Placeholder untuk data tahun akademik. Isi ini secara dinamis dari controller Anda. --}}
-                        <option value="2024/2025">2024/2025</option>
-                        <option value="2023/2024">2023/2024</option>
-                        <option value="2022/2023">2022/2023</option>
+                    <select class="form-select" id="tahunAkademikDropdown" onchange="filterTahunAkademik()">
+                        <option value="" disabled>Pilih Tahun Akademik</option>
+                        @foreach ($tahunAkademikFilter as $tahun)
+                            <option value="{{ $tahun }}" {{ $tahunAkademikAktif == $tahun ? 'selected' : '' }}>
+                                {{ $tahun }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="mb-3">
                     <label for="mataKuliahFilterDropdown" class="form-label">Mata Kuliah</label>
-                    <select class="form-select" id="mataKuliahFilterDropdown">
-                        <option value="" selected disabled>Pilih Mata Kuliah</option>
-                        {{-- Data mata kuliah sudah diambil dari $mataKuliahs yang ada --}}
-                        @foreach ($mataKuliahs as $mk)
-                            <option value="{{ $mk->kode_matkul }}">{{ $mk->nama_matkul }} ({{ $mk->jumlah_sks }} SKS)</option>
-                        @endforeach
+                    {{-- TAMBAHKAN onchange DI SINI --}}
+                    <select class="form-select" id="mataKuliahFilterDropdown" onchange="filterMataKuliah()">
+                        <option value="" disabled>Pilih Mata Kuliah</option>
+                        {{-- Logika untuk menampilkan opsi mata kuliah --}}
+                        @forelse ($mataKuliahs as $mk)
+                            {{-- Perbaiki logika 'selected' --}}
+                            <option value="{{ $mk->kode_matkul }}" {{ $kodeMatkulAktif == $mk->kode_matkul ? 'selected' : '' }}>
+                                {{ $mk->nama_matkul }}
+                            </option>
+                        @empty
+                            <option value="" disabled selected>Tidak ada mata kuliah</option>
+                        @endforelse
                     </select>
                 </div>
             </div>
@@ -51,59 +58,58 @@
         <div class="table-responsive mt-4">
             <table class="table table-bordered text-center align-middle small">
                 <thead>
+                    {{-- HEADER TABEL YANG DIPERBARUI --}}
+                    @if ($matkulAktifData)
                     <tr>
-                        <th rowspan="4">No</th>
-                        <th rowspan="4">NIM</th>
-                        <th rowspan="4">Nama</th>
-                        {{-- MENAMBAH KOLOM KELAS DAN PROGRAM STUDI --}}
-                        <th rowspan="4">Kelas</th>
-                        <th rowspan="4">Program Studi</th>
-                        {{-- AKHIR PENAMBAHAN --}}
-                        <th colspan="{{ $mataKuliahs->count() }}">MATA KULIAH</th>
+                        <th rowspan="2">No</th>
+                        <th rowspan="2">NIM</th>
+                        <th rowspan="2">Nama</th>
+                        <th rowspan="2">Kelas</th>
+                        <th rowspan="2">Program Studi</th>
+                        {{-- Judul kolom utama adalah nama mata kuliah yang aktif --}}
+                        <th colspan="2">MATA KULIAH: {{ $matkulAktifData->nama_matkul }}</th>
                     </tr>
                     <tr>
-                        {{-- Ini adalah baris untuk kode mata kuliah, tidak perlu diubah di sini --}}
-                        @foreach ($mataKuliahs as $mk)
-                            <th>{{ $mk->kode_matkul }}</th>
-                        @endforeach
+                        {{-- Sub-kolom untuk mata kuliah tersebut --}}
+                        <th>SKS</th>
+                        <th>NILAI</th>
                     </tr>
+                    @else
+                    {{-- Tampilan header jika tidak ada data sama sekali --}}
                     <tr>
-                        {{-- Ini adalah baris untuk nama mata kuliah, tidak perlu diubah di sini --}}
-                        @foreach ($mataKuliahs as $mk)
-                            <th>{{ $mk->nama_matkul }}</th>
-                        @endforeach
+                         <th>No</th>
+                         <th>NIM</th>
+                         <th>Nama</th>
+                         <th>Kelas</th>
+                         <th>Program Studi</th>
+                         <th>Mata Kuliah</th>
                     </tr>
-                    <tr>
-                        {{-- Ini adalah baris untuk jumlah SKS mata kuliah, tidak perlu diubah di sini --}}
-                        @foreach ($mataKuliahs as $mk)
-                            <th>{{ $mk->jumlah_sks }}</th>
-                        @endforeach
-                    </tr>
+                    @endif
                 </thead>
                 <tbody>
-                    @foreach($data as $mhs)
+                    {{-- BODY TABEL YANG DIPERBARUI --}}
+                    @forelse($data as $mhs)
                         <tr>
                             <td>{{ $mhs['no'] }}</td>
                             <td>{{ $mhs['nim'] }}</td>
-                            <td>{{ $mhs['nama_mhs'] }}</td>
-                            {{-- MENAMBAH DATA KELAS DAN PROGRAM STUDI --}}
-                            <td>{{ $mhs['kelas'] ?? '-' }}</td> {{-- Asumsi ada key 'kelas' di array $mhs --}}
-                            <td>{{ $mhs['program_studi'] ?? '-' }}</td> {{-- Asumsi ada key 'program_studi' di array $mhs --}}
-                            {{-- AKHIR PENAMBAHAN --}}
-                            @foreach ($mataKuliahs as $mk)
-                                <td>
-                                    @php
-                                        $nilai = collect($mhs['nilai_per_matkul'])->firstWhere('kode_matkul', $mk->kode_matkul);
-                                    @endphp
-                                    {{ $nilai['indeks_nilai'] ?? '-' }}
-
-                                </td>
-                            @endforeach
+                            <td class="text-start">{{ $mhs['nama_mhs'] }}</td>
+                            <td>{{ $mhs['kelas'] }}</td>
+                            <td>{{ $mhs['program_studi'] }}</td>
+                            {{-- Tampilkan data SKS dan Nilai langsung --}}
+                            <td>{{ $mhs['nilai_per_matkul'][0]['jumlah_sks'] }}</td>
+                            <td>{{ $mhs['nilai_per_matkul'][0]['indeks_nilai'] }}</td>
                         </tr>
-                    @endforeach
+                    @empty
+                        {{-- Pesan jika data tidak ditemukan untuk mata kuliah yang dipilih --}}
+                        <tr>
+                            {{-- Sesuaikan colspan dengan jumlah kolom di header --}}
+                            <td colspan="7" class="text-center">Tidak ada data nilai untuk mata kuliah dan semester ini.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
+
         @if ($data->isEmpty())
             <div class="alert alert-info mt-3">
                 Tidak ada data nilai untuk semester ini.
@@ -352,6 +358,34 @@
             document.getElementById('includeClassIP').checked = false;
             document.getElementById('includeClassIPK').checked = false;
         }
+
+        // Fungsi untuk filter berdasarkan tahun akademik
+        function filterTahunAkademik() {
+            const tahunAkademik = document.getElementById('tahunAkademikDropdown').value;
+            if (tahunAkademik) {
+                const kodeMatkul = document.getElementById('mataKuliahFilterDropdown').value;
+                let url = `/buku-besar-dosen?tahun_akademik=${encodeURIComponent(tahunAkademik)}`;
+                if (kodeMatkul) {
+                    url += `&kode_matkul=${kodeMatkul}`;
+                }
+                window.location.href = url;
+            }
+        }
+
+        // Fungsi untuk filter berdasarkan mata kuliah
+        function filterMataKuliah() {
+            const kodeMatkul = document.getElementById('mataKuliahFilterDropdown').value;
+            const tahunAkademik = document.getElementById('tahunAkademikDropdown').value;
+
+            if (kodeMatkul) {
+                let url = `/buku-besar-dosen?kode_matkul=${kodeMatkul}`;
+                if (tahunAkademik) {
+                    url += `&tahun_akademik=${encodeURIComponent(tahunAkademik)}`;
+                }
+                window.location.href = url;
+            }
+        }
+
 
         // Tambahkan gaya CSS untuk gradasi hijau pada tombol OK SweetAlert
         const style = document.createElement('style');
