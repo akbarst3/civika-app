@@ -245,6 +245,7 @@ class BukuBesarController extends Controller
         $mataKuliahs = MataKuliah::whereIn('kode_matkul', function ($query) use ($semester) {
             $query->select('kode_matkul')->from('nilai')->where('semester_ke', $semester);
         })
+        ->with('nilai.dosen')
         ->get();
 
         $jumlahMataKuliah = count($mataKuliahs);
@@ -257,7 +258,7 @@ class BukuBesarController extends Controller
             'kelas.prodi',
             'nilai' => fn($query) => $query->with(['mataKuliah', 'dosen']),
             'absensi' => fn($query) => $query->where('semester', $semester),
-            'indeksPrestasiSemester' => fn($query) => $query->whereIn('semester', [$semester, $semester - 1]),
+            'indeksPrestasiSemester' => fn($query) => $query->whereBetween('semester', [1, $semester]),
         ]);
 
         // Filter berdasarkan kelas atau prodi dan tahun
@@ -296,8 +297,11 @@ class BukuBesarController extends Controller
             $totalSks = $nilaiSemester->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0);
             $totalSksAll = $mhs->nilai->sum(fn($n) => $n->mataKuliah->jumlah_sks ?? 0);
             $totalBobot = $mhs->indeksPrestasiSemester->sum('nilai_bobot');
-            $jumlahD = $ipSmtNow->jumlah_d ?? 0;
-            $sksD = $mhs->indeksPrestasiSemester->sum('jumlah_d');
+            $jumlahDPerSemester = collect(range(1, $semester))->mapWithKeys(fn($s) => [
+                $s => $mhs->indeksPrestasiSemester->firstWhere('semester', $s)->jumlah_d ?? 0
+            ]);
+
+            $totalD = $jumlahDPerSemester->sum();
             $ipNow = $ipSmtNow->indeks_prestasi ?? 0;
             $ipPrev = $ipSmtBefore->indeks_prestasi ?? 0;
             $nilaiBobot = $ipSmtNow->nilai_bobot ?? 0;
@@ -328,8 +332,8 @@ class BukuBesarController extends Controller
                 'nama_mhs' => $mhs->nama_mhs,
                 'nilai_per_matkul' => $nilaiDetail,
                 'total_sks' => $totalSks,
-                'jumlah_d' => $jumlahD,
-                'sks_d' => $sksD,
+                'jumlah_d_per_semester' => $jumlahDPerSemester->toArray(),
+                'total_d' => $totalD,
                 'semester_sks' => $semesterSks->toArray(),
                 'nilai_bobot' => $nilaiBobot,
                 'ip_semester' => [
@@ -477,49 +481,106 @@ class BukuBesarController extends Controller
 
     public function bukuBesarDosen(Request $request)
     {
+        $kodeDosen = $request->input('kode_dosen', 'KO001N'); // default kode dosen, diganti ke auth dosen nanti
         $semester = $request->input('semester', 3); // Default ke semester 3
+        $kodeMatkul = $request->input('kode_matkul'); // Ambil dari request, bisa null jika tidak dipilih
 
-        // Ambil daftar mata kuliah untuk semester tertentu
-        $mataKuliahs = MataKuliah::whereIn('kode_matkul', function ($query) use ($semester) {
+        // Logika tahun akademik dari cekStatus
+        $tahunSekarang = Carbon::now()->year;
+        $bulanSekarang = Carbon::now()->month;
+
+        // Hitung default tahun akademik aktif
+        if ($bulanSekarang >= 7) {
+            $tahunAwal = $tahunSekarang;
+            $semesterLabelDefault = 'Ganjil';
+        } else {
+            $tahunAwal = $tahunSekarang - 1;
+            $semesterLabelDefault = 'Genap';
+        }
+        $tahunAkademikDefault = "$tahunAwal/" . ($tahunAwal + 1) . " $semesterLabelDefault";
+
+        // Ambil dari request atau gunakan default
+        $tahunAkademikAktif = $request->input('tahun_akademik', $tahunAkademikDefault);
+
+        // Parse input tahun akademik
+        [$tahunPeriode, $ganjilGenap] = explode(' ', $tahunAkademikAktif);
+        [$tahunMulai, $tahunSelesai] = explode('/', $tahunPeriode);
+        $tahunMulai = (int)$tahunMulai;
+
+        // Daftar tahun akademik tersedia
+        $angkatanTerkecil = Kelas::min('angkatan');
+        $tahunAkademikFilter = [];
+        if ($angkatanTerkecil) {
+            for ($tahun = (int)$angkatanTerkecil; $tahun <= $tahunAwal; $tahun++) {
+                $tahunAkademikFilter[] = "$tahun/" . ($tahun + 1) . " Ganjil";
+                $tahunAkademikFilter[] = "$tahun/" . ($tahun + 1) . " Genap";
+            }
+        }
+
+        // Tentukan semester berdasarkan tahun akademik aktif
+        $semesterAktif = ($tahunSekarang - $tahunMulai) * 2 + ($ganjilGenap === 'Ganjil' ? 1 : 2);
+
+        // Ambil daftar mata kuliah yang diajar dosen untuk semester tertentu
+        $mataKuliahs = MataKuliah::whereIn('kode_matkul', function ($query) use ($semesterAktif, $kodeDosen) {
             $query->select('kode_matkul')
-                  ->from('nilai')
-                  ->where('semester_ke', $semester);
+                ->from('nilai')
+                ->where('kode_dosen', $kodeDosen)
+                ->where('semester_ke', $semesterAktif);
         })->get();
 
-        // Ambil data mahasiswa dengan nilai untuk semester tertentu
-        $mahasiswas = Mahasiswa::with([
-            'nilai' => function ($query) use ($semester) {
-                $query->where('semester_ke', $semester)
-                      ->with(['mataKuliah', 'dosen']);
-            }
-        ])->get();
+        // Jika tidak ada mata kuliah, kembalikan data kosong
+        if ($mataKuliahs->isEmpty()) {
+            return view('buku-besar-view.tabel-buku-besar-dosen', [
+                'data' => collect(),
+                'semesterAktif' => $semesterAktif,
+                'mataKuliahs' => $mataKuliahs,
+                'tahunAkademikFilter' => $tahunAkademikFilter,
+                'tahunAkademikAktif' => $tahunAkademikAktif,
+                'kodeMatkulAktif' => null,
+                'matkulAktifData' => null,
+            ]);
+        }
 
-        // Transformasi data untuk view
-        $data = $mahasiswas->filter(function ($mhs) {
-            return $mhs->nilai->isNotEmpty(); // Hanya sertakan mahasiswa dengan nilai
-        })->map(function ($mhs, $index) use ($semester) {
-            $nilaiSemester = $mhs->nilai->where('semester_ke', $semester);
+        // Tentukan mata kuliah default (misalnya yang pertama)
+        $defaultKodeMatkul = $mataKuliahs->first()->kode_matkul;
+        if (!$kodeMatkul) {
+            $kodeMatkul = $defaultKodeMatkul; // Set default jika tidak ada input
+        }
 
-            $nilaiDetail = $nilaiSemester->map(function ($n) {
-                return [
-                    'kode_matkul' => $n->kode_matkul,
-                    'nama_matkul' => optional($n->mataKuliah)->nama_matkul ?? '-',
-                    'kode_dosen' => optional($n->dosen)->kode_dosen ?? '-',
-                    'nama_dosen' => optional($n->dosen)->nama_dosen ?? '-',
-                    'jumlah_sks' => optional($n->mataKuliah)->jumlah_sks ?? 0,
-                    'indeks_nilai' => $n->indeks_nilai ?? '-',
-                ];
-            })->values();
+        // Ambil semua nilai mahasiswa untuk mata kuliah yang diajar dosen
+        $nilaiList = Nilai::with(['mahasiswa.kelas.prodi', 'mataKuliah', 'dosen'])
+            ->where('kode_dosen', $kodeDosen)
+            ->where('semester_ke', $semesterAktif)
+            ->where('kode_matkul', $kodeMatkul) // << penting!
+            ->get();
+            // ->groupBy('nim');
 
+        // Transformasi data mahasiswa berdasarkan semua nilai mata kuliah
+        $data = $nilaiList->map(function ($nilai, $index) {
             return [
                 'no' => $index + 1,
-                'nim' => $mhs->nim,
-                'nama_mhs' => $mhs->nama_mhs,
-                'nilai_per_matkul' => $nilaiDetail,
+                'nim' => $nilai->mahasiswa->nim,
+                'nama_mhs' => $nilai->mahasiswa->nama_mhs,
+                'kelas' => $nilai->mahasiswa->kelas->nama_kelas ?? '-',
+                'program_studi' => $nilai->mahasiswa->kelas->prodi->nama_prodi ?? '-',
+                'nilai_per_matkul' => [[
+                    'kode_matkul' => $nilai->kode_matkul,
+                    'nama_matkul' => $nilai->mataKuliah->nama_matkul ?? '-',
+                    'jumlah_sks' => $nilai->mataKuliah->jumlah_sks ?? 0,
+                    'indeks_nilai' => $nilai->indeks_nilai ?? '-',
+                ]],
             ];
-        })->values();
+        });
 
-        return view('buku-besar-view.tabel-buku-besar-dosen', compact('data', 'semester', 'mataKuliahs'));
+        return view('buku-besar-view.tabel-buku-besar-dosen', [
+            'data' => $data,
+            'semesterAktif' => $semesterAktif,
+            'mataKuliahs' => $mataKuliahs,
+            'tahunAkademikFilter' => $tahunAkademikFilter,
+            'tahunAkademikAktif' => $tahunAkademikAktif,
+            'kodeMatkulAktif' => $kodeMatkul,
+            'matkulAktifData' => $mataKuliahs->where('kode_matkul', $kodeMatkul)->first(),
+        ]);
     }
 
     public function bukuBesarWaliMahasiswa(Request $request)
@@ -625,7 +686,7 @@ class BukuBesarController extends Controller
         ));
 
     }
-    
+
     public function generateLaporan(Request $request)
     {
         Log::info('Fungsi generateLaporan dipanggil.', $request->all());
