@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TugasAkhirController;
+use App\Http\Controllers\PKLController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,13 +18,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('dataTA/pembimbing_penguji',function () {
-    return view('tugas-akhir-view.pembimbing_penguji');
-});
+Route::get('/tugas-akhir/pembimbing-penguji', [TugasAkhirController::class, 'getPembimbingPenguji']);
 
-Route::get('dataKP/pembimbing_penguji',function () {
-    return view('pkl-view.pembimbing_penguji');
-});
-
-
-Route::get('dataTA/pembimbing_penguji', [TugasAkhirController::class, 'showPembimbingPengujiView']);
+Route::get('/kp-pkl/pembimbing-penguji', [PKLController::class, 'getPembimbingPenguji']);

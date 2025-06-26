@@ -2,111 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\TugasAkhir;
-use App\Models\Membimbing;
+use App\Models\Mahasiswa;
+use App\Models\Dosen;
 use App\Models\Menguji;
+use App\Models\Membimbing;
+use Illuminate\Http\JsonResponse;
 
 class TugasAkhirController extends Controller
 {
-    public function getDataTA(Request $request)
-{
-    $query = TugasAkhir::with([
-        'mahasiswa' => function ($query) {
-            $query->select('nim', 'nama_mhs', 'nama_kelas');
-        },
-        'membimbing.dosen' => function ($query) {
-            $query->select('kode_dosen', 'nama_dosen');
-        },
-        'menguji.dosen' => function ($query) {
-            $query->select('kode_dosen', 'nama_dosen');
-        }
-    ]);
-
-    // Filter berdasarkan angkatan (misalnya, nama_kelas berisi info angkatan)
-    if ($request->has('angkatan') && $request->angkatan != '') {
-        $query->whereHas('mahasiswa', function ($q) use ($request) {
-            $q->where('nama_kelas', 'like', '%' . $request->angkatan . '%');
-        });
-    }
-
-    // Pencarian berdasarkan nama mahasiswa atau topik
-    if ($request->has('search') && $request->search != '') {
-        $search = $request->search;
-        $query->where(function ($q) use ($search) {
-            $q->where('topik', 'like', '%' . $search . '%')
-              ->orWhereHas('mahasiswa', function ($q) use ($search) {
-                  $q->where('nama_mhs', 'like', '%' . $search . '%');
-              });
-        });
-    }
-
-    $tugasAkhir = $query->get();
-
-    // Format data untuk response
-    $data = $tugasAkhir->map(function ($ta) {
-        return [
-            'kota' => $ta->kota,
-            'nim' => $ta->nim,
-            'nama_mahasiswa' => $ta->mahasiswa->nama_mhs,
-            'kelas' => $ta->mahasiswa->nama_kelas,
-            'topik' => $ta->topik,
-            'pembimbing' => $ta->membimbing->map(function ($membimbing) {
-                return [
-                    'kode_dosen' => $membimbing->kode_dosen,
-                    'nama_dosen' => $membimbing->dosen->nama_dosen,
-                ];
-            })->toArray(),
-            'penguji' => $ta->menguji->map(function ($menguji) {
-                return [
-                    'kode_dosen' => $menguji->kode_dosen,
-                    'nama_dosen' => $menguji->dosen->nama_dosen,
-                ];
-            })->toArray(),
-        ];
-    });
-
-    return response()->json([
-        'status' => 'success',
-        'data' => $data
-    ], 200);
-}
-
-    public function showPembimbingPengujiView(Request $request)
+    /**
+     * Mengambil daftar pembimbing dan penguji tugas akhir.
+     *
+     * @return JsonResponse
+     */
+    public function getPembimbingPenguji(): JsonResponse
     {
-        $query = TugasAkhir::with([
-            'mahasiswa' => function ($query) {
-                $query->select('nim', 'nama_mhs', 'nama_kelas');
-            },
-            'membimbing.dosen' => function ($query) {
-                $query->select('kode_dosen', 'nama_dosen');
-            },
-            'menguji.dosen' => function ($query) {
-                $query->select('kode_dosen', 'nama_dosen');
-            }
+        // Ambil data tugas akhir dengan relasi mahasiswa, membimbing, dan menguji
+        $tugasAkhir = TugasAkhir::with([
+            'mahasiswa',
+            'membimbing.dosen',
+            'menguji.dosen'
+        ])->get();
+
+        // Transformasi data untuk respons
+        $data = $tugasAkhir->map(function ($tugas) {
+            // Ambil pembimbing (maksimal 2)
+            $pembimbing = $tugas->membimbing->take(2);
+            $pembimbing1 = $pembimbing->get(0)->dosen ?? null;
+            $pembimbing2 = $pembimbing->get(1)->dosen ?? null;
+
+            // Ambil penguji (maksimal 2)
+            $penguji = $tugas->menguji->take(2);
+            $penguji1 = $penguji->get(0)->dosen ?? null;
+            $penguji2 = $penguji->get(1)->dosen ?? null;
+
+            return [
+                'kota' => $tugas->kota,
+                'nim' => $tugas->nim,
+                'nama_mhs' => $tugas->mahasiswa->nama_mhs ?? '-',
+                'topik' => $tugas->topik,
+                'pembimbing1' => $pembimbing1 ? $pembimbing1->nama_dosen : '-',
+                'nip_pembimbing1' => $pembimbing1 ? $pembimbing1->nip : '-',
+                'pembimbing2' => $pembimbing2 ? $pembimbing2->nama_dosen : '-',
+                'nip_pembimbing2' => $pembimbing2 ? $pembimbing2->nip : '-',
+                'penguji1' => $penguji1 ? $penguji1->nama_dosen : '-',
+                'nip_penguji1' => $penguji1 ? $penguji1->nip : '-',
+                'penguji2' => $penguji2 ? $penguji2->nama_dosen : '-',
+                'nip_penguji2' => $penguji2 ? $penguji2->nip : '-',
+            ];
+        });
+
+        return response()->json([
+            'data' => $data
         ]);
-
-        // Filter berdasarkan angkatan
-        if ($request->filled('angkatan')) {
-            $query->whereHas('mahasiswa', function ($q) use ($request) {
-                $q->where('nama_kelas', 'like', '%' . $request->angkatan . '%');
-            });
-        }
-
-        // Pencarian berdasarkan nama mahasiswa atau topik
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('topik', 'like', '%' . $search . '%')
-                ->orWhereHas('mahasiswa', function ($q) use ($search) {
-                    $q->where('nama_mhs', 'like', '%' . $search . '%');
-                });
-            });
-        }
-
-        $tugasAkhir = $query->get();
-
-        return view('tugas-akhir-view.pembimbing_penguji', compact('tugasAkhir'));
     }
-
 }

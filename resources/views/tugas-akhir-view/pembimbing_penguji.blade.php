@@ -1,4 +1,3 @@
-```html
 @extends('layouts.app')
 
 @section('content')
@@ -70,132 +69,125 @@
         <div class="d-flex justify-content-center">
             <nav>
                 <ul class="pagination" id="pagination">
-                    <!-- Pagination akan diisi oleh JavaScript -->
+                
                 </ul>
             </nav>
         </div>
     </div>
 
-    <!-- Include Axios -->
-    <script src="https://cdn.jsdxelivr.net/npm/axios/dist/axios.min.js"></script>
+    @push('scripts')
     <script>
-        // Fungsi untuk mengambil data dari API
-        async function fetchData(page = 1, search = '', angkatan = '') {
-            try {
-                const response = await axios.get('/api/tugas-akhir', {
-                    params: {
-                        page,
-                        search,
-                        angkatan
-                    }
-                });
-                const data = response.data.data;
-                renderTable(data);
-                renderPagination(response.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                document.getElementById('tableBody').innerHTML = `
-                    <tr><td colspan="12" class="text-center">Error loading data</td></tr>
-                `;
-            }
-        }
-
-        // Fungsi untuk merender tabel
-        function renderTable(data) {
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const angkatanFilter = document.getElementById('angkatanFilter');
             const tableBody = document.getElementById('tableBody');
-            tableBody.innerHTML = '';
-
-            // Kelompokkan data berdasarkan topik untuk rowspan
-            const groupedData = groupBy(data, 'topik');
-            let groupNumber = 1;
-
-            for (const topik in groupedData) {
-                const group = groupedData[topik];
-                const rowSpan = group.length;
-
-                group.forEach((item, index) => {
-                    const row = document.createElement('tr');
-                    if (index === 0) {
-                        row.innerHTML = `
-                            <td rowspan="${rowSpan}">${String(groupNumber).padStart(2, '0')}</td>
-                            <td>${item.nim}</td>
-                            <td>${item.nama_mahasiswa}</td>
-                            <td rowspan="${rowSpan}">${item.topik}</td>
-                            <td rowspan="${rowSpan}">${item.pembimbing[0]?.nama_dosen || '-'}</td>
-                            <td rowspan="${rowSpan}">${item.pembimbing[0]?.kode_dosen || '-'}</td>
-                            <td rowspan="${rowSpan}">${item.pembimbing[1]?.nama_dosen || '-'}</td>
-                            <td rowspan="${rowSpan}">${item.pembimbing[1]?.kode_dosen || '-'}</td>
-                            <td rowspan="${rowSpan}">${item.penguji[0]?.nama_dosen || '-'}</td>
-                            <td rowspan="${rowSpan}">${item.penguji[0]?.kode_dosen || '-'}</td>
-                            <td rowspan="${rowSpan}">${item.penguji[1]?.nama_dosen || '-'}</td>
-                            <td rowspan="${rowSpan}">${item.penguji[1]?.kode_dosen || '-'}</td>
-                        `;
-                    } else {
-                        row.innerHTML = `
-                            <td>${item.nim}</td>
-                            <td>${item.nama_mahasiswa}</td>
-                        `;
-                    }
-                    tableBody.appendChild(row);
-                });
-                groupNumber++;
-            }
-        }
-
-        // Fungsi untuk mengelompokkan data
-        function groupBy(array, key) {
-            return array.reduce((result, item) => {
-                (result[item[key]] = result[item[key]] || []).push(item);
-                return result;
-            }, {});
-        }
-
-        // Fungsi untuk merender pagination
-        function renderPagination(data) {
             const pagination = document.getElementById('pagination');
-            pagination.innerHTML = '';
+            let currentPage = 1;
 
-            if (!data.links) return;
+            function fetchData(page = 1) {
+                const search = searchInput.value;
+                const angkatan = angkatanFilter.value;
 
-            data.links.forEach(link => {
-                const li = document.createElement('li');
-                li.className = `page-item ${link.active ? 'active' : ''} ${link.url ? '' : 'disabled'}`;
-                const span = document.createElement('span');
-                span.className = 'page-link';
-                span.innerHTML = link.label;
-                
-                if (link.url && !link.active) {
-                    span.style.cursor = 'pointer';
-                    span.addEventListener('click', () => {
-                        const url = new URL(link.url);
-                        const page = url.searchParams.get('page') || 1;
-                        const search = document.getElementById('searchInput').value;
-                        const angkatan = document.getElementById('angkatanFilter').value;
-                        fetchData(page, search, angkatan);
+                fetch(`/tugas-akhir/pembimbing-penguji?page=${page}&search=${encodeURIComponent(search)}&angkatan=${angkatan}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update table
+                        tableBody.innerHTML = '';
+                        data.data.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${item.kota}</td>
+                                <td>${item.nim}</td>
+                                <td>${item.nama_mhs}</td>
+                                <td>${item.topik}</td>
+                                <td>${item.pembimbing1}</td>
+                                <td>${item.nip_pembimbing1}</td>
+                                <td>${item.pembimbing2}</td>
+                                <td>${item.nip_pembimbing2}</td>
+                                <td>${item.penguji1}</td>
+                                <td>${item.nip_penguji1}</td>
+                                <td>${item.penguji2}</td>
+                                <td>${item.nip_penguji2}</td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+
+                        // Update pagination
+                        pagination.innerHTML = '';
+                        const totalPages = data.last_page;
+                        const maxPagesToShow = 5;
+                        let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+                        let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+                        if (endPage - startPage + 1 < maxPagesToShow) {
+                            startPage = Math.max(1, endPage - maxPagesToShow + 1);
+                        }
+
+                        // Previous button
+                        if (currentPage > 1) {
+                            pagination.innerHTML += `
+                                <li class="page-item">
+                                    <a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a>
+                                </li>
+                            `;
+                        }
+
+                        // Page numbers
+                        for (let i = startPage; i <= endPage; i++) {
+                            pagination.innerHTML += `
+                                <li class="page-item ${i === currentPage ? 'active' : ''}">
+                                    <a class="page-link" href="#" data-page="${i}">${i}</a>
+                                </li>
+                            `;
+                        }
+
+                        // Next button
+                        if (currentPage < totalPages) {
+                            pagination.innerHTML += `
+                                <li class="page-item">
+                                    <a class="page-link" href="#" data-page="${currentPage + 1}">Next</a>
+                                </li>
+                            `;
+                        }
+
+                        // Add click events to pagination links
+                        document.querySelectorAll('.page-link').forEach(link => {
+                            link.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                currentPage = parseInt(e.target.dataset.page);
+                                fetchData(currentPage);
+                            });
+                        });
                     });
-                }
-                li.appendChild(span);
-                pagination.appendChild(li);
+            }
+
+            // Initial data load
+            fetchData();
+
+            // Search and filter event listeners
+            searchInput.addEventListener('input', debounce(() => {
+                currentPage = 1;
+                fetchData();
+            }, 300));
+
+            angkatanFilter.addEventListener('change', () => {
+                currentPage = 1;
+                fetchData();
             });
-        }
 
-        // Event listener untuk pencarian
-        document.getElementById('searchForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const search = document.getElementById('searchInput').value;
-            const angkatan = document.getElementById('angkatanFilter').value;
-            fetchData(1, search, angkatan);
+            // Debounce function to limit API calls
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
         });
-
-        // Event listener untuk filter angkatan
-        document.getElementById('angkatanFilter').addEventListener('change', () => {
-            const search = document.getElementById('searchInput').value;
-            const angkatan = document.getElementById('angkatanFilter').value;
-            fetchData(1, search, angkatan);
-        });
-
-        // Panggil data saat halaman dimuat
-        fetchData();
     </script>
+    @endpush
 @endsection
-```
