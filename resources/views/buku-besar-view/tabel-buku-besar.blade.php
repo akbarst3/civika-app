@@ -101,7 +101,11 @@
 
                     <tr>
                         @foreach ($mataKuliahs as $mk)
-                            <th>{{ $mk->kode_matkul }}</th>
+                            @php
+                                // Ambil nama dosen pertama dari relasi nilai yang memuat dosen
+                                $dosenNama = $mk->nilai->first()?->dosen->nama_dosen ?? '-';
+                            @endphp
+                            <th>{{ $dosenNama }}</th>
                         @endforeach
                     </tr>
 
@@ -146,14 +150,10 @@
                             @endforeach
                             @for ($i = 1; $i <= 8; $i++)
                                 <td class="semester-{{ $i }} {{ $i <= $semester ? 'semester-active' : '' }}">
-                                    @if ($i == $semester)
-                                        {{ $mhs['jumlah_d'] ?? "" }}
-                                    @else
-                                        {{ "" }}
-                                    @endif
+                                    {{ $i <= $semester ? ($mhs['jumlah_d_per_semester'][$i] ?? 0) : '' }}
                                 </td>
                             @endfor
-                            <td>{{ $mhs['sks_d'] }}</td>
+                            <td>{{ $mhs['total_d'] }}</td>
                             <td>{{ $mhs['nilai_bobot'] }}</td>
                             <td>{{ $mhs['ip_semester']['lalu'] }}</td>
                             <td>{{ $mhs['ip_semester']['sekarang'] }}</td>
