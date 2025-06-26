@@ -60,7 +60,7 @@ Route::middleware(['auth', 'role:tata_usaha'])->group(function () {
 
     // Generate Honor Tugas Akhir
     Route::get('data-ta/generate-honor-ta', [TugasAkhirController::class, 'formGenerateHonor'])->name('data-ta.honor.form');
-    Route::post('data-ta/generate-honor-ta', [TugasAkhirController::class, 'handleDownload'])->name('data-ta.generate.honor');
+    Route::post('data-ta/generate-honor-ta', [TugasAkhirController::class, 'handleDownloadHonor'])->name('data-ta.generate.honor');
     Route::get('data-ta/display-honor-ta', [TugasAkhirController::class, 'displayHonorTA'])->name('data-ta.display.honor.ta');
     Route::get('data-ta/ta/form', [TugasAkhirController::class, 'form'])->name('ta.form');
     Route::get('data-ta/ta/download', [TugasAkhirController::class, 'handleDownload'])->name('data-ta.honor.download');

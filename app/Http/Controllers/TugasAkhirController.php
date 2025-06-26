@@ -39,7 +39,7 @@ class TugasAkhirController extends Controller
             $request->validate([
                 'program_studi' => 'required|exists:prodi,kode_prodi',
                 'angkatan' => 'required|digits:4|integer',
-                'jenis_laporan' => 'required|in:pdpt',
+                'jenis_laporan' => 'required|in:pdpt,honor',
             ]);
 
         if ($request->jenis_laporan === 'pdpt') {
@@ -49,11 +49,11 @@ class TugasAkhirController extends Controller
         }
 
             return redirect()->back()
-                ->with('success', 'Jenis laporan tidak valid.');
+                ->with('error', 'Jenis laporan tidak valid.');
         } catch (\Exception $e) {
             Log::error('Error handling PDPT download: ' . $e->getMessage());
-            return redirect()->route('data-ta.generate.pdpt.form')
-                ->with('success', 'Gagal menangani pengunduhan PDPT: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Gagal menangani pengunduhan Laporan: ' . $e->getMessage());
         }
     }
 
