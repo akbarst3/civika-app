@@ -61,10 +61,12 @@ class SuratController extends Controller
     {
         $jenisSurat = $request->input('jenisSurat');
         $validator = Validator::make($request->all(), [
+            'ipk' => 'required|numeric|between:0,4.00',
             'ditujukan' => 'required_if:jenisSurat,suratBeasiswa|string|max:255',
             'keperluan' => 'required|string',
             'berkas' => 'nullable|file|mimes:pdf|max:5120',
         ], [
+            'ipk.required' => 'Kolom IPK wajib diisi.',
             'ditujukan.required_if' => 'Kolom ditujukan wajib diisi untuk jenis surat beasiswa.',
         ]);
 
@@ -187,9 +189,9 @@ class SuratController extends Controller
 
     public function updateDetailPengajuanSurat(Request $request, $kodeSurat)
     {
-        $jenisSurat = $request->input('jenisSurat');
+        // $jenisSurat = $request->input('jenisSurat');
         $surat = Surat::where('kode_surat', $kodeSurat)->firstOrFail();
-
+        $jenisSurat = $surat->jenis_surat;
         $user = auth()->user();
 
         if ($user->role === 'tata_usaha') {

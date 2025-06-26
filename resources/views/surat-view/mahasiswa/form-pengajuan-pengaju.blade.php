@@ -49,8 +49,11 @@
                             for="ipk">IPK</label>
                         <input
                             class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                            id="ipk" placeholder="Masukkan IPK, contoh: 3,99" name="ipk" type="text" required>
+                            id="ipk" placeholder="Masukkan IPK, contoh: 3,99" name="ipk" type="text" >
                     </div>
+                    @error('ipk')
+                        <div class="text-red-600 text-[10px] mt-1">{{ $message }}</div>
+                    @enderror
                     <div class="flex-1">
                         <label class="block text-[10px] font-bold text-[#1A237E] mb-1 select-none"
                             for="kelas">Kelas</label>
@@ -110,7 +113,7 @@
                             for="ditujukan">Ditujukan</label>
                         <input
                             class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                            id="ditujukan" placeholder="Masukkan Tujuan" name="ditujukan" type="text" required>
+                            id="ditujukan" placeholder="Masukkan Tujuan Surat, contoh: Beasiswa PT. XX Indonesia" name="ditujukan" type="text" required>
                     </div>
                 @endif
                 <div>
@@ -118,7 +121,7 @@
                         Surat</label>
                     <textarea
                         class="w-full border border-gray-300 rounded-md px-3 py-2 text-xs placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1A237E]"
-                        id="keperluan" placeholder="Masukkan Keperluan" name="keperluan" rows="3" required></textarea>
+                        id="keperluan" placeholder="Masukkan Keperluan, contoh: melakukan pengajuan surat beasiswa melalui Yayasan XX" name="keperluan" rows="3" required></textarea>
                 </div>
                 <div>
                     <div class="mb-4">

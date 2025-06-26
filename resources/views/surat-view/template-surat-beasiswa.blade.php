@@ -1,8 +1,3 @@
-@isset($src)
-    <img src="{{ $src }}" width="100" alt="Logo">
-@endisset
-
-
 <!DOCTYPE html>
 <html lang="id">
 

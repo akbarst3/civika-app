@@ -8,14 +8,14 @@
 
 @section('content')
     <div class="container mt-4">
-        <h3 class="mb-4 text-2xl font-bold">Daftar Verifikasi Surat</h3>
+        <h3 class="mb-4 text-2xl font-bold">Daftar Surat yang perlu diVerifikasi</h3>
 
         <!-- Filter Dropdown -->
         <div class="mb-4">
             <form action="{{ route('daftar-verifikasi-surat') }}" method="GET" class="d-flex align-items-center gap-3">
                 <label for="status" class="form-label font-semibold">Filter Status:</label>
                 <select name="status" id="status" class="form-select w-auto rounded-lg shadow-sm" onchange="this.form.submit()">
-                    <option value="all" {{ $stadtus == 'all' ? 'selected' : '' }}>Semua</option>
+                    <option value="all" {{ $status == 'all' ? 'selected' : '' }}>Semua</option>
                     <option value="draft" {{ $status == 'draft' ? 'selected' : '' }}>Draft</option>
                     <option value="disetujui" {{ $status == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
                     <option value="ditolak" {{ $status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
@@ -23,7 +23,10 @@
                 </select>
             </form>
         </div>
-
+        <div>
+            <p class="text-danger-subtle">*Ditujukan merupakan tujuan surat untuk siapa (penerima), contoh: Beasiswa PT. XX Indonesia </p>
+            <p class="text-danger-subtle">*Keperluan merupakan berupa pernyataan pengaju mengapa mengajukan surat tersebut, contoh: melakukan pengajuan surat beasiswa melalui Yayasan XX</p>
+        </div>
         <div class="table-responsive shadow-sm rounded-lg">
             <table class="table table-bordered table-striped table-hover" style="font-size: 0.9em; border-radius: 8px; overflow: hidden;">
                 <thead class="bg-light">
@@ -62,7 +65,7 @@
                             <td class="text-center p-3">{{ $surat->updated_at->format('d-m-Y H:i') }}</td>
                             <td class="text-center p-3">
                                 <a href="{{ route('detail-pengajuan-surat', $surat->kode_surat) }}" class="btn btn-sm btn-outline-primary rounded-pill">
-                                    <i class="fas fa-eye"></i> Detail
+                                    <i class="fas fa-eye"></i> Verifikasi Surat
                                 </a>
                                 @if ($surat->status_surat === 'disetujui')
                                 <a href="{{ route('pengajuan-surat-create', $surat->kode_surat) }}" class="btn btn-sm btn-outline-primary rounded-pill">

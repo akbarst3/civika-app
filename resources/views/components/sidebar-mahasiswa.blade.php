@@ -7,14 +7,13 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link text-dark" data-bs-toggle="collapse"
+            <a href="/mahasiswa/dashboard-pengaju" class="nav-link text-dark" data-bs-toggle="collapse"
                 data-bs-target="#formPengajuanCollapse">
                 <i class="fas fa-file-alt"></i> Form Pengajuan
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link text-dark" data-bs-toggle="collapse"
-                data-bs-target="#riwayatPengajuanCollapse">
+            <a href="/mahasiswa/daftar-pengajuan-surat" class="nav-link text-dark">
                 <i class="fas fa-history"></i> Riwayat Pengajuan
             </a>
         </li>

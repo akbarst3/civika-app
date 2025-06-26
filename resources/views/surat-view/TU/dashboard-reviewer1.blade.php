@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Reviewer 1')
+@section('title', 'Dashboard Reviewer')
 
 @section('navbar-content', 'Dashboard / Home')
 

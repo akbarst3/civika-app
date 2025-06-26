@@ -25,6 +25,10 @@
             </form>
         </div>
 
+        <div>
+            <p class="text-danger-subtle">*Ditujukan merupakan tujuan surat untuk siapa (penerima), contoh: Beasiswa PT. XX Indonesia </p>
+            <p class="text-danger-subtle">*Keperluan merupakan berupa pernyataan pengaju mengapa mengajukan surat tersebut, contoh: melakukan pengajuan surat beasiswa melalui Yayasan XX</p>
+        </div>
         <div class="table-responsive shadow-sm rounded-lg">
             <table class="table table-bordered table-striped table-hover"
                 style="font-size: 0.9em; border-radius: 8px; overflow: hidden;">

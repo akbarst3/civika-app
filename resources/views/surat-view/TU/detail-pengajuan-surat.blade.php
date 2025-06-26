@@ -209,7 +209,8 @@
                     </div>
                 @else
                     <div class="flex space-x-4">
-                        <button type="submit" name="status" value="tolak"
+                        <button type="button"
+                            onclick="window.location.href='{{ route('daftar-verifikasi-surat') }}'"
                             class="w-1/2 bg-gradient-to-r from-[#E11818] to-[#FF6C6C] text-white font-bold text-xs py-2 rounded-md hover:brightness-110 transition">
                             Tolak
                         </button>

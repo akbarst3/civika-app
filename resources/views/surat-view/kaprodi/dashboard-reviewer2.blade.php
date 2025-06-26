@@ -26,7 +26,7 @@
                                     <div class="rounded-circle bg-secondary" style="width: 1.5rem; height: 1.5rem;"></div>
                                     <div class="rounded-circle bg-secondary" style="width: 1.5rem; height: 1.5rem;"></div>
                                 </div>
-                                <span class="ms-2 text-muted">+10</span>
+                                <span class="ms-2 text-muted">+10 orang</span>
                             </div>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                                     <div class="rounded-circle bg-secondary" style="width: 1.5rem; height: 1.5rem;"></div>
                                     <div class="rounded-circle bg-secondary" style="width: 1.5rem; height: 1.5rem;"></div>
                                 </div>
-                                <span class="ms-2 text-muted">+8</span>
+                                <span class="ms-2 text-muted">+8 orang</span>
                             </div>
                         </div>
                     </div>

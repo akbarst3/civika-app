@@ -10,6 +10,15 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     && docker-php-ext-install pdo pdo_pgsql
 
+    
+# Install GD dan dependensinya kebutuhan gambar pada generate pdf
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd
+    
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
