@@ -72,8 +72,8 @@ class KpPklImport implements ToModel
             'kelas' => $mahasiswa->kelas ? $mahasiswa->kelas->toArray() : null,
         ]);
 
-        if ($mahasiswa->angkatan != $this->angkatan) {
-            Log::warning("Angkatan mismatch for NIM {$nim}: expected {$this->angkatan}, got {$mahasiswa->angkatan}", $mappedRow);
+        if ((string)$mahasiswa->kelas->angkatan !== (string)$this->angkatan) {
+            Log::warning("Angkatan mismatch for NIM {$nim}: expected {$this->angkatan}, got " . ($mahasiswa->kelas->angkatan ?? 'null'));
             return null;
         }
 
@@ -114,7 +114,7 @@ class KpPklImport implements ToModel
         }
 
         $cleanNidn = function ($nidn) {
-            return is_numeric($nidn) ? (string) (int) $nidn : trim((string) $nidn);
+            return trim((string) $nidn);
         };
 
         if (!empty($mappedRow['pembimbing_1_nidn'])) {

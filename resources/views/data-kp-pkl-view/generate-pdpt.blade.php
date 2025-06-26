@@ -27,7 +27,7 @@
                             </select>
                         </div>
                         <button type="submit" class="btn custom-button" onclick="setFormAction('{{ route('data-kp-pkl.generate-pdpt-download') }}')">Generate</button>
-                        <button type="submit" class="btn custom-button" onclick="">Lihat Laporan</button>
+                        {{-- <button type="submit" class="btn custom-button" onclick="">Lihat Laporan</button> --}}
                     </form>
                 </div>
             </div>

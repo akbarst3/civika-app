@@ -22,7 +22,7 @@ class DosenSeeder extends Seeder
                 'nip' => '1987654321098767',
                 'nidn' => '0002039008',
                 'nama_dosen' => 'Rahil Jumiyani, S.ST., M.Sc.',
-                'jabatan_dosen' => null,
+                'jabatan_dosen' => "Kaprodi",
                 'ttd' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
