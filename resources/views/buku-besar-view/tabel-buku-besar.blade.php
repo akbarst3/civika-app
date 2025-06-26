@@ -715,9 +715,11 @@
             filterForm.submit();
         });
 
-        semesterDropdown.addEventListener('change', function() {
-            updateSemesterColumns(parseInt(this.value));
-            filterForm.submit();
+        semesterDropdown.addEventListener('input', function () {
+            const selectedSemester = this.value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('semester', selectedSemester);
+            window.location.href = url.toString();
         });
 
         document.getElementById('search').addEventListener('keypress', function(e) {
