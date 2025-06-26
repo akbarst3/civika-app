@@ -7,7 +7,7 @@
 @section('content')
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center">
-            <h2>History Buku Besar</h2>
+            <h2>History Buku Besar - Kelas {{ $kelas->nama_kelas }} {{ $kelas->angkatan }}</h2>
             <div class="dropdown" style="margin-top: -3px;">
                 <button class="btn btn-secondary dropdown-toggle rounded-circle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="background: linear-gradient(90deg, #666666, #999999); color: white; width: 30px; height: 30px; padding: 0; border: none; display: flex; align-items: center; justify-content: center;">
                     <span class="three-dots" style="font-size: 18px; line-height: 1;">⋮</span>
@@ -18,7 +18,7 @@
             </div>
         </div>
         <form method="GET" action="{{ route('buku-besar-wali-mahasiswa') }}">
-            <div class="row mb-3">  
+            <div class="row mb-3">
                 <div class="col-12 col-sm-6 col-md-2 mb-2">
                     <label for="semester" class="form-label">Semester</label>
                     <select class="form-select custom-dropdown w-100" id="semester" name="semester" onchange="this.form.submit()">
@@ -31,7 +31,7 @@
                 </div>
             </div>
         </form>
-    </div>
+    
 
     @if ($mataKuliahs->isEmpty())
         <div class="alert alert-info mt-4" role="alert">
@@ -609,6 +609,43 @@
                 }
             }, 2500); // Tunggu 2.5 detik
         });
+        document.getElementById('semester').addEventListener('change', function () {
+            const selectedSemester = parseInt(this.value) || 1;
+            updateSemesterColumns(selectedSemester);
+        });
+
+        function updateSemesterColumns(selectedSemester) {
+            // Sembunyikan semua kolom semester
+            for (let i = 1; i <= 8; i++) {
+                const cells = document.querySelectorAll(`.semester-${i}`);
+                cells.forEach(cell => cell.classList.remove('semester-active'));
+            }
+
+            // Perbarui colspan header
+            const sksDHeader = document.getElementById('sks-d-header');
+            sksDHeader.setAttribute('colspan', selectedSemester || 1);
+
+            // Tampilkan kolom untuk semester yang aktif
+            for (let i = 1; i <= selectedSemester && i <= 8; i++) {
+                const cells = document.querySelectorAll(`.semester-${i}`);
+                cells.forEach(cell => cell.classList.add('semester-active'));
+            }
+
+            // Perbarui nilai SKS D
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const sksDCell = row.querySelector('td:nth-child(17)');
+                if (selectedSemester === 0) {
+                    sksDCell.textContent = '';
+                } else {
+                    const selectedSemesterCell = row.querySelector(`.semester-${selectedSemester}`);
+                    sksDCell.textContent = selectedSemesterCell ? selectedSemesterCell.textContent : '';
+                }
+            });
+        }
+
+        // Inisialisasi tampilan tabel dengan semester default saat halaman dimuat
+        updateSemesterColumns({{ $semester }});
     });
     </script>
     @endpush
