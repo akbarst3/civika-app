@@ -12,6 +12,11 @@ use App\Imports\KpPklImport;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Routing\Controller;
+use App\Models\Mahasiswa;
+use App\Models\Membimbing;
+use App\Models\Memnguji;
+
+
 
 class PKLController extends Controller
 {
@@ -354,5 +359,116 @@ class PKLController extends Controller
             return redirect()->back()
                 ->with('error', 'Gagal menampilkan data Honor KP/PKL: ' . $e->getMessage());
         }
+    }
+
+
+    public function getDatapkl(Request $request)
+    {
+        $query = KpPkl::with([
+            'mahasiswa' => function ($query) {
+                $query->select('nim', 'nama_mhs', 'nama_kelas');
+            },
+            'dosen' => function ($query) {
+                $query->select('kode_dosen', 'nama_dosen');
+            }
+        ]);
+
+        // Filter berdasarkan angkatan
+        if ($request->has('angkatan') && $request->angkatan != '') {
+            $query->whereHas('mahasiswa', function ($q) use ($request) {
+                $q->where('nama_kelas', 'like', '%' . $request->angkatan . '%');
+            });
+        }
+
+        // Pencarian berdasarkan nama mahasiswa atau perusahaan
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_perusahaan', 'like', '%' . $search . '%')
+                  ->orWhereHas('mahasiswa', function ($q) use ($search) {
+                      $q->where('nama_mhs', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+
+        // Pagination
+        $kpPkl = $query->paginate(10);
+
+        // Format data untuk response
+        $data = [];
+        foreach ($kpPkl as $pkl) {
+            $data[] = [
+                'id_perusahaan' => $pkl->id_perusahaan,
+                'tahun' => $pkl->tahun,
+                'nim' => $pkl->nim,
+                'nama_mahasiswa' => $pkl->mahasiswa->nama_mhs,
+                'kelas' => $pkl->mahasiswa->nama_kelas,
+                'nama_perusahaan' => $pkl->nama_perusahaan,
+                'pembimbing' => [
+                    [
+                        'kode_dosen' => $pkl->kode_dosen,
+                        'nama_dosen' => $pkl->dosen->nama_dosen,
+                    ],
+                    // Placeholder untuk pembimbing kedua (sesuaikan jika ada data)
+                    [
+                        'kode_dosen' => null,
+                        'nama_dosen' => null,
+                    ]
+                ],
+                'penguji' => [
+                    // Placeholder untuk penguji (sesuaikan jika ada data)
+                    [
+                        'kode_dosen' => null,
+                        'nama_dosen' => null,
+                    ],
+                    [
+                        'kode_dosen' => null,
+                        'nama_dosen' => null,
+                    ]
+                ]
+            ];
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+            'meta' => [
+                'current_page' => $kpPkl->currentPage(),
+                'last_page' => $kpPkl->lastPage(),
+                'total' => $kpPkl->total(),
+                'per_page' => $kpPkl->perPage(),
+            ]
+        ], 200);
+    }
+
+    public function showPembimbingPengujiView(Request $request)
+    {
+        $query = KpPkl::with([
+            'mahasiswa' => function ($query) {
+                $query->select('nim', 'nama_mhs');
+            },
+            'dosen' => function ($query) {
+                $query->select('kode_dosen', 'nama_dosen');
+            }
+        ]);
+
+        if ($request->filled('angkatan')) {
+            $query->whereHas('mahasiswa', function ($q) use ($request) {
+            });
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_perusahaan', 'like', '%' . $search . '%')
+                ->orWhereHas('mahasiswa', function ($q) use ($search) {
+                    $q->where('nama_mhs', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        $kpPkl = $query->paginate(10);
+
+        return view('data-kp-pkl-view.pembimbing_penguji', compact('kpPkl'));
     }
 }
