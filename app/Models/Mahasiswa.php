@@ -13,16 +13,16 @@ class Mahasiswa extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'nim', 'nama_kelas', 'angkatan', 'nama_mhs', 'no_ktp', 'email', 'telepon',
+        'nim', 'nama_mhs', 'no_ktp', 'email', 'telepon',
         'tgl_lahir', 'kota_lahir', 'jenis_kelamin', 'agama', 'gol_darah', 'anak_ke',
-        'nama_slta', 'jalur_daftar', 'nem'
+        'nama_slta', 'jalur_daftar', 'nem', 'kelas_id', 'kota'
     ];
 
     protected $casts = [
         'tgl_lahir' => 'date',
         'jenis_kelamin' => 'boolean', // Enum: 0 = Laki-laki, 1 = Perempuan
         'gol_darah' => 'string', // Enum: A, B, AB, O
-        'agama' => 'string', // Enum: Islam, Kristen, Katolik, Hindu, Buddha, Konghucu
+        'agama' => 'string', // Enum: Islam, Kristen, Katholik, Hindu, Buddha, Konghucu
         'jalur_daftar' => 'string', // Enum: SNMPTN, SBMPTN, Mandiri, Lainnya
         'nem' => 'decimal:2'
     ];
@@ -59,7 +59,7 @@ class Mahasiswa extends Model
 
     public function kpPkl()
     {
-        return $this->hasMany(KpPkl::class, 'nim', 'nim');
+        return $this->hasOne(KpPkl::class, 'nim', 'nim');
     }
 
     public function nilai()
@@ -74,7 +74,7 @@ class Mahasiswa extends Model
 
     public function tugasAkhir()
     {
-        return $this->hasMany(TugasAkhir::class, 'nim', 'nim');
+        return $this->belongsTo(TugasAkhir::class, 'kota', 'kota');
     }
 
     public function user()
