@@ -1,11 +1,10 @@
 <?php
 
 use App\Http\Controllers\MahasiswaController;
-use App\Http\Controllers\TugasAkhirController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PKLController;
 use App\Models\Prodi;
-
+use App\Http\Controllers\TugasAkhirController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -90,4 +89,15 @@ Route::middleware(['auth', 'role:tata_usaha'])->group(function () {
     Route::get('/datamahasiswa/import', function () {
         return view('mahasiswa-view/importdatamhs');
     })->name('datamahasiswa.import');
+
+    Route::get('dataTA/pembimbing_penguji',function () {
+        return view('tugas-akhir-view.pembimbing_penguji');
+    });
+    
+    Route::get('dataKP/pembimbing_penguji',function () {
+        return view('pkl-view.pembimbing_penguji');
+    });
+    
+    
+    Route::get('dataTA/pembimbing_penguji', [TugasAkhirController::class, 'showPembimbingPengujiView']);
 });
