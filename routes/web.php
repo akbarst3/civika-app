@@ -53,3 +53,5 @@ Route::post('/import-excel', [BukuBesarController::class, 'importExcel'])
 Route::get('/generate-pdf', [BukuBesarController::class, 'generatePdf'])->name('generate.pdf');
 // Route::post('/import-buku-besar/generate-laporan', [BukuBesarController::class, 'generateLaporan'])->name('buku.besar.generateLaporan'); //->middleware('auth'); // Pastikan route ini dilindungi
 Route::post('/laporan/generate-mahasiswa', [BukuBesarController::class, 'generateLaporan'])->name('laporan.mahasiswa.generate');
+
+Route::get('/buku-besar/export', [BukuBesarController::class, 'exportExcel'])->name('buku-besar.export');

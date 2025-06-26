@@ -56,6 +56,7 @@
                         @endforeach
                     </select>
                 </div>
+                <a href="{{ route('buku-besar.export', request()->query()) }}" class="btn btn-success">Export Excel</a>
             </div>
         </form>
     </div>

@@ -10,10 +10,12 @@ use App\Models\Absensi;
 use App\Models\Mahasiswa;
 use App\Models\MataKuliah;
 use App\Models\ProgramStudi;
+use Carbon\Traits\ToStringFormat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use App\Exports\BukuBesarExport;
 use App\Imports\DataAkademikImport;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
@@ -155,7 +157,7 @@ class BukuBesarController extends Controller
         ]);
     }
 
-    public function bukuBesar(Request $request)
+    public function getExportData(Request $request)
     {
         // 1. Ambil angkatan terakhir yang memiliki data indeks prestasi
         $angkatanTerakhir = Kelas::whereIn('id', function ($query) {
@@ -190,15 +192,64 @@ class BukuBesarController extends Controller
         $semester = $request->input('semester', $semesterTerakhir);
         $kelas = $request->input('kelas_id', $defaultKelas->id ?? null);
         $program_studi = $request->input('program_studi', $defaultProdi->kode_prodi ?? null);
-        $tahun_akademik = $tahun . '/' . ($tahun + 1);
+
+        $kelasObject = Kelas::find($kelas);
+        $namaKelas = $kelasObject->nama_kelas ?? 'Semua Kelas';
+
+        $tahun_saat_ini = date('Y');
+        $bulan_saat_ini = date('n');
+
+        $tahun_awal_akademik = $tahun_saat_ini;
+
+        if ($bulan_saat_ini < 8) {
+            $tahun_awal_akademik = $tahun_saat_ini - 1;
+        }
+        $tahun_akademik = $tahun_awal_akademik . '/' . ($tahun_awal_akademik + 1);
 
         // 6. Data referensi
         $prodis = Prodi::all();
         $kelasList = Kelas::with('prodi')->get();
+
+        $selectedProdi = $prodis->firstWhere('kode_prodi', $program_studi);
+        // dd($program_studi);
+        $tambahanKolomProdi = 0;
+
+        if ($program_studi == 1 ) { // D3
+            $tambahanKolomProdi = 6;
+        } elseif ($program_studi == 2) { // D4
+            $tambahanKolomProdi = 8;
+        }
+
+        // Menentukan ganjil/genap dari semester
+        $ganjilGenap = ($semester % 2 != 0) ? 'Ganjil' : 'Genap';
+
+        // Logika untuk tingkat_kelas
+        $tingkat_kelas = null; // Inisialisasi dengan null
+        $maksSemester = 0;
+
+        if ($selectedProdi) {
+            $angkatan_mhs = (int) $tahun; // Menggunakan $tahun sebagai angkatan mahasiswa
+            $semesterAktif = ($tahun_awal_akademik - $angkatan_mhs) * 2 + ($ganjilGenap === 'Ganjil' ? 1 : 2);
+
+            $prodiNamaLower = strtolower($selectedProdi->nama_prodi ?? '');
+            $maksSemester = str_contains($prodiNamaLower, 'd3') ? 6 : 8;
+
+            if ($semesterAktif >= 1 && $semesterAktif <= $maksSemester) {
+                $tingkat_kelas = (int) ceil($semesterAktif / 2);
+            }
+        }
+
+        $kelasTerpilih = (string) $tingkat_kelas . $namaKelas;
+        // dd($kelasTerpilih);
+
         $mataKuliahs = MataKuliah::whereIn('kode_matkul', function ($query) use ($semester) {
             $query->select('kode_matkul')->from('nilai')->where('semester_ke', $semester);
         })
         ->get();
+
+        $jumlahMataKuliah = count($mataKuliahs);
+        $totalKolom = 17 + $jumlahMataKuliah + $tambahanKolomProdi;
+
         // dd($mataKuliahs);
 
         // 7. Query mahasiswa dengan relasi
@@ -222,6 +273,7 @@ class BukuBesarController extends Controller
                 }
             });
         }
+        // dd($program_studi);
 
         $mahasiswas = $mahasiswaQuery->get();
         $totalSemesters = IndeksPrestasiSemester::select('semester')->distinct()->count();
@@ -295,18 +347,49 @@ class BukuBesarController extends Controller
             ];
         });
 
-        return view('buku-besar-view.tabel-buku-besar', compact(
-            'data',
-            'totalSemesters',
-            'tahun_akademik',
-            'semester',
-            'mataKuliahs',
-            'prodis',
-            'kelasList',
-            'kelas',
-            'tahun',
-            'program_studi'
-        ));
+        return [
+            'data' => $data,
+            'mataKuliahs' => $mataKuliahs,
+            'semester' => $semester,
+            'totalSemesters' => $totalSemesters,
+            'prodis' => $prodis,
+            'kelasList' => $kelasList,
+            'kelasTerpilih' => $kelasTerpilih,
+            'kelas' => $kelas,
+            'tahun' => $tahun,
+            'program_studi' => $program_studi,
+            'tahun_akademik' => $tahun_akademik,
+            'tingkat_kelas' => $tingkat_kelas,
+            'totalKolom' => $totalKolom,
+        ];
+    }
+
+    public function bukuBesar(Request $request)
+    {
+        $result = $this->getExportData($request);
+
+        return view('buku-besar-view.tabel-buku-besar', $result);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $result = $this->getExportData($request);
+
+        return Excel::download(
+            new BukuBesarExport(
+                $result['data'],
+                $result['mataKuliahs'],
+                $result['semester'],
+                $result['totalSemesters'],
+                $result['tahun_akademik'],
+                $result['program_studi'],
+                $result['tingkat_kelas'],
+                $result['kelasTerpilih'],
+                $result['tahun'],
+                $result['totalKolom']
+            ),
+            'buku_besar_' . now()->format('Ymd_His') . '.xlsx'
+        );
     }
 
     public function cekStatus(Request $request)
