@@ -13,7 +13,9 @@
                     <span class="three-dots" style="font-size: 18px; line-height: 1;">⋮</span>
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="border-radius: 8px; padding: 0;">
-                    <li><a class="dropdown-item" href="#" id="downloadTrigger" style="padding: 10px 15px; border-bottom: 1px solid #dee2e6;">Download Laporan</a></li>
+                    <li><a class="dropdown-item" href="{{ route('buku-besar.export', request()->query()) }}" id="downloadTrigger" 
+                            style="padding: 10px 15px; border-bottom: 1px solid #dee2e6;">Download Laporan</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -69,7 +71,6 @@
                         @endforeach
                     </select>
                 </div>
-                <a href="{{ route('buku-besar.export', request()->query()) }}" class="btn btn-success">Export Excel</a>
             </div>
         </form>
     </div>
@@ -536,10 +537,11 @@
 
         // Listener untuk membuka alur modal
         downloadTrigger.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('studentDropdown').value = ""; // Reset dropdown mahasiswa
-            resetReportOptions(); // Reset checkbox di modal opsi
-            studentModal.show();
+            window.location.href = this.href;
+            // e.preventDefault();
+            // document.getElementById('studentDropdown').value = ""; // Reset dropdown mahasiswa
+            // resetReportOptions(); // Reset checkbox di modal opsi
+            // studentModal.show();
         });
 
         // Listener untuk tombol Next (dari Student Selection ke Report Options)
