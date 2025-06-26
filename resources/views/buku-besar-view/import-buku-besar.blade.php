@@ -4,11 +4,14 @@
 
 @section('content')
     <div class="container mt-5">
-        <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
-            <div>
+        <div class="d-flex align-items-center mb-4 flex-wrap gap-3"> {{-- Removed justify-content-between to allow finer control of alignment --}}
+            <a href="{{ route('import.buku-besar.status') }}" class="text-dark" title="Kembali ke Status Import" style="font-size: 1.5rem; text-decoration: none;"> {{-- Removed btn btn-secondary rounded-full, added text-dark, font-size and text-decoration --}}
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="ms-3"> {{-- Added margin-start for spacing --}}
                 <h2 class="mb-0" style="font-weight: 700;">Import Buku Besar</h2>
                 <p class="description-text mt-2">
-                    Upload buku besar dengan format excel. Sesuikan format excel dengan format excel sesuai prodi.
+                    Upload buku besar dengan format excel. Sesuaikan format excel dengan format excel sesuai prodi.
                 </p>
             </div>
             <!-- Search box dihapus -->
