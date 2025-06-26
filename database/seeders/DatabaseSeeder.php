@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
             DosenSeeder::class,
             MahasiswaSeeder::class,
 //            TugasAkhirSeeder::class,
-//            TugasAkhirSeeder::class,
 //            MembimbingTASeeder::class,
 //            MengujiTASeeder::class,
 //            KpPklSeeder::class,
