@@ -30,7 +30,7 @@ echo "✅ Container $CONTAINER_NAME aktif!"
 # Cek folder vendor
 if [ ! -d vendor ]; then
   echo "📦 Folder vendor belum ada, menjalankan composer install..."
-  docker compose -f compose.dev.yaml exec $SERVICE_NAME bash composer install --no-interaction --optimize-autoloader
+  docker compose exec $SERVICE_NAME composer install --no-interaction --optimize-autoloader
 else
   echo "✅ Folder vendor sudah ada."
 fi
