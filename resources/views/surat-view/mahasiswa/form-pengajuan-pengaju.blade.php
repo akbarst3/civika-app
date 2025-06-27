@@ -24,6 +24,32 @@
                 margin-left: 0;
             }
         }
+
+        .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 50;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 100;
+            width: 90%;
+            max-width: 400px;
+        }
     </style>
 
     @include('components.sidebar-mahasiswa')
@@ -135,7 +161,43 @@
                         @enderror
                     </div>
                 </div>
-                <div class="flex space-x-4">
+                    <div class="flex space-x-4">
+                        <a href="{{ route('dashboard-pengaju') }}"
+                            class="w-1/2 bg-gradient-to-r from-[#E11818] to-[#FF6C6C] text-white font-bold text-xs py-2 rounded-md hover:brightness-110 transition text-center inline-block">
+                            Batal
+                        </a>
+                        <button type="button" onclick="showPopup()"
+                            class="submit-button w-1/2 bg-gradient-to-r from-[#00008B] to-[#3B3BBD] text-white font-bold text-xs py-2 rounded-md hover:brightness-110 transition">
+                            Ajukan Pengajuan
+                        </button>
+                    </div>
+
+                    <!-- ⬇️ POPUP SEKARANG DI DALAM FORM -->
+                    <div class="overlay" id="overlay"></div>
+                    <div class="popup" id="popup">
+                        <h3 class="text-lg mb-2">Ajukan Surat ke Wali kelas!</h3>
+                        <div class="space-y-5">
+                            <select name="kode_dosen" id="kode_dosen" class="w-full p-2 mb-2 border rounded" required>
+                                <option value="">Pilih Wali Kelas Anda</option>
+                                @foreach($dosen as $d)
+                                    <option value="{{ $d->kode_dosen }}">{{ $d->nama_dosen }}</option>
+                                @endforeach
+                            </select>
+                            <div class="flex justify-between">
+                                <!-- SUBMIT PENGAJUAN -->
+                                <button type="submit" 
+                                    class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                    Teruskan Pengajuan
+                                </button>
+                                <!-- TUTUP POPUP -->
+                                <button type="button" onclick="closePopup()"
+                                    class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                                    Batal
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {{-- <div class="flex space-x-4">
                     <a href="{{ route('dashboard-pengaju') }}"
                         class="w-1/2 bg-gradient-to-r from-[#E11818] to-[#FF6C6C] text-white font-bold text-xs py-2 rounded-md hover:brightness-110 transition text-center inline-block">
                         Batal
@@ -144,11 +206,41 @@
                     <button type="submit"
                         class="w-1/2 bg-gradient-to-r from-[#00008B] to-[#3B3BBD] text-white font-bold text-xs py-2 rounded-md hover:brightness-110 transition"
                         data-bs-toggle="modal" data-bs-target="#confirmationModal">Ajukan</button>
-                </div>
+                </div> --}}
             </form>
         </div>
     </main>
     <x-whatsapp-floating />
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showPopup() {
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // function redirectToRoute() {
+        //     const verifikator = document.getElementById('kode_dosen').value;
+    
+        //     if (!verifikator) {
+        //         alert('Pilih dahulu, surat akan diajukan ke siapa?');
+        //         return;
+        //     }
+
+        //     // Route dasar Laravel, kirimkan kode_dosen sebagai parameter (query string)
+        //     const route = "{{ route('daftar-verifikasi-surat') }}?verifikator=" + encodeURIComponent(verifikator);
+        //     window.location.href = route;
+        // }
+    </script>
+@endsection
+
+@section('styles')
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 @endsection
 
 @section('scripts')

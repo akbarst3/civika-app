@@ -57,15 +57,15 @@
                             <td class="text-center p-3">{{ $surat->keperluan ?? '-' }}</td>
                             <td class="text-center p-3">
                                 <span
-                                    class="badge {{ $surat->status_surat == 'Disetujui' ? 'bg-success' : ($surat->status_surat == 'Ditolak' ? 'bg-danger' : ($surat->status_surat == 'Proses' ? 'bg-warning' : 'bg-secondary')) }}">
+                                    class="badge {{ $surat->status_surat == 'disetujui' ? 'bg-success' : ($surat->status_surat == 'ditolak' ? 'bg-danger' : ($surat->status_surat == 'diproses' ? 'bg-warning' : 'bg-secondary')) }}">
                                     {{ $surat->status_surat ?? '-' }}
                                 </span>
                             </td>
                             <td class="text-center p-3">
-                                @if ($surat->tahap_verifikasi == 'tu')
-                                    Tata Usaha
+                                @if ($surat->status_surat == 'disetujui')
+                                    Hubungi TU Jika terdapat kesalahan
                                 @else
-                                    {{ ucfirst($surat->tahap_verifikasi ?? '-') }}
+                                    Diproses {{ $surat->tahap_verifikasi }}
                                 @endif
                             </td>
                             <td class="text-center p-3">{{ $surat->created_at->format('d-m-Y H:i') }}</td>
@@ -76,6 +76,8 @@
                                     class="btn btn-sm btn-outline-primary rounded-pill">
                                     <i class="fas fa-solid fa-download"></i> Download
                                 </a>
+                                @elseif ($surat->status_surat == 'ditolak')
+                                    Surat Ditolak, Hubungi Pihak Terkait
                                 @else
                                     <p>Surat masih dalam proses review</p>
                                 @endif

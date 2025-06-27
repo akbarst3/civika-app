@@ -18,6 +18,7 @@ class Surat extends Model
         'keperluan',
         'berkas',
         // 'id_user',
+        'kode_dosen',
         'nim',
         'jenis_surat',
         'status_surat',
@@ -39,10 +40,10 @@ class Surat extends Model
         return $this->belongsTo(Mahasiswa::class, 'nim', 'nim');
     }
 
-    // public function dosen()
-    // {
-    //     return $this->belongsTo(Dosen::class, 'kode_dosen', 'kode_dosen');
-    // }
+    public function dosen()
+    {
+        return $this->belongsTo(Dosen::class, 'kode_dosen', 'kode_dosen');
+    }
 
     // public function beasiswa()
     // {

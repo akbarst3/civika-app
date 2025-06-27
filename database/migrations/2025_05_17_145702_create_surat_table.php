@@ -18,14 +18,14 @@ return new class extends Migration
             $table->string('berkas', 255)->nullable();
             // $table->integer('id_user')->nullable();
             $table->string('nim', 9)->nullable();
-            // $table->string('kode_dosen', 6)->nullable();
+            $table->string('kode_dosen', 6);
             $table->string('jenis_surat', 20); // Enum: Rekomendasi, Beasiswa, Pengantar, Lainnya
             // $table->text('pesan')->nullable();
             $table->string('status_surat', 20)->default('draft');
-            $table->string('tahap_verifikasi', 20)->default('TU');
+            $table->string('tahap_verifikasi', 20)->default('WaliDosen');
             // $table->foreign('id_user')->references('id_user')->on('users')->restrictOnDelete()->restrictOnUpdate();
             $table->foreign('nim')->references('nim')->on('mahasiswa')->restrictOnDelete()->restrictOnUpdate();
-            // $table->foreign('kode_dosen')->references('kode_dosen')->on('dosen')->restrictOnDelete()->restrictOnUpdate();
+            $table->foreign('kode_dosen')->references('kode_dosen')->on('dosen')->restrictOnDelete()->restrictOnUpdate();
             // $table->index(['id_user'], 'membuat_fk');
             $table->index(['nim'], 'mengajukan_fk');
             // $table->index(['kode_dosen'], 'menandatangani_fk');

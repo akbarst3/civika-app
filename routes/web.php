@@ -33,8 +33,10 @@ Route::middleware(['auth', 'role:tata_usaha,dosen'])->group(function () {
 
     //Detail Pengajuan Surat
     Route::get('/TU/detail-pengajuan-surat/{kode_surat}', [SuratController::class, 'indexDetailPengajuanSurat'])->name('detail-pengajuan-surat');
-    Route::put('TU/pengajuan-surat/{kode_surat}/update', [SuratController::class, 'updatePengajuan'])->name('pengajuan-surat-update');
     Route::put('TU/detail-pengajuan-surat/{kode_surat}/update', [SuratController::class, 'updateDetailPengajuanSurat'])->name('detail-pengajuan-surat-update');
+
+    //Update Surat Jika Ada Kesalahan Minor 
+    Route::put('TU/pengajuan-surat/{kode_surat}/update', [SuratController::class, 'updatePengajuan'])->name('pengajuan-surat-update');
 });
 
 Route::get('/TU/pengajuan-surat-download/{kode_surat}', [SuratController::class, 'createSurat'])->name('pengajuan-surat-create');

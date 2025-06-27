@@ -53,8 +53,8 @@ class SuratController extends Controller
         if (!$data) {
             return redirect()->route('dashboard')->with('error', 'Data pengguna tidak ditemukan.');
         }
-
-        return view('surat-view.mahasiswa.form-pengajuan-pengaju', compact('data', 'jenisSurat'));
+        $dosen = Dosen::where('jabatan_dosen', 'WaliDosen')->get();
+        return view('surat-view.mahasiswa.form-pengajuan-pengaju', compact('data', 'jenisSurat', 'dosen'));
     }
 
     public function storePengajuan(Request $request)
@@ -113,6 +113,7 @@ class SuratController extends Controller
             'keperluan' => $request->input('keperluan'),
             'berkas' => $berkasPath,
             'jenis_surat' => $jenisSurat,
+            'kode_dosen' => $request->kode_dosen
         ]);
 
         if ($jenisSurat === 'suratBeasiswa') {
@@ -189,23 +190,21 @@ class SuratController extends Controller
 
     public function updateDetailPengajuanSurat(Request $request, $kodeSurat)
     {
-        // $jenisSurat = $request->input('jenisSurat');
         $surat = Surat::where('kode_surat', $kodeSurat)->firstOrFail();
         $jenisSurat = $surat->jenis_surat;
         $user = auth()->user();
-
-        if ($user->role === 'tata_usaha') {
-            $surat->update([
-                'status_surat' => StatusSurat::DIPROSES->value,
-                'tahap_verifikasi' => $request->tahap_verifikasi,
+        
+        if ($request->status === 'tolak') {
+        $surat->update([
+            'status_surat' => StatusSurat::DITOLAK->value,
+            'tahap_verifikasi' => $surat->tahap_verifikasi,
             ]);
-        } elseif ($user->role === 'dosen') {
+        return redirect()->route('daftar-verifikasi-surat')->with('success', 'Surat berhasil ditolak.');
+        }
+        
+        if ($user->role === 'dosen')  {
             $jsonPath = "temp/pdfData-{$kodeSurat}.json";
-            $pdfData = null;
-
-            if (Storage::exists($jsonPath)) {
-                $pdfData = json_decode(Storage::get($jsonPath), true);
-            }
+            $pdfData = Storage::exists($jsonPath) ? json_decode(Storage::get($jsonPath), true) : [];
 
             $targetDir = public_path('laraview/' . $surat->nim . '/' . $kodeSurat);
             if (!file_exists($targetDir)) {
@@ -216,22 +215,44 @@ class SuratController extends Controller
             if (file_exists($pdfPath)) {
                 unlink($pdfPath);
             }
-            $imagePath = public_path('images/ttd_digital.png');
-            $src = file_exists($imagePath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($imagePath)) : '';
-            if ($jenisSurat === 'suratBeasiswa') {
-                $pdf = PDF::loadView('surat-view.template-surat-beasiswa', compact('src', 'pdfData', 'kodeSurat'));
-            } else {
-                $pdf = PDF::loadView('surat-view.template-surat-ormawa', compact('src', 'pdfData', 'kodeSurat'));
+            
+            $dosen = Dosen::where('kode_dosen', $user->kode_dosen)->first();
+            $jabatan = $dosen->jabatan_dosen ?? null;
+
+            if ($jabatan === 'WaliDosen') {
+                $surat->update([
+                    'status_surat' => StatusSurat::DIPROSES->value,
+                    'tahap_verifikasi' => TahapVerifikasi::TU->value,
+                ]);
             }
-            $pdf->save($pdfPath);
+            elseif (in_array($jabatan, ['Kaprodi', 'Kajur'])) {
+                $ttdPath = $jabatan === 'Kaprodi' ? public_path('images/ttd_digital1.png')
+                : public_path('images/ttd_digital2.png');
+
+                $src = file_exists($ttdPath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($ttdPath))
+                : '';
+
+                $view = $jenisSurat === 'suratBeasiswa' ? 'surat-view.template-surat-beasiswa'
+                : 'surat-view.template-surat-ormawa';
+
+                $pdf = PDF::loadView($view, compact('src', 'pdfData', 'kodeSurat'));
+                $pdf->save($pdfPath);
+
+                $surat->update([
+                'tahap_verifikasi' => $jabatan === 'Kaprodi' ? TahapVerifikasi::KAJUR->value
+                    : TahapVerifikasi::TU->value,
+                'status_surat' => $jabatan === 'Kaprodi' ? $surat->status_surat
+                    : StatusSurat::DISETUJUI->value, 
+                ]);
+            }
+        } elseif ($user->role === 'tata_usaha')  {
             $surat->update([
-                'status_surat' => StatusSurat::DISETUJUI->value,
-                'tahap_verifikasi' => TahapVerifikasi::TU->value,
+                'status_surat' => StatusSurat::DIPROSES->value,
+                'tahap_verifikasi' => TahapVerifikasi::KAPRODI->value,
             ]);
         } else {
             abort(403, 'Akses ditolak');
         }
-
         return redirect()->route('daftar-verifikasi-surat')->with('success', 'Pengajuan surat berhasil diperbarui!');
     }
 
@@ -256,6 +277,7 @@ class SuratController extends Controller
     {
         return view('surat-view.TU.dashboard-reviewer1');
     }
+
     public function indexDaftarSuratVerifikasi(Request $request)
     {
         $user = auth()->user();
@@ -263,6 +285,9 @@ class SuratController extends Controller
 
         if ($user->role === 'tata_usaha') {
             $query = Surat::query();
+            // kondisi untuk mengecualikan tahap_verifikasi = 'WaliDosen'
+            $query->where('tahap_verifikasi', '!=', 'WaliDosen');
+
             if ($status !== 'all') {
                 $query->where('status_surat', $status);
             }
@@ -272,15 +297,16 @@ class SuratController extends Controller
             $dosen = Dosen::where('kode_dosen', $user->kode_dosen)->first();
             $query = Surat::whereRaw('0 = 1'); // Query kosong untuk default tabel kosong
 
-            if ($dosen && in_array($dosen->jabatan_dosen, ['Kaprodi', 'Kajur', 'wali dosen'])) {
-                // Filter surat berdasarkan jabatan dosen
-                $query = Surat::where('tahap_verifikasi', $dosen->jabatan_dosen)
-                    ->where('status_surat', 'diproses');
+            if ($dosen && in_array($dosen->jabatan_dosen, ['Kaprodi', 'Kajur', 'WaliDosen'])) {
+                $query = Surat::where('tahap_verifikasi', $dosen->jabatan_dosen);
+                if ($dosen->jabatan_dosen === 'WaliDosen') {
+                    $query->where('kode_dosen', $dosen->kode_dosen);
+                }
+
                 if ($status !== 'all') {
                     $query->where('status_surat', $status);
                 }
             }
-
             $surats = $query->orderBy('updated_at', 'desc')->paginate(10);
         } else {
             abort(403, 'Akses ditolak');

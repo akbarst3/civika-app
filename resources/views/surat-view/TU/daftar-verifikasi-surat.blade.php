@@ -51,15 +51,15 @@
                             <td class="text-center p-3">{{ $surat->ditujukan }}</td>
                             <td class="text-center p-3">{{ $surat->keperluan }}</td>
                             <td class="text-center p-3">
-                                <span class="badge {{ $surat->status_surat == 'Disetujui' ? 'bg-success' : ($surat->status_surat == 'Ditolak' ? 'bg-danger' : ($surat->status_surat == 'Proses' ? 'bg-warning' : 'bg-secondary')) }}">
+                                <span class="badge {{ $surat->status_surat == 'disetujui' ? 'bg-success' : ($surat->status_surat == 'ditolak' ? 'bg-danger' : ($surat->status_surat == 'diproses' ? 'bg-warning' : 'bg-secondary')) }}">
                                     {{ $surat->status_surat }}
                                 </span>
                             </td>
                             <td class="text-center p-3">
-                                @if($surat->tahap_verifikasi == 'tu')
-                                    Tata Usaha
+                                @if ($surat->status_surat == 'disetujui')
+                                    Pengajuan Selesai
                                 @else
-                                    {{ ucfirst($surat->tahap_verifikasi) }}
+                                    Diproses {{ $surat->tahap_verifikasi }}
                                 @endif
                             </td>
                             <td class="text-center p-3">{{ $surat->updated_at->format('d-m-Y H:i') }}</td>
